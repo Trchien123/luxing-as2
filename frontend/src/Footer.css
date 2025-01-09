@@ -1,0 +1,14 @@
+.footer-container {
+    background-color: #160C31;
+}
+
+.footer-container ul {
+    margin: 0px;
+    height: 20vh;
+    padding: 20px;
+}
+
+.footer-container ul li{
+    color: white;
+    list-style: none;
+}
