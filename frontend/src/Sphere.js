@@ -87,4 +87,4 @@ const Sphere =() => {
   }
   window.addEventListener('resize', handleWindowResize, false);
 }
-export default Sphere;
+export default Sphere
