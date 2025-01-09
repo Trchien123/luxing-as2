@@ -11,6 +11,9 @@
     --home-background: linear-gradient(#160c31, #442597);
 }
 
+body {
+    background-image: var(--home-background);
+}
 
 .blur-container {
     width: 100%;
@@ -31,7 +34,6 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    background-image: var(--home-background);
 
 
 }
