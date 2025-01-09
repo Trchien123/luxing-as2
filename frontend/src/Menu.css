@@ -4,6 +4,7 @@
     width: 100%;
     position: fixed;
     background-color: #160C31;
+    z-index: 999999999;
 }
 
 .menu-elements ul {
