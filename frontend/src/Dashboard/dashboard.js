@@ -7,20 +7,19 @@ const Dashboard = () => {
                 <div className="avatar">
 
                 </div>
+                <h1 className="navbar--name">Address</h1>
+
                 <div className="content">
-                    <div>
+
+                    <div className="navbar-icon">
                         <div className="icon"></div>
                         <h1>Dashboards</h1>
                     </div>
-                    <div>
+                    <div className="navbar-icon">
                         <div className="icon"></div>
                         <h1>Dashboards</h1>
                     </div>
-                    <div>
-                        <div className="icon"></div>
-                        <h1>Dashboards</h1>
-                    </div>
-                    <div>
+                    <div className="navbar-icon">
                         <div className="icon"></div>
                         <h1>Dashboards</h1>
                     </div>

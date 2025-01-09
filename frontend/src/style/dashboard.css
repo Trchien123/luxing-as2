@@ -23,7 +23,23 @@
     background-image: var(--home-background);
     height: 100%;
     color: white;
+    display: flex;
+    flex-direction: column;
 
+
+
+
+}
+
+.DB-navbar .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: red;
+    margin-top: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .DB-container {
@@ -32,4 +48,35 @@
     background-color: #160c31;
     overflow-y: auto;
 
+}
+
+.navbar--name {
+    text-align: center;
+}
+
+.DB-navbar .content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}
+
+.navbar-icon {
+    border-radius: 15px;
+    background-color: red;
+    padding: 10px;
+    height: 2rem;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+
+}
+
+.navbar-icon .icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background-color: white;
 }
