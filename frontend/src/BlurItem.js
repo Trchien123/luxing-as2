@@ -20,7 +20,7 @@ const Item = ({ top, left, animation, shape }) => {
                 {
                     top: `${top}px`,
                     left: `${left}px`,
-                    animation: `${animation} ${getRandomDuration(4, 6)}s ease-in-out infinite`,
+                    animation: `popUp 2s none, ${animation} ${getRandomDuration(4, 6)}s ease-in-out infinite`,
                     filter: `blur(${getRandomDuration(5, 20)}px)`
                 }
 

@@ -8,7 +8,7 @@ import DbNavbar from "./DbNavbar";
 const Dashboard = () => {
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef(null);
-
+    const [showBar, setShowBar] = useState(true)
     useEffect(() => {
         const handleScroll = () => {
             const container = containerRef.current;
@@ -28,10 +28,12 @@ const Dashboard = () => {
     }, []);
     return (
         <section className="DB-section">
-            <DbNavbar />
+            {
+                showBar && <DbNavbar setShowBar={setShowBar} />
+            }
             <div ref={containerRef} className="DB-container">
 
-                <DbHeader scrolled={scrolled} />
+                <DbHeader scrolled={scrolled} setShowBar={setShowBar} showBar={showBar} />
                 <main className="DB-main">
                     <DbContainer1 />
                     <div className="DB-main-container-2">
