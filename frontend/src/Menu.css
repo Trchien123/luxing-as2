@@ -1,0 +1,9 @@
+.menu-container {
+    color: black;
+}
+
+.menu-elements ul li{
+    text-align: center;
+    color: white;
+    text-decoration: none;
+}
