@@ -1,5 +1,7 @@
 import { useState, React } from "react";
 import "./style/item.css"
+
+
 import { Link } from "react-router-dom";
 const Item = ({ top, left, animation, shape }) => {
     const [onHover, setOnHover] = useState(false)
@@ -11,24 +13,24 @@ const Item = ({ top, left, animation, shape }) => {
         // Round to 2 decimal places for better readability (optional)
         return Math.round(randomDuration * 100) / 100;
     }
-    const isLeftPositionLarge = left > (window.innerWidth * 4 / 5);
+    const isLeftPositionLarge = left > (window.innerWidth * 2 / 3);
     return (
+        <Link to={'/Dashboard'} className="blur-container--url">
+            <div className={`item ${shape}`} style={
+                {
+                    top: `${top}px`,
+                    left: `${left}px`,
+                    animation: `${animation} ${getRandomDuration(4, 6)}s ease-in-out infinite`,
+                    filter: `blur(${getRandomDuration(5, 20)}px)`
+                }
 
-        <div className={`item ${shape}`} style={
-            {
-                top: `${top}px`,
-                left: `${left}px`,
-                animation: `${animation} ${getRandomDuration(4, 6)}s ease-in-out infinite`,
-                filter: `blur(${getRandomDuration(5, 20)}px)`
             }
-
-        }
-            onMouseEnter={() => setOnHover(true)}
-            onMouseLeave={() => setOnHover(false)}
-        >
-            {onHover && <ItemInfo isLeftPositionLarge={isLeftPositionLarge} />}
-        </div>
-
+                onMouseEnter={() => setOnHover(true)}
+                onMouseLeave={() => setOnHover(false)}
+            >
+                {onHover && <ItemInfo isLeftPositionLarge={isLeftPositionLarge} />}
+            </div>
+        </Link>
 
     )
 }
