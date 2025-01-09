@@ -1,10 +1,37 @@
 import React from "react";
-
+import '../style/dashboard.css';
 const Dashboard = () => {
     return (
-        <div className="container">
-            this is Dashboard
-        </div>
+        <section className="DB-section">
+            <div className="DB-navbar">
+                <div className="avatar">
+
+                </div>
+                <div className="content">
+                    <div>
+                        <div className="icon"></div>
+                        <h1>Dashboards</h1>
+                    </div>
+                    <div>
+                        <div className="icon"></div>
+                        <h1>Dashboards</h1>
+                    </div>
+                    <div>
+                        <div className="icon"></div>
+                        <h1>Dashboards</h1>
+                    </div>
+                    <div>
+                        <div className="icon"></div>
+                        <h1>Dashboards</h1>
+                    </div>
+                </div>
+            </div>
+            <div className="DB-container">
+                <header>
+
+                </header>
+            </div>
+        </section>
     )
 }
 
