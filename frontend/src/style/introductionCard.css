@@ -1,0 +1,151 @@
+.introduction-explore-background {
+  width: 100%;
+  background-image: linear-gradient(black, #2d427a, black);
+}
+.introduction-container {
+  display: grid;
+  place-items: center;
+  margin-inline: 1.5rem;
+}
+.introduction-container h1 {
+  font-size: 35px;
+  font-weight: 600;
+  color: white;
+  margin-top: 100px;
+}
+.introduction-container p {
+  color: white;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 22px;
+  padding: 10px;
+}
+#introduction-text {
+  text-align: center;
+  font-size: 18px;
+}
+.introduction-card-container,
+.introduction-card-article {
+  display: grid;
+  gap: 2rem;
+}
+.introduction-card-container {
+  padding-block: 4.5rem;
+}
+.introduction-card-article {
+  --hue-1: 210;
+  --hue-2: 238;
+  position: relative;
+  justify-items: center;
+  color: white;
+  text-align: center;
+  padding: 4rem 2rem 3rem;
+  border: 4px solid transparent;
+  background: linear-gradient(black, black) padding-box,
+    linear-gradient(
+        135deg,
+        hsl(var(--hue-1), 85%, 70%) 0%,
+        black,
+        black,
+        hsl(var(--hue-2), 70%, 55%) 100%
+      )
+      border-box;
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+.card-shape-1 {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  background: linear-gradient(
+    140deg,
+    hsl(var(--hue-1), 75%, 25%) 3%,
+    hsl(var(--hue-2), 65%, 45%) 100%
+  );
+  border-radius: 2rem;
+  z-index: 2;
+}
+.card-shape-2 {
+  width: 116px;
+  height: 116px;
+  background: linear-gradient(
+    140deg,
+    hsl(var(--hue-1), 70%, 50%) 3%,
+    hsl(var(--hue-2), 95%, 45%) 100%
+  );
+  border-radius: 1.5rem;
+}
+.card-shape-3 {
+  width: 76px;
+  height: 76px;
+  background: linear-gradient(
+    140deg,
+    hsl(var(--hue-1), 85%, 60%) 3%,
+    hsl(var(--hue-2), 85%, 60%) 100%
+  );
+  border-radius: 1rem;
+  display: grid;
+  place-items: center;
+}
+.card-shape-2,
+.card-shape-3 {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+.card-icon {
+  font-size: 3rem;
+}
+.card-data {
+  z-index: 3;
+}
+.card-title {
+  font-size: var(--h2-font-size);
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 25px;
+}
+.card-desc {
+  margin-bottom: 1.5rem;
+  font-size: 25px;
+}
+
+.card-orange {
+  --hue-1: 300;
+  --hue-2: 30;
+}
+.card-green {
+  --hue-1: 180;
+  --hue-2: 50;
+}
+.card-scale-1 {
+  width: 148px;
+  height: 148px;
+  background: linear-gradient(
+    140deg,
+    hsl(var(--hue-1), 70%, 50%) 3%,
+    hsl(var(--hue-2), 95%, 45%) 100%
+  );
+  border-radius: 2rem;
+  top: 4rem;
+}
+.card-scale-2 {
+  width: 116px;
+  height: 116px;
+  background: var(--container-color);
+  border-radius: 1.5rem;
+  top: 5rem;
+}
+.card-scale-1,
+.card-scale-2 {
+  position: absolute;
+  filter: blur(24px);
+  transition: transform 0.3s ease-in;
+}
+.introduction-card-article:hover .card-scale-1 {
+  transform: scale(6);
+}
+.introduction-card-article:hover .card-scale-2 {
+  transform: scale(6);
+  transition-delay: 0.1s;
+}
