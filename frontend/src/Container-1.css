@@ -1,4 +1,28 @@
 .container-1 {
-    background-image: url('./asset/container1.png');
-    background-color: black;
+    width: 100%;
+    margin-top: 80px;
+    background-image: url("./asset/container1.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 100vh;
+}   
+
+.container-1-content {
+    width: fit-content;
+    padding-left: 150px;
+    padding-top: 150px;
+    padding-bottom: 150px;
+    text-align: center;
 }
+
+#main-content {
+    color: white;
+    font-size: 60px;
+}
+
+#supporting-content {
+    color: white;
+    font-size: 25px;
+}
+
+

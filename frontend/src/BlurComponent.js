@@ -1,5 +1,8 @@
 import React from "react";
 import Item from "./BlurItem";
+import Dashboard from "./Dashboard/dashboard";
+import { Link } from "react-router-dom";
+
 import './style/home.css'
 const BlurContainer = () => {
     const getRandomLeft = () => {
@@ -19,23 +22,32 @@ const BlurContainer = () => {
     return (
 
         <>
+
             <div className="home-component-1">
+
                 <div className="blur-container">
+
                     {
                         Array(6).fill(0).map((item, index) => {
                             return (
-                                <Item
-                                    key={index} // Assign a unique key to each item
-                                    top={getRandomTop()} // Generate random top value
-                                    left={getRandomLeft()} // Generate random left value
-                                    animation={getRandomAnimation()}
-                                    shape={getRandomShape()}
-                                />
+                                <Link to={'/Dashboard'} key={index}>
+                                    <Item
+                                        key={index} // Assign a unique key to each item
+                                        top={getRandomTop()} // Generate random top value
+                                        left={getRandomLeft()} // Generate random left value
+                                        animation={getRandomAnimation()}
+                                        shape={getRandomShape()}
+                                    />
+                                </Link>
                             )
                         }
                         )
                     }
+
+
+
                 </div>
+
                 <div className="home-component--content">
                     <form onsubmit="event.preventDefault();" role="search">
                         <label for="search">Search for stuff</label>
