@@ -1,9 +1,10 @@
 import { React, useState, useEffect, useRef } from "react";
 import '../style/dashboard.css';
 
-import DbItem from "./DbItem";
+
 import DbHeader from "./DbHeader";
 import DbContainer1 from "./DbContainer1";
+import DbNavbar from "./DbNavbar";
 const Dashboard = () => {
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef(null);
@@ -27,19 +28,7 @@ const Dashboard = () => {
     }, []);
     return (
         <section className="DB-section">
-            <div className="DB-navbar">
-                <div className="avatar">
-
-                </div>
-                <h1 className="navbar--name">Address</h1>
-
-                <div className="content">
-
-                    <DbItem />
-                    <DbItem />
-                    <DbItem />
-                </div>
-            </div>
+            <DbNavbar />
             <div ref={containerRef} className="DB-container">
 
                 <DbHeader scrolled={scrolled} />

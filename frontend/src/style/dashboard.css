@@ -30,15 +30,23 @@
 
 }
 
+.Db-navbar-url {
+    width: fit-content;
+}
+
+.Db-navbar-url svg {
+
+    color: white;
+}
+
 .DB-navbar .avatar {
     width: 120px;
     height: 120px;
     border-radius: 50%;
     background-color: red;
-    margin-top: 50px;
+
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 
 .DB-container {
@@ -165,10 +173,22 @@
     border-color: white;
 }
 
-.DB--items div {
-    width: 20px;
-    height: 20px;
-    background-color: white;
+.DB--items .Db--items-icon {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: transparent;
+
+
+
+}
+
+.DB--items .Db--items-icon svg {
+    color: white;
+    width: 100%;
+    height: 100%;
 }
 
 .DB-main-container-1 {
