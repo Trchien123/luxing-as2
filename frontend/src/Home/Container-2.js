@@ -8,12 +8,12 @@ import Sphere from "../Sphere";
 const Home = () => {
     return (
         <>
-        <Menu />
-        <Container1 />
-        <BlurContainer />
-        <IntroductionCard />
-        
-        <Footer />
+            <Menu />
+            <Container1 />
+            <BlurContainer />
+            <IntroductionCard />
+
+            <Footer />
 
         </>
     )

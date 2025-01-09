@@ -8,8 +8,8 @@ function Container1() {
                     EXPLORING <br/> EVERY TRANSACTION <br/> WITH US
                 </p>
                 <p id="supporting-content">
-                    Trace and visualize transactions on the blockchain <br/>     with
-                    powerful insights and analytics
+                    Trace and visualize transactions on the blockchain <br/>
+                    with powerful insights and analytics.
                 </p>
             </div>
         </div>

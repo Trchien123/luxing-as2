@@ -4,7 +4,7 @@ function Menu() {
     return (
         <div className="menu-container">
             <div className="menu-elements">
-                <ul>
+                <ul id="company-name">
                     <li>Company Name</li>
                 </ul>
             </div>
