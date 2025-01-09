@@ -1,5 +1,6 @@
 import { useState, React } from "react";
 import "./style/item.css"
+import { Link } from "react-router-dom";
 const Item = ({ top, left, animation, shape }) => {
     const [onHover, setOnHover] = useState(false)
 
@@ -12,6 +13,7 @@ const Item = ({ top, left, animation, shape }) => {
     }
     const isLeftPositionLarge = left > (window.innerWidth * 4 / 5);
     return (
+
         <div className={`item ${shape}`} style={
             {
                 top: `${top}px`,
@@ -26,6 +28,8 @@ const Item = ({ top, left, animation, shape }) => {
         >
             {onHover && <ItemInfo isLeftPositionLarge={isLeftPositionLarge} />}
         </div>
+
+
     )
 }
 

@@ -1,9 +1,18 @@
 .menu-container {
-    color: black;
+    top: 0;
+    height: 80px;
+    width: 100%;
+    position: fixed;
+    background-color: #160C31;
+}
+
+.menu-elements ul {
+    margin-top: 25px;
 }
 
 .menu-elements ul li{
-    text-align: center;
     color: white;
+    list-style: none;
+    font-size: 25px;
     text-decoration: none;
 }

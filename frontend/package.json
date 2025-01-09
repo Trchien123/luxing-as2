@@ -7,7 +7,10 @@
     "cra-template": "1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
+    "three": "^0.172.0",
+    "three-stdlib": "^2.35.6",
     "web-vitals": "^4.2.4"
   },
   "scripts": {

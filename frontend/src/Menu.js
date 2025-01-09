@@ -3,9 +3,11 @@ import './Menu.css';
 function Menu() {
     return (
         <div className="menu-container">
-            <ul className="menu-elements">
-                <li>Company Name</li>
-            </ul>
+            <div className="menu-elements">
+                <ul>
+                    <li>Company Name</li>
+                </ul>
+            </div>
         </div>
     )
 }
