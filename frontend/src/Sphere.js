@@ -3,8 +3,8 @@ import { Canvas } from "@react-three/fiber";
 import './style/sphere.css';
 import * as THREE from "three";
 import { OrbitControls } from 'three-stdlib';
-import getStarfield from "./getStarfield.js";
-import { getFresnelMat } from "./getFresnelMat.js";
+import getStarfield from "./Sphere/getStarfield.js";
+import { getFresnelMat } from "./Sphere/getFresnelMat.js";
 
 const Sphere =() => {
   const w = window.innerWidth;

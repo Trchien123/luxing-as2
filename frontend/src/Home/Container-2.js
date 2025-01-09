@@ -12,7 +12,9 @@ const Home = () => {
         <Container1 />
         <BlurContainer />
         <IntroductionCard />
+        
         <Footer />
+
         </>
     )
 }
