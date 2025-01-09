@@ -23,10 +23,20 @@
   text-align: center;
   font-size: 18px;
 }
-.introduction-card-container,
+.introduction-card-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding-block: 4.5rem;
+}
+
 .introduction-card-article {
   display: grid;
-  gap: 2rem;
+  justify-items: center;
+  width: 300px; /* Adjust as needed */
+  /* Other existing properties remain unchanged */
 }
 .introduction-card-container {
   padding-block: 4.5rem;
