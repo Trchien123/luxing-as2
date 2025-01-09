@@ -1,7 +1,6 @@
 import React from "react";
 import Item from "./BlurItem";
-import Dashboard from "./Dashboard/dashboard";
-import { Link } from "react-router-dom";
+
 
 import './style/home.css'
 const BlurContainer = () => {
@@ -30,15 +29,15 @@ const BlurContainer = () => {
                     {
                         Array(6).fill(0).map((item, index) => {
                             return (
-                                <Link to={'/Dashboard'} key={index}>
-                                    <Item
-                                        key={index} // Assign a unique key to each item
-                                        top={getRandomTop()} // Generate random top value
-                                        left={getRandomLeft()} // Generate random left value
-                                        animation={getRandomAnimation()}
-                                        shape={getRandomShape()}
-                                    />
-                                </Link>
+
+                                <Item
+                                    key={index} // Assign a unique key to each item
+                                    top={getRandomTop()} // Generate random top value
+                                    left={getRandomLeft()} // Generate random left value
+                                    animation={getRandomAnimation()}
+                                    shape={getRandomShape()}
+                                />
+
                             )
                         }
                         )
