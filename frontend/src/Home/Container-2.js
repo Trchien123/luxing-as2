@@ -12,6 +12,7 @@ const Home = () => {
             <Container1 />
             <BlurContainer />
             <IntroductionCard />
+            
             <Sphere />
             <Footer />
 
