@@ -1,9 +1,7 @@
-import React from "react";
-import { Canvas } from "@react-three/fiber";
+
 import './style/sphere.css';
 import * as THREE from "three";
 import { OrbitControls } from 'three-stdlib';
-import getStarfield from "./Sphere/getStarfield.js";
 import { getFresnelMat } from "./Sphere/getFresnelMat.js";
 
 const Sphere =() => {
@@ -60,8 +58,7 @@ const Sphere =() => {
   glowMesh.scale.setScalar(1.01);
   earthGroup.add(glowMesh);
 
-  const stars = getStarfield({numStars: 2000});
-  scene.add(stars);
+
 
   const sunLight = new THREE.DirectionalLight(0xffffff, 2.0);
   sunLight.position.set(-2, 0.5, 1.5);
@@ -74,7 +71,7 @@ const Sphere =() => {
     lightsMesh.rotation.y += 0.002;
     cloudsMesh.rotation.y += 0.0023;
     glowMesh.rotation.y += 0.002;
-    stars.rotation.y -= 0.0002;
+   
     renderer.render(scene, camera);
   }
 
