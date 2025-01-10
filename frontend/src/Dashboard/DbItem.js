@@ -1,6 +1,6 @@
 import React from "react";
 
-const DbItem = () => {
+const DbItem = ({ content }) => {
     return (
         <div className="navbar-icon">
             <div className="icon">
@@ -9,7 +9,7 @@ const DbItem = () => {
                 </svg>
 
             </div>
-            <p>Dashboards</p>
+            <p>{content}</p>
         </div>
     )
 }

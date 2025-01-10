@@ -1,9 +1,16 @@
 import { React, useState, useEffect, useRef } from "react";
 import '../style/dashboard.css';
-
+import {
+    Link,
+    BrowserRouter as Router,
+    Routes,
+    Route
+} from 'react-router-dom';
 
 import DbHeader from "./DbHeader";
 import DbContainer1 from "./DbContainer1";
+import DbHome from "./DbDashboard";
+import DashTable from "./DashTable";
 import DbNavbar from "./DbNavbar";
 const Dashboard = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -34,24 +41,13 @@ const Dashboard = () => {
             <div ref={containerRef} className="DB-container">
 
                 <DbHeader scrolled={scrolled} setShowBar={setShowBar} showBar={showBar} />
-                <main className="DB-main">
-                    <DbContainer1 />
-                    <div className="DB-main-container-2">
-                        <div className="Db-main-2-items Db-main-2-items-1 "></div>
-                        <div className="Db-main-2-items Db-main-2-items-2"></div>
-                        <div className="Db-main-2-items Db-main-2-items-3"></div>
-                    </div>
-                    <div className="DB-main-container-2">
-                        <div className="Db-main-2-items Db-main-2-items-4 "></div>
-                        <div className="Db-main-2-items Db-main-2-items-5"></div>
-
-                    </div>
-                    <div className="DB-main-container-2">
-                        <div className="Db-main-2-items Db-main-2-items-6 "></div>
-                        <div className="Db-main-2-items Db-main-2-items-7"></div>
-                    </div>
-                </main>
+                <Routes>
+                    <Route path='/' element={<DbHome />} />
+                    <Route exact path='/Table' element={<DashTable />} />
+                </Routes>
             </div>
+
+
         </section>
     )
 }

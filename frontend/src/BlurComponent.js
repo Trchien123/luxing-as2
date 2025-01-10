@@ -8,7 +8,7 @@ const BlurContainer = () => {
         return Math.floor(Math.random() * window.innerWidth);
     }
     const getRandomTop = () => {
-        return Math.floor(Math.random() * window.innerHeight);
+        return Math.floor(Math.random() * (window.innerHeight - 80));
     }
     const getRandomAnimation = () => {
         const animations = ['float1', 'float2', 'float3', 'float4'];

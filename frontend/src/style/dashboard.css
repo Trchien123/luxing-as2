@@ -28,11 +28,21 @@
     display: flex;
     flex-direction: column;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease-in-out
+}
 
+.DB-navbar__header {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
 }
 
 .Db-navbar-url {
     width: fit-content;
+}
+
+.Db-navbar-showBar {
+    cursor: pointer;
 }
 
 .Db-navbar-url svg {
@@ -51,7 +61,7 @@
 }
 
 .DB-container {
-
+    transition: all 1s ease-in-out;
     height: 100%;
     background-color: #160c31;
     overflow-y: auto;
@@ -131,7 +141,7 @@
     margin-left: auto;
     margin-right: auto;
     top: 0;
-    z-index: 99999;
+    z-index: 1000;
     transition: all 0.1s ease-in-out;
     flex-wrap: wrap;
     gap: 10px
@@ -145,7 +155,8 @@
 
 .DB--title {
     color: white;
-
+    display: flex;
+    gap: 3px;
 }
 
 .DB--items {
@@ -158,7 +169,7 @@
 }
 
 .DB--items .search-bar {
-    width: 150px;
+    width: 10rem;
     outline: none;
     text-decoration: none;
     padding: 12px;
@@ -171,7 +182,7 @@
 }
 
 .DB--items .search-bar:focus {
-    width: 230px;
+    width: 12rem;
     border: 0.0825rem solid white
 }
 
@@ -185,16 +196,68 @@
     outline: none;
     text-decoration: none;
 
-
+    width: 1.6rem;
+    height: 1.6rem;
 
 
 }
+
+
 
 .DB--items .Db--items-icon svg {
     color: white;
     width: 100%;
     height: 100%;
 }
+
+
+
+.bell {
+    width: 18px;
+}
+
+.bell path {
+    fill: white;
+}
+
+
+#icon-bell:hover .bell {
+    animation: bellRing 0.9s both;
+}
+
+/* bell ringing animation keyframes*/
+@keyframes bellRing {
+
+    0%,
+    100% {
+        transform-origin: top;
+    }
+
+    15% {
+        transform: rotateZ(10deg);
+    }
+
+    30% {
+        transform: rotateZ(-10deg);
+    }
+
+    45% {
+        transform: rotateZ(5deg);
+    }
+
+    60% {
+        transform: rotateZ(-5deg);
+    }
+
+    75% {
+        transform: rotateZ(2deg);
+    }
+}
+
+.Db--items-icon:active {
+    transform: scale(0.8);
+}
+
 
 .DB-main-container-1 {
     display: flex;
@@ -298,4 +361,30 @@
 
 .Db-main-2-items-7 {
     flex: 2;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .DB-section {
+        display: block;
+    }
+
+    .DB-navbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #160c31;
+        z-index: 1000000;
+        padding: 20px 40px;
+    }
+
+    .DB-container--header {
+        border-radius: 1.25rem;
+        border: 1px solid white;
+        background-color: rgba(22, 12, 49, 0.6);
+        transition: all 0.2s ease-in-out;
+        box-shadow: rgba(255, 255, 255, 0.9) 0rem 0rem 0.0625rem 0.0625rem inset, rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
+
+    }
 }
