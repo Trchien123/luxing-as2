@@ -4,7 +4,8 @@ import {
     Link,
     BrowserRouter as Router,
     Routes,
-    Route
+    Route,
+    Outlet
 } from 'react-router-dom';
 
 import DbHeader from "./DbHeader";
@@ -41,10 +42,7 @@ const Dashboard = () => {
             <div ref={containerRef} className="DB-container">
 
                 <DbHeader scrolled={scrolled} setShowBar={setShowBar} showBar={showBar} />
-                <Routes>
-                    <Route path='/' element={<DbHome />} />
-                    <Route exact path='/Table' element={<DashTable />} />
-                </Routes>
+                <Outlet />
             </div>
 
 

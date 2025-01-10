@@ -43,6 +43,7 @@
 
 .Db-navbar-showBar {
     cursor: pointer;
+    display: none;
 }
 
 .Db-navbar-url svg {
@@ -72,6 +73,13 @@
 
 .navbar--name {
     text-align: center;
+
+}
+
+.navbar--name--url {
+    text-decoration: none;
+    outline: none;
+    color: white;
 
 }
 
@@ -387,4 +395,143 @@
         box-shadow: rgba(255, 255, 255, 0.9) 0rem 0rem 0.0625rem 0.0625rem inset, rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
 
     }
+
+    .Db-navbar-showBar {
+        display: block;
+    }
+}
+
+
+.DB-table {
+
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.Dbtable-title {
+    color: white;
+    padding: 10px 0;
+    text-transform: capitalize;
+    font-size: 2.7rem;
+}
+
+.Dbtable-component {
+    width: 65%;
+    margin: auto;
+    height: 400px;
+    background-image: linear-gradient(#442597, #845fff);
+    border-radius: 30px;
+
+}
+
+
+.Dbhistory--container {
+    color: white;
+    padding: 30px 20px;
+
+}
+
+.Dbhistory--container--header {
+    padding: 15px 0;
+}
+
+.Dbhistory--subcontainer {
+    background: linear-gradient(127.09deg, rgba(6, 11, 40, 0.94) 19.41%,
+            rgba(10, 14, 35, 0.49) 76.65%) border-box;
+    padding: 22px;
+    overflow-x: scroll;
+    box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
+}
+
+.Dbhistory--subcontainer::-webkit-scrollbar {
+    display: none;
+}
+
+.Dbhistory--container table {
+    width: 100%;
+    border-collapse: collapse;
+
+    border-radius: 10px;
+
+
+}
+
+.Dbhistory--container table td,
+th {
+    padding: 12px 24px 10px;
+    text-align: center;
+}
+
+.Dbhistory--table--header-1 {
+    text-align: left;
+}
+
+.Dbhistory--container table th {
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    color: #a0aec0;
+    border-bottom: 0.0625rem solid rgb(45, 55, 72);
+}
+
+.Dbhistory--container table td {
+    border-bottom: 1px solid #333366;
+}
+
+
+.Dbhistory-list-item {
+    display: flex;
+    gap: 12px;
+
+    align-items: center;
+
+}
+
+.Dbhistory-header-firstItem1 {
+    min-width: 200px;
+}
+
+.Dbhistory-list-item .icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.9375rem;
+    background-color: red;
+}
+
+
+
+.Dbhistory-list-item .title p {
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5;
+    opacity: 1;
+
+}
+
+.Dbhistory-list-item .title span {
+    color: rgb(160, 175, 192);
+    font-size: 0.75rem;
+    line-height: 1.25;
+    opacity: 1;
+    font-weight: 400;
+
+}
+
+.Dbhistory-list-item.status {
+    width: max-content;
+    margin: auto;
+    justify-content: center;
+    padding: 3px 5px;
+    background: rgb(1, 181, 116);
+    border: 0.0625rem solid rgb(1, 181, 116);
+    border-radius: 0.5rem;
+    vertical-align: middle;
+}
+
+.Dbhistory-list-item.status p {
+    font-size: 0.87rem;
 }

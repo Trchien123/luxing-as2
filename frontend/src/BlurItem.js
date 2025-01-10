@@ -30,8 +30,8 @@ const Item = ({ top, left, animation, shape }) => {
             >
                 {onHover && <ItemInfo isLeftPositionLarge={isLeftPositionLarge} />}
             </div>
-        </Link>
 
+        </Link>
     )
 }
 

@@ -3,10 +3,14 @@ import DbItem from "./DbItem";
 import { Link } from "react-router-dom";
 
 const DbNavbar = ({ setShowBar }) => {
-
+    const handleShowBar = () => {
+        if (window.innerWidth <= 768) {
+            setShowBar(false)
+        }
+    }
     return (
         <div className="DB-navbar"
-            onBlur={() => setShowBar(false)}
+            onClick={handleShowBar}
         >
             <div className="DB-navbar__header">
                 <Link to={'/'} className="Db-navbar-url ">
@@ -18,16 +22,15 @@ const DbNavbar = ({ setShowBar }) => {
 
 
                 </Link>
-                {
-                    window.innerWidth <= 768 ?
-                        <div className="Db-navbar-showBar" onClick={() => setShowBar(false)}>
-                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6H6m12 4H6m12 4H6m12 4H6" />
-                            </svg>
 
-                        </div> :
-                        ""
-                }
+                <div className="Db-navbar-showBar" onClick={() => setShowBar(false)}>
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6H6m12 4H6m12 4H6m12 4H6" />
+                    </svg>
+
+                </div>
+
+
 
             </div>
 
@@ -37,13 +40,19 @@ const DbNavbar = ({ setShowBar }) => {
             <h1 className="navbar--name">Address</h1>
 
             <div className="content">
-
-                <DbItem content={"Dashboard"} />
-                <Link to={'/Table'}>
-                    <DbItem content={"Table"} />
+                <Link to={'/Dashboard'} className="navbar--name--url">
+                    <DbItem content={"Dashboard"} />
                 </Link>
 
-                <DbItem content={"History"} />
+
+                <Link to={'/Dashboard/Table'} className="navbar--name--url">
+                    <DbItem content={"Table"} />
+                </Link>
+                <Link to={'/Dashboard/History'} className="navbar--name--url">
+                    <DbItem content={"History"} />
+                </Link>
+
+
             </div>
         </div>
     )
