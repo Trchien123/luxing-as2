@@ -5,6 +5,7 @@ import Container1 from "../Container-1";
 import BlurContainer from "../BlurComponent";
 import IntroductionCard from "../gradientBorderCard";
 import Sphere from "../Sphere";
+import Sphere__head from "../Sphere__head";
 const Home = () => {
     return (
         <>
@@ -12,6 +13,7 @@ const Home = () => {
             <Container1 />
             <BlurContainer />
             <IntroductionCard />
+            <Sphere__head />
             <Sphere />
             <Footer />
 
