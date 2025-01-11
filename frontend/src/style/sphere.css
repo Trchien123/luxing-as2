@@ -21,7 +21,7 @@
   font-family: "Arial";
 
   text-transform: uppercase;
-
+  padding: 0 9px;
   -webkit-text-stroke: 1px var(--text-stroke-color);
 }
 
@@ -46,6 +46,7 @@
 
 /* hover */
 .sphere--title-content:hover::after {
+  padding: 0 9px;
   width: 100%;
   filter: drop-shadow(0 0 23px var(--animation-color))
 }
