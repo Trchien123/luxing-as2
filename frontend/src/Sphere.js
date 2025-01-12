@@ -19,6 +19,7 @@ const Sphere = () => {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(w, h);
+
     container.appendChild(renderer.domElement);
 
     renderer.setClearColor(0x000000, 0);
