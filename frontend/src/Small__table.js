@@ -4,25 +4,14 @@ const Small = ({ dotData, onClose }) => {
   if (!dotData) return null;
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        top: "10px",
-        right: "10px",
-        width: "250px",
-        background: "white",
-        padding: "10px",
-        borderRadius: "8px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-        zIndex: 2,
-      }}
+    <div className="sphere-smalltable"
     >
       <h3>Dot Details</h3>
       <p>
         <strong>Dot Index:</strong> {dotData.index + 1}
       </p>
       <p>
-        <strong>Position:</strong> 
+        <strong>Position:</strong>
         <br />
         X: {dotData.x.toFixed(2)} <br />
         Y: {dotData.y.toFixed(2)} <br />
