@@ -48,7 +48,7 @@ const Sphere = () => {
 
     // Dot creation
     const dotGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-    const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xfc6c85 });
+    const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xfc6c85, raycast: true });
     const dotMeshArray = [];
     const dotInitialPositions = [];
 
