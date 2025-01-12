@@ -1,4 +1,5 @@
 import './Container-1.css';
+import container1 from './asset/container_1.jpg' 
 
 function Container1() {
     return (
@@ -12,6 +13,11 @@ function Container1() {
                     with powerful insights and analytics.
                 </p>
             </div>
+            <div>
+                <img id="container-1-img" src={container1} alt="container_1" />
+            </div>
+            <label for="check" class="open-menu"><i class="fas fa-bars"></i></label>
+            <label for="check" class="close-menu"><i class="fas fa-times"></i></label>
         </div>
     )
 }

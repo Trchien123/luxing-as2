@@ -13,6 +13,7 @@
 
 body {
     background-image: var(--home-background);
+    overflow-x: hidden;
 }
 
 .blur-container {

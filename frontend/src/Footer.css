@@ -120,3 +120,33 @@
         background-position-x: 1000px;
     }
 }
+
+@media (max-width: 1000px) {
+    .footer-container p {
+        font-size: 18px; /* Reduce font size for smaller screens */
+    }
+
+    .footer-container .social-icon li a {
+        font-size: 20px; /* Reduce social icon font size */
+        margin: 0 5px; /* Adjust margin for smaller screens */
+    }
+
+    .footer-container .menu li a {
+        font-size: 18px; /* Reduce menu font size */
+        margin: 0 5px; /* Adjust margin for smaller screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-container p {
+        font-size: 16px; /* Further reduce font size for very small screens */
+    }
+
+    .footer-container .social-icon li a {
+        font-size: 18px; /* Further reduce social icon font size */
+    }
+
+    .footer-container .menu li a {
+        font-size: 16px; /* Further reduce menu font size */
+    }
+}
