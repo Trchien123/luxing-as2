@@ -158,6 +158,12 @@ const Sphere = () => {
       const w = container?.clientWidth || window.innerWidth;
       const h = container?.clientHeight || window.innerHeight;
       camera.aspect = w / h;
+      if (Ratio / w < 2.5) {
+        camera.position.z = 2.5
+      } else {
+        camera.position.z = Ratio / w
+      }
+
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
       console.log(camera.position.z)

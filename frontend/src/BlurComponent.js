@@ -59,7 +59,7 @@ const BlurContainer = () => {
                 </div>
 
                 <div className="home-component--content">
-                    <h1 className="home-component--conten--header">this is the search bar</h1>
+                    <h1 className="home-component--conten--header">Search transaction here</h1>
                     <form onsubmit="event.preventDefault();" role="search">
                         <label for="search">Search for stuff</label>
                         <input id="search" type="search" placeholder="Search..." autofocus required />
