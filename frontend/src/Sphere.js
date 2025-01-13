@@ -18,8 +18,10 @@ const Sphere = () => {
     const h = container?.clientHeight || window.innerHeight;
 
     const scene = new THREE.Scene();
+
     const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
-    camera.position.z = 2.5;
+
+    camera.position.z = w / (w / 3);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(w, h);
@@ -157,8 +159,10 @@ const Sphere = () => {
       const w = container?.clientWidth || window.innerWidth;
       const h = container?.clientHeight || window.innerHeight;
       camera.aspect = w / h;
+      camera.position.z = w / (w / 3);
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      console.log(camera.position.z)
     }
     window.addEventListener("resize", handleWindowResize);
 

@@ -46,8 +46,9 @@ body {
 .home-component--content {
 
     z-index: 10000;
-
-
+    padding: 0 20px;
+    width: 100%;
+    max-width: 30rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,11 +60,14 @@ body {
     padding: 40px 0;
     color: white;
     text-transform: capitalize;
+
+    text-align: center;
+
 }
 
 .home-component--content form {
     position: relative;
-    width: 30rem;
+    width: 100%;
     background: var(--color-brand);
     border-radius: var(--rad);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
