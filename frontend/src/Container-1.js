@@ -16,8 +16,6 @@ function Container1() {
             <div>
                 <img id="container-1-img" src={container1} alt="container_1" />
             </div>
-            <label for="check" class="open-menu"><i class="fas fa-bars"></i></label>
-            <label for="check" class="close-menu"><i class="fas fa-times"></i></label>
         </div>
     )
 }
