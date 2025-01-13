@@ -1,4 +1,5 @@
 import React from "react";
+import './style/sphere.css'
 
 const Small = ({ dotData, onClose }) => {
   if (!dotData) return null;
@@ -6,11 +7,12 @@ const Small = ({ dotData, onClose }) => {
   return (
     <div className="sphere-smalltable"
     >
-      <h3>Dot Details</h3>
+      <h3>Coin Name</h3>
       <p>
-        <strong>Dot Index:</strong> {dotData.index + 1}
+        <strong>Name Index:</strong> {dotData.index + 1}
       </p>
       <p>
+        <hr></hr>
         <strong>Position:</strong>
         <br />
         X: {dotData.x.toFixed(2)} <br />

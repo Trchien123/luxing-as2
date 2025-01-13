@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three-stdlib";
 import { getFresnelMat } from "./Sphere/getFresnelMat.js";
 import Small from "./Small__table";
-
+const Ratio = window.innerWidth * 2.56
 const Sphere = () => {
   const [selectedDot, setSelectedDot] = useState(null);
 
@@ -20,8 +20,7 @@ const Sphere = () => {
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
-
-    camera.position.z = w / (w / 3);
+    camera.position.z = Ratio / w;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(w, h);
@@ -159,7 +158,6 @@ const Sphere = () => {
       const w = container?.clientWidth || window.innerWidth;
       const h = container?.clientHeight || window.innerHeight;
       camera.aspect = w / h;
-      camera.position.z = w / (w / 3);
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
       console.log(camera.position.z)
