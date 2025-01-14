@@ -41,7 +41,7 @@ const SwapContainer = ({ handleOnClick }) => {
                 </button>
             </div> */}
 
-            <SwapBox span={"Buy"} ref={input2Ref} handleOnClick={handleOnClick} />
+            <SwapBox span={"Search"} ref={input2Ref} handleOnClick={handleOnClick} />
             <button className="swap-button" >Get Started </button>
         </div>
     )

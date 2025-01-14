@@ -17,7 +17,7 @@ const SwapBox = forwardRef(({ span, handleOnClick }, ref) => {
             <div className={`swap-box--container ${onFocus ? "focused" : ""}`}>
                 <span className="swap-box--span">{span}</span>
                 <div className="swap-box--input">
-                    <input type="text" placeholder="0"
+                    <input type="text" placeholder="Type here..."
                         ref={ref}
                         onFocus={handleInputFocus}
                         onBlur={handleInputBlur}
@@ -32,7 +32,7 @@ const SwapBox = forwardRef(({ span, handleOnClick }, ref) => {
 
 
                 </div>
-                {onFocus && <span className="swap-box--span">$0</span>}
+
 
             </div>
         </>
