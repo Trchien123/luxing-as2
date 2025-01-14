@@ -160,7 +160,8 @@ const Sphere = () => {
       camera.aspect = w / h;
       if (Ratio / w < 2.5) {
         camera.position.z = 2.5
-      } else {
+      }
+      else {
         camera.position.z = Ratio / w
       }
 
