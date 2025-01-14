@@ -28,6 +28,9 @@
     padding-bottom: 20px;
 }
 
+#main-content span:nth-child(1) {
+    animation-delay: 0s;
+}
 #main-content span:nth-child(2) {
     animation-delay: 0.05s;
 }
@@ -131,6 +134,9 @@
 
 #main-content span {
     animation: animate 0.5s forwards;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-duration: 3s;
     display: inline-block;
     opacity: 0;
     text-shadow: 3px 3px 4px rbga(0,0,0,.2);
