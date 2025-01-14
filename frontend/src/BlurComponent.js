@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useState } from "react";
+import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import Item from "./BlurItem";
 import SwapContainer from "./SwapContainer";
 import PopUp from "./popup";
@@ -9,6 +9,9 @@ const BlurContainer = () => {
     const [containerWidth, setContainerWidth] = useState(0);
     const [popUp, setPopUp] = useState(false)
     const [block, setBlock] = useState(null)
+
+
+
     useLayoutEffect(() => {
         const container = containerRef.current;
         setContainerHeight(container.offsetHeight);
@@ -72,7 +75,7 @@ const BlurContainer = () => {
 
                 </div>
             </div >
-            {popUp && <PopUp onClick={handleOnClick} setBlock={setBlock} />}
+            <PopUp onClick={handleOnClick} setBlock={setBlock} show={popUp} />
 
         </>
     )
