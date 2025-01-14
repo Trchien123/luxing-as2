@@ -17,6 +17,20 @@
     border-radius: 20px;
     width: 75%;
     height: auto;
+    animation: imgSlideIn 1s ease-out forwards;
+    transform: translateX(-100%);
+    opacity: 0;   
+}
+
+@keyframes imgSlideIn {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 #main-content {
@@ -130,7 +144,6 @@
 #main-content span:nth-child(34) {
     animation-delay: 1.65s;
 }
-
 
 #main-content span {
     animation: animate 0.5s forwards;
