@@ -7,7 +7,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 100000000;
+    z-index: 1001;
     color: rgb(255, 255, 255);
 }
 
@@ -128,15 +128,15 @@ nav ul li a:hover::before {
         display: none;
     }
 
-    #check:checked ~ .open-menu {
+    #check:checked~.open-menu {
         display: none;
     }
 
-    #check:checked ~ .menus ul {
+    #check:checked~.menus ul {
         right: 0;
     }
 
-    #check:checked ~ .close-menu {
+    #check:checked~.close-menu {
         display: block;
     }
 }

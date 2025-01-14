@@ -1,18 +1,27 @@
-import React, { useRef, useLayoutEffect, useState } from "react";
+import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import Item from "./BlurItem";
-
-
+import SwapContainer from "./SwapContainer";
+import PopUp from "./popup";
 import './style/home.css'
 const BlurContainer = () => {
     const containerRef = useRef(null);
     const [containerHeight, setContainerHeight] = useState(0);
     const [containerWidth, setContainerWidth] = useState(0);
+    const [popUp, setPopUp] = useState(false)
+    const [block, setBlock] = useState(null)
+
+
 
     useLayoutEffect(() => {
         const container = containerRef.current;
         setContainerHeight(container.offsetHeight);
         setContainerWidth(container.offsetWidth);
     }, []);
+
+    const handleOnClick = () => {
+        console.log("clicked")
+        setPopUp(!popUp)
+    }
 
     const getRandomLeft = () => {
         return Math.floor(Math.random() * containerWidth);
@@ -59,18 +68,15 @@ const BlurContainer = () => {
                 </div>
 
                 <div className="home-component--content">
-                    <h1 className="home-component--conten--header">Search transaction here</h1>
-                    <form onsubmit="event.preventDefault();" role="search">
-                        <label for="search">Search for stuff</label>
-                        <input id="search" type="search" placeholder="Search..." autofocus required />
-                        <button type="submit">Go</button>
-                    </form>
+                    <h1 className="home-component--title">Swap anytime, anywhere</h1>
+
+                    <SwapContainer handleOnClick={handleOnClick} />
+                    <p className="home-component--footer">the best crypto exchange</p>
 
                 </div>
-
-
-
             </div >
+            <PopUp onClick={handleOnClick} setBlock={setBlock} show={popUp} />
+
         </>
     )
 }

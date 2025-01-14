@@ -45,83 +45,180 @@ body {
 
 .home-component--content {
 
-    z-index: 10000;
-    padding: 0 20px;
+    z-index: 1000;
+    padding: 0 10px;
+
+
+}
+
+
+
+.home-component--title {
+    padding: 20px;
+    font-weight: 450;
+    text-align: center;
+    color: white;
+
+}
+
+.swap-box {
+
+    height: max-content;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    outline: none;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+
+
+}
+
+.swap-box-wrapper {
+    position: relative;
+}
+
+.swap-box--container {
     width: 100%;
-    max-width: 30rem;
+
+    border-radius: 15px;
+    padding: 0 14px;
+    background-color: #f8f8f8;
+    border: 2.1px solid #f8f8f8;
+    display: flex;
+    flex-direction: column;
+
+
+}
+
+.swap-box--container.focused {
+    background-color: white !important;
+
+}
+
+.swap-box--select {
+    z-index: 300;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
+    width: fit-content;
+    margin: auto;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    padding: 10px;
+    transform: translateX(-50%) translateY(-50%);
+    cursor: pointer;
+    transition: 5px;
+    border-radius: 10px;
+    border: none;
+    background-color: #f8f8f8;
+    border: 4px solid white;
+    font-weight: 400;
+
 
 }
 
-.home-component--conten--header {
-    padding: 40px 0;
+.swap-box--select:hover {
+    background-color: #f0f0f0;
+}
+
+.select-box {
+    padding: 10px 0;
+    padding-left: 5px;
+    padding-right: 15px;
+    background-color: white;
+
+
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+
+}
+
+.select-box:hover {
+    background-color: #f0f0f0;
+}
+
+.select-box span {
+    color: #00b4d8;
+    font-weight: 550;
+}
+
+.select-box--img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+
+    background-image: url("../asset/333a0f124c2d7fe9857e19e8636f36a8_916177912106998656.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.swap-button {
+
+    margin-top: 8px;
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    padding: 15px;
+    cursor: pointer;
+    background-color: #00b4d8;
     color: white;
-    text-transform: capitalize;
-
-    text-align: center;
-
+    font-size: 22px;
+    font-weight: 450;
+    transition: all 0.1s ease-in-out;
 }
 
-.home-component--content form {
-    position: relative;
-    width: 100%;
-    background: var(--color-brand);
-    border-radius: var(--rad);
+.swap-button:hover {
+    color: #00b4d8;
+    background-color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.home-component--content input,
-button {
-    height: var(--height);
-    font-family: var(--font-fam);
-    border: 0;
-    color: var(--color-light);
-    font-size: 1.8rem;
+.swap-box--span {
+    padding: 14px 0;
+    text-align: left;
+    color: #7d7d7d;
+
 }
 
-.home-component--content input[type="search"] {
-    outline: 0;
+.swap-box--input {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+}
+
+.swap-box--input input {
     width: 100%;
-    background: var(--color-light);
-    padding: 0 1.6rem;
-    border-radius: var(--rad);
-    appearance: none;
-    transition: all var(--dur) var(--bez);
-    transition-property: width, border-radius;
-    z-index: 1;
-    position: relative;
-    color: var(--color-dark);
+    border: none;
+    outline: none;
+    color: black;
+    font-size: 35px;
+    outline: none;
+    background-color: transparent;
 }
 
-.home-component--content button {
-    display: none;
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: var(--btn-width);
-    font-weight: bold;
-    background: var(--color-brand);
-    border-radius: 0 var(--rad) var(--rad) 0;
+.swap-box--input input::placeholder {
+    color: #999;
 }
 
-.home-component--content input:not(:placeholder-shown) {
-    border-radius: var(--rad) 0 0 var(--rad);
-    width: calc(100% - var(--btn-width));
-
-    +button {
-        display: block;
-    }
+.home-component--footer {
+    padding: 20px;
+    color: #999;
+    text-align: center;
 }
 
-.home-component--content label {
-    position: absolute;
-    clip: rect(1px, 1px, 1px, 1px);
-    padding: 0;
-    border: 0;
-    height: 1px;
-    width: 1px;
-    overflow: hidden;
-}
+
+
+
+
+
+
+/* end of  swap */
