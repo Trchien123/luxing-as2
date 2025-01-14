@@ -41,7 +41,7 @@ const BlurContainer = () => {
 
         <>
 
-            <div className="home-component-1">
+            <div className="home-component-1" id="home-component-1">
 
                 <div ref={containerRef} className="blur-container">
 

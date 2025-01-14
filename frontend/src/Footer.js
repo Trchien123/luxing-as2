@@ -2,7 +2,7 @@ import './Footer.css';
 
 function Footer() {
     return (
-        <div className="footer-container">
+        <div className="footer-container" id="footer">
             <div className="waves">
                 <div class="wave" id="wave1"></div>
                 <div class="wave" id="wave2"></div>
