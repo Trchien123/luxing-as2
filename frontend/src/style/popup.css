@@ -18,6 +18,7 @@
 }
 
 .home-component-1--popup.hide {
+
     visibility: hidden;
     animation: popComponentOut 0.2s ease;
     /* z-index: -222; */
