@@ -8,10 +8,10 @@ function Menu() {
             <div class="menus">
                 <ul>
                 <li><a href="">Home</a></li>
-                <li><a href="">About</a></li>
-                <li><a href="">Services</a></li>
-                <li><a href="">Team</a></li>
-                <li><a href="">Contact</a></li>
+                <li><a href="#home-component-1">Swap</a></li>
+                <li><a href="#introduction-card">Benefits</a></li>
+                <li><a href="#earth-container">Achievements</a></li>
+                <li><a href="#footer">Contact</a></li>
                 </ul>
             </div>
             <label for="check" class="open-menu"><i class="fas fa-bars"></i></label>

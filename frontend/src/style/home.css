@@ -11,6 +11,10 @@
     --home-background: linear-gradient(#160c31, #442597);
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-image: var(--home-background);
     overflow-x: hidden;

@@ -3,7 +3,7 @@ import "./style/introductionCard.css";
 
 const IntroductionCard = () => {
   return (
-    <div className="introduction-explore-background">
+    <div className="introduction-explore-background" id="introduction-card">
       <div className="introduction-container">
         <h1>Enhance Your Experience</h1>
         <p id="introduction-text">
