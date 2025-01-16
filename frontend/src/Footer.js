@@ -17,10 +17,10 @@ function Footer() {
             </ul>
             <ul className="menu">
                 <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Team</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="#home-component-1">Swap</a></li>
+                <li><a href="#introduction-card">Benefits</a></li>
+                <li><a href="#earth-container">Achievements</a></li>
+                <li><a href="#footer">Contact</a></li>
             </ul>
             <p>Copyright © 2012 - 2025 TermsFeed®. All rights reserved.</p>
         </div>
