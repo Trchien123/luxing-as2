@@ -58,10 +58,14 @@ const Sphere = () => {
     earthGroup.add(earthMesh);
 
     // Dot creation
-    const dotGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-    const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xfc6c85, raycast: true });
+    const dotGeometry = new THREE.SphereGeometry(0.04, 6);
+    const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xfc6c85, raycast: true, side: THREE.DoubleSide});
+    // const outlineGeometry = new THREE.EdgesGeometry(dotGeometry); // Generates edges from the hexagon geometry
+    // const outlineMaterial = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 1 });
     const dotMeshArray = [];
     const dotInitialPositions = [];
+    const dotGroup = new THREE.Group();
+    scene.add(dotGroup);
 
     for (let i = 0; i < 8; i++) {
       const theta = Math.random() * Math.PI * 2;
@@ -73,11 +77,18 @@ const Sphere = () => {
 
       const dotMesh = new THREE.Mesh(dotGeometry, dotMaterial);
       dotMesh.position.set(x * 1.1, y * 1.1, z * 1.1);
+      dotMesh.lookAt(0,0,0);
       dotMeshArray.push(dotMesh);
+
+      // const outlineMesh = new THREE.LineSegments(outlineGeometry, outlineMaterial);
+      // outlineMesh.position.copy(dotMesh.position); // Match position with the hexagon
+      // outlineMesh.lookAt(0, 1, 1);
 
       dotMesh.userData = { index: i, x, y, z };
       dotInitialPositions.push({ theta, phi }); // Store initial spherical coordinates for each dot
       scene.add(dotMesh); // Ensure the dots are added to the scene
+      // scene.add(outlineMesh);
+      dotGroup.add(dotMesh);
     }
 
     // Raycasting setup
@@ -134,7 +145,9 @@ const Sphere = () => {
 
     function animate() {
       requestAnimationFrame(animate);
-
+  
+      dotGroup.rotation.y +=0.002;
+      dotGroup.rotation.x +=0.0005;
       earthMesh.rotation.y += 0.002;
       lightsMesh.rotation.y += 0.002;
       cloudsMesh.rotation.y += 0.0023;
