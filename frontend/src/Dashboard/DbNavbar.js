@@ -48,8 +48,8 @@ const DbNavbar = ({ setShowBar }) => {
                 <Link to={'/Dashboard/Table'} className="navbar--name--url">
                     <DbItem content={"Table"} />
                 </Link>
-                <Link to={'/Dashboard/History'} className="navbar--name--url">
-                    <DbItem content={"History"} />
+                <Link to={'/Dashboard/News'} className="navbar--name--url">
+                    <DbItem content={"News"} />
                 </Link>
 
 

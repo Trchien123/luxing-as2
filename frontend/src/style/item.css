@@ -11,6 +11,7 @@
     padding: 3px;
     position: relative;
     display: inline-block;
+    animation-timeline: view();
 }
 
 .item.circle {

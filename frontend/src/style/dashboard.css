@@ -1,13 +1,9 @@
 :root {
-    --rad: .7rem;
-    --dur: .3s;
+    --head-font: 2rem;
     --color-dark: #2f2f2f;
     --color-light: #fff;
     --color-brand: #845fff;
     --font-fam: 'Lato', sans-serif;
-    --height: 4rem;
-    --btn-width: 6rem;
-    --bez: cubic-bezier(0, 0, 0.43, 1.49);
     --home-background: linear-gradient(#160c31, #442597);
 }
 
@@ -325,7 +321,7 @@
 
 .DB-main-container-2 {
     display: flex;
-    align-items: start;
+    align-items: flex-start;
     gap: 20px;
     justify-content: center;
     padding: 30px 80px;
@@ -337,21 +333,31 @@
     min-width: 300px;
     background-color: #442597;
     border-radius: 20px;
-    /* max-width: 400px; */
-    margin: auto;
+
+
     box-shadow: 1px 4px 8px rgba(255, 255, 255, 0.1);
 
 }
 
 .Db-main-2-items-1 {
+    height: 420px;
+    padding: 30px 20px;
     flex: 1.6;
+    position: relative;
+    background-position: center;
+    background-size: cover;
+    background-position: center;
+
 }
+
 
 .Db-main-2-items-2 {
     flex: 1;
+    align-self: flex-start;
 }
 
 .Db-main-2-items-3 {
+    height: 400px;
     flex: 1;
 }
 
@@ -371,6 +377,259 @@
     flex: 2;
 }
 
+/* css the first big container of dashboard component */
+
+.DbHomeContainer-1 {
+
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+
+}
+
+.DbHomeContainer-1--title {
+    font-size: 3rem;
+}
+
+.DbHomeContainer-1--span {
+    color: whitesmoke;
+    font-size: 0.9rem;
+}
+
+/* second container of dashboard that contains overview of binance */
+.Bo--title {
+    color: white;
+    text-align: center;
+    padding: 20px 10px;
+    text-transform: capitalize;
+    font-size: var(--head-font)
+}
+
+
+/* dashboard that contains news css */
+.newsOverview-title {
+    padding: 20px 10px;
+    letter-spacing: 0.8px;
+    font-size: var(--head-font);
+    text-align: center;
+    color: white;
+}
+
+.newsOverview-slider {
+
+    width: 100%;
+    height: var(--height);
+    overflow: hidden;
+    mask-image: linear-gradient(to right,
+            transparent,
+            #000 10% 90%,
+            transparent);
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.newsOverview-slider:hover {
+    transform: scale(1.03);
+}
+
+.newsOverview-slider:hover .news-items {
+    animation-play-state: paused !important;
+    filter: grayscale(1);
+
+
+}
+
+/* .news-item:hover {
+    filter: grayscale(1);
+} */
+
+.newsOverview-list {
+    height: 100%;
+    display: flex;
+    min-width: calc(var(--width) * var(--quantity));
+    position: relative;
+
+}
+
+.news-item {
+    width: var(--width);
+
+    overflow: hidden;
+    border-radius: 10px;
+    height: var(--height);
+    position: absolute;
+    left: 100%;
+    animation: autoRun var(--duration) linear infinite;
+
+}
+
+
+
+.news-item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+
+}
+
+.news-item-1 {
+    animation-delay: calc((var(--duration) / var(--quantity)) * 0);
+}
+
+.news-item-2 {
+    animation-delay: calc((var(--duration) / var(--quantity)) * 1);
+}
+
+.news-item-3 {
+    animation-delay: calc((var(--duration) / var(--quantity)) * 2);
+}
+
+.news-item-4 {
+    animation-delay: calc((var(--duration) / var(--quantity)) * 3);
+}
+
+
+
+@keyframes autoRun {
+    from {
+        left: 100%;
+
+    }
+
+    to {
+        left: calc(var(--width) * -1)
+    }
+}
+
+
+/* css for Dashboard news page */
+.DN-section {
+    padding: 30px 80px;
+    color: white;
+    width: 100%;
+    aspect-ratio: 5/2;
+    height: 500px;
+
+}
+
+.Dn-img-slider {
+    position: relative;
+}
+
+.Dn-img-slider-img {
+    object-fit: cover;
+    width: 100%;
+    display: block;
+    height: 100%;
+    flex-shrink: 0;
+    flex-grow: 0;
+    transition: translate 0.3s ease-in-out;
+}
+
+.Dn-img-slider-btn {
+
+    all: unset;
+    display: block;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    padding: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.Dn-img-slider-btn:hover,
+.Dn-img-slider-btn:focus-visible {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.Dn-img-slider-btn>* {
+    stroke: white;
+    fill: black;
+    width: 2rem;
+    height: 2rem;
+}
+
+.Dn-img-slider-btn:hover>* {
+    animation: squish 0.2s ease-in-out
+}
+
+@keyframes squish {
+    50% {
+        scale: 1.4 0.6;
+    }
+}
+
+.Dn-img-slider-dotbtn {
+    all: unset;
+    width: 1rem;
+    height: 1rem;
+    display: block;
+    cursor: pointer;
+    transition: scale 0.1s ease-in-out;
+}
+
+.Dn-img-slider-dotbtn:hover {
+    scale: 1.2;
+}
+
+.Dn-img-slider-dotbtn>* {
+    stroke: white;
+    fill: black;
+    height: 100%;
+    width: 100%;
+}
+
+.DN-section2 {
+    padding: 10px;
+    width: 60%;
+    margin: auto;
+
+}
+
+.DN-section2-title {
+    text-align: center;
+    color: white;
+    font-size: 1.4rem;
+    padding: 10px 0;
+}
+
+.DN-section2-container {
+    color: white;
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    flex-wrap: wrap;
+    height: 100px;
+
+}
+
+.DN-section2-container-img {
+    flex: 1;
+    height: 100%;
+    background-color: red;
+    position: relative;
+    overflow: hidden;
+}
+
+.DN-section2-container-para {
+    flex: 2;
+
+}
+
+.DN-section2-container-img img {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+
+
+}
 
 @media only screen and (max-width: 768px) {
     .DB-section {

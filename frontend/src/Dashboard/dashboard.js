@@ -1,17 +1,11 @@
 import { React, useState, useEffect, useRef } from "react";
 import '../style/dashboard.css';
 import {
-    Link,
-    BrowserRouter as Router,
-    Routes,
-    Route,
     Outlet
 } from 'react-router-dom';
 
 import DbHeader from "./DbHeader";
-import DbContainer1 from "./DbContainer1";
-import DbHome from "./DbDashboard";
-import DashTable from "./DashTable";
+
 import DbNavbar from "./DbNavbar";
 const Dashboard = () => {
     const [scrolled, setScrolled] = useState(false);

@@ -10,7 +10,8 @@ import {
   Route
 } from 'react-router-dom';
 import Dashboard from './Dashboard/dashboard';
-import DashHistory from './Dashboard/DashHistory';
+
+import DashNews from './Dashboard/DbNews';
 function App() {
   return (
     <div className="App">
@@ -20,7 +21,7 @@ function App() {
           <Route path='/Dashboard' element={<Dashboard />}>
             <Route path="" element={<DbHome />} />
             <Route path="Table" element={<DashTable />} />
-            <Route path="History" element={<DashHistory />} />
+            <Route path="News" element={<DashNews />} />
           </Route>
 
         </Routes>
