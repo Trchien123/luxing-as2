@@ -11,7 +11,6 @@ const BlurContainer = () => {
     const [block, setBlock] = useState(null)
 
 
-
     useLayoutEffect(() => {
         const container = containerRef.current;
         setContainerHeight(container.offsetHeight);

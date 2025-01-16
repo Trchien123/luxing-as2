@@ -23,7 +23,7 @@ const SwapContainer = ({ handleOnClick }) => {
     };
     return (
         <div className="swap-box">
-            <div className="swap-box-wrapper">
+            {/* <div className="swap-box-wrapper">
                 <SwapBox span={"Sell"} ref={input1Ref} handleOnClick={handleOnClick} />
                 <button className="swap-box--select" onClick={toggleFocus}>
                     <svg
@@ -39,9 +39,9 @@ const SwapContainer = ({ handleOnClick }) => {
                         />
                     </svg>
                 </button>
-            </div>
+            </div> */}
 
-            <SwapBox span={"Buy"} ref={input2Ref} handleOnClick={handleOnClick} />
+            <SwapBox span={"Search"} ref={input2Ref} handleOnClick={handleOnClick} />
             <button className="swap-button" >Get Started </button>
         </div>
     )
