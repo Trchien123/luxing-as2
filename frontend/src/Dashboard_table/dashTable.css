@@ -1,0 +1,37 @@
+.DB-table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+  
+.Dbtable-component {
+    width: 100%;
+    height: auto;
+    display: flex;
+    padding: 50px;
+    justify-content: center;
+    border: 1px solid gray; /* Optional: helps visualize the component */
+}
+
+#main-circle:hover {
+    fill: orange;
+}
+
+.child-nodes:hover circle,
+.child-nodes:hover line {
+    stroke: orange;
+    stroke-width: 5;
+}
+
+.child-nodes:hover text {
+    fill: orange;
+    font-weight: bold;
+}
+
+.child-nodes:hover rect {
+    fill: green;
+}
+
+.sender:hover text {
+    stroke: white;
+}
