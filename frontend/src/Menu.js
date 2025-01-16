@@ -7,7 +7,7 @@ function Menu() {
             <div class="logo">Company Name</div>
             <div class="menus">
                 <ul>
-                <li><a href="">Home</a></li>
+                <li><a href="#">Home</a></li>
                 <li><a href="#home-component-1">Swap</a></li>
                 <li><a href="#introduction-card">Benefits</a></li>
                 <li><a href="#earth-container">Achievements</a></li>
