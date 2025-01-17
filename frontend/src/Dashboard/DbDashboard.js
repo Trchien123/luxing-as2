@@ -8,8 +8,8 @@ const DbHome = () => {
 
     const generateNumber = () => {
         const randomNumber = Math.random(); // Generates a number between 0 and 1
-        if (randomNumber < 0.1) {
-            return 1 // 99% chance to get 1
+        if (randomNumber < 0.07) {
+            return 1
         } else {
             return (Math.random() < 0.5 ? 2 : 3); // 1% chance to get either 2 or 3
         }
@@ -25,7 +25,7 @@ const DbHome = () => {
                     <DbHomeContainer Address={"User's name"} />
                 </div>
                 <div className="Db-main-2-items Db-main-2-items-2">
-                    <BinanceOverview />
+                    <BinanceOverview title={"Bitcoin"} />
                 </div>
                 <div className="Db-main-2-items Db-main-2-items-3">
                     <NewsOverview />
