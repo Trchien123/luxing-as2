@@ -20,7 +20,11 @@ const DNImageSlider = ({ images }) => {
     }
     return (
         <section className="Dn-img-slider" style={{ width: "100%", height: "100%" }}>
-            <div style={{ width: "100%", height: "100%", display: "flex", overflow: "hidden" }}>
+            <div style={{
+                width: "100%", height: "100%", display: "flex", overflow: "hidden",
+                borderRadius: "10px",
+                boxShadow: " 0 4px 8px  rgba(255,255,255,0.2)",
+            }}>
                 {images.map(({ url, alt }, index) => (
 
                     <img key={url} src={url} alt={alt} aria-hidden={imageIndex !== index} className="Dn-img-slider-img" style={{
