@@ -805,10 +805,10 @@
 }
 
 .Dbtable-component {
-    width: 65%;
+    width: 1000px;
     margin: auto;
-    height: 400px;
-    background-image: linear-gradient(#442597, #845fff);
+    height: 2000px;
+    background-color: #845fff;
     border-radius: 30px;
 
 }
