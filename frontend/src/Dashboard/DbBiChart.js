@@ -37,7 +37,7 @@ const BinanceChart = () => {
             const mousemove = function (event, d) {
                 const [x, y] = d3.pointer(event, this);
                 tooltip
-                    .html("Value:" + d)
+                    .html("Value: " + d)
                     .style("left", (x + 50) + "px")
                     .style("top", (y - 300) + "px")
 

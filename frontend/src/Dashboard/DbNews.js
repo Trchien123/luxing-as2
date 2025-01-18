@@ -69,7 +69,7 @@ const DNStickyContent = ({ data, index }) => {
         <div className="Dn-sticky-container" style={{
             zIndex: index,
             top: "120px",
-            backgroundColor: "red",
+
 
         }}>
             <div className="Dn-sticky-container-img">

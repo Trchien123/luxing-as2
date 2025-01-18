@@ -450,6 +450,8 @@
     position: relative;
     width: max-content;
     transform: translate(-50%, -50%);
+    padding: 3px 4px;
+    border-radius: 6px;
 }
 
 /* dashboard that contains news css */
@@ -671,7 +673,7 @@
     min-height: 400px;
     margin: 0 auto;
     height: max-content;
-    border: 2px solid white;
+    border: 1.2px solid white;
     position: sticky;
 
     box-sizing: border-box;
@@ -679,8 +681,9 @@
     flex-wrap: wrap;
 
     padding: 30px;
-
+    background-color: #333366;
     gap: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 @media screen and (max-width: 570px) {
