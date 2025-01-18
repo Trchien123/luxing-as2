@@ -404,6 +404,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 10px;
 }
 
 .Bo--title {
@@ -416,18 +417,40 @@
 
 .Bo-chart {
 
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 90%;
-    margin: auto;
 
-    height: 340px;
+    height: 300px;
 
 }
 
 
+
+.Bo-chart svg rect {
+    transition: all .1s ease-in-out;
+
+}
+
+.Bo-chart svg rect:hover {
+    fill: lightgreen;
+}
+
+@keyframes popCell {
+    from {
+        height: 0;
+    }
+
+    to {
+        height: 100%;
+    }
+}
+
+.tooltip {
+    flex: 0;
+    border: 1px solid white;
+    color: white;
+    position: relative;
+    width: max-content;
+    transform: translate(-50%, -50%);
+}
 
 /* dashboard that contains news css */
 .newsOverview-title {
