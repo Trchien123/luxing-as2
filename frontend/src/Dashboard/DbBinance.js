@@ -1,9 +1,10 @@
 import React from "react";
-
-const BinanceOverview = () => {
+import BinanceChart from "./DbBiChart";
+const BinanceOverview = ({ title }) => {
     return (
         <div className="binanceOverview">
-            <h1 className="Bo--title"> overview</h1>
+            <h1 className="Bo--title">{title}</h1>
+            <BinanceChart />
         </div>
     )
 }

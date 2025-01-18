@@ -100,6 +100,7 @@ const Sphere = () => {
       const mouse = new THREE.Vector2();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      
       raycaster.setFromCamera(mouse, camera);
       console.log("Raycaster origin:", raycaster.ray.origin); // Debug
       console.log("Raycaster direction:", raycaster.ray.direction); // Debug
@@ -112,6 +113,7 @@ const Sphere = () => {
       } else {
         console.log("No intersection detected");
       }
+      
     }
 
     window.addEventListener("click", onMouseClick, false);
