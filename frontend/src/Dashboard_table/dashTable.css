@@ -13,7 +13,8 @@
     border: 1px solid gray; /* Optional: helps visualize the component */
 }
 
-#main-circle:hover {
+#main-circle:hover,
+#sender:hover {
     fill: orange;
 }
 
