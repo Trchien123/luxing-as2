@@ -29,10 +29,10 @@ function DrawCircle() {
 
     const sender = "Chien";
     const name = ["Olivia Carter", "Liam Johnson", "Emma Smith", "Noah Davis", "Ava Wilson", 
-        "Jackson Brown", "Sophia Miller", "Ethan Moore", "Isabella Taylor", "Lucas Anderson", 
+        "Jackson Brown", "Lam Dan", "Ethan Moore", "Isabella Taylor", "Lucas Anderson", 
         "Mia Thomas", "Aiden Jackson", "Harper White", "Mason Harris", "Amelia Clark", 
         "James Lewis", "Charlotte Walker", "Benjamin Scott", "Ella Hall", "Alexander Young"];
-    const radii = [9133, 5457, 3085, 2746, 4254, 1572, 1907, 8947, 3183, 8323, 7021, 6429, 5252, 7054, 3571, 7741, 4020, 1702, 8688, 8458]
+    const radii = [9133, 5457, 3085, 2746, 4254, 8000, 1907, 8947, 3183, 8323, 7021, 6429, 5252, 7054, 3571, 7741, 4020, 1702, 8688, 8458]
     const normalizedRadii = Normalization(radii, numPoints);
 
     return (
@@ -67,7 +67,7 @@ function DrawCircle() {
                 )
             })}
             <circle id="main-circle" cx={300} cy={300} r={30} fill="black" />
-            <text x="300" y="300" fontSize="15" fill="black" textAnchor="middle" alignmentBaseline="middle">{sender}</text>
+            <text id="sender" x="300" y="300" fontSize="15" fill="black" textAnchor="middle" alignmentBaseline="middle">{sender}</text>
         </svg>
     );
 }
