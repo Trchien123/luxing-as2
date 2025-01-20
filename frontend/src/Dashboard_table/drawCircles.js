@@ -71,7 +71,7 @@ function DrawCircle() {
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
                             <circle cx={point.x} cy={point.y} r={normalizedRadii[index].normalized} fill="none" stroke="black" strokeWidth={3} />
                             <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="black" strokeWidth={3}/>
-                            <rect x={midX - rectWidth / 2} y={midY - rectHeight / 2} width={rectWidth} height={rectHeight} fill="#845fff" />
+                            <rect x={midX - rectWidth / 2} y={midY - rectHeight / 2} width={rectWidth} height={rectHeight} fill="#442597" />
                             <text x={midX} y={midY} fontSize="13" fill="black" textAnchor="middle" alignmentBaseline="middle">
                                 {radii[index]}
                             </text>
