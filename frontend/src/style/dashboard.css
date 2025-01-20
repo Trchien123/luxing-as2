@@ -256,9 +256,8 @@
   padding: 10px 20px;
   border-radius: 20px;
   background-color: #160c31;
-  display: flex;
   align-items: center;
-  /* justify-content: space-between; */
+  justify-content: center;
   min-width: 300px;
   min-height: 150px;
   cursor: pointer;
@@ -270,33 +269,50 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.Db-main-1-items .title {
+.Db-main-1-items .card-header {
+  display: flex;
+  /* justify-content: space-between; */
+}
+.card-header .title {
+  display: flex;
   color: white;
-  text-align: center;
 }
-
-.Db-main-1-items .title span {
-  color: #999;
-  font-size: 10px;
-}
-
-.Db-main-1-items .title p {
-  font-weight: 600;
-  color: white;
-  margin: 0;
-}
-
-.Db-main-1-items .icon {
-  width: 40px;
-  height: 40px;
+.title svg {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
   border-radius: 20%;
-  color: white;
-  background-color: #845fff;
+  color: #845fff;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+/* .Db-main-1-items .title span {
+  color: #999;
+  font-size: 20px;
+}
 
+.Db-main-1-items .title p {
+  font-weight: 600;
+  font-size: 25px;
+  align-items: center;
+  color: white;
+  margin: 0;
+  line-height: 50px;
+} */
+.Db-main-1-items .card-body {
+  margin-top: 10px;
+  align-items: center;
+}
+.card-body .coin {
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+}
+.card-body .money {
+  color: #aaa;
+  font-size: 1em;
+}
 .DB-main-container-2 {
   display: flex;
   align-items: flex-start;
