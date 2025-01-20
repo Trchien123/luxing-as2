@@ -10,22 +10,26 @@ table {
   margin-top: 25px;
   padding-left: 10px;
 }
+
 .tbl-header-sender {
   background-color: RGB(0, 158, 96);
   border-radius: 5px;
 }
+
 .tbl-header-receiver {
   background-color: RGB(158, 0, 62);
   border-radius: 5px;
 }
+
 .tbl-content-sender,
 .tbl-content-receiver {
-  height: 300px;
+  height: auto;
   overflow-x: auto;
   margin-top: 0px;
   border: 1px solid hidden;
   border-radius: 5px;
 }
+
 th {
   padding: 20px 15px;
   text-align: center;
@@ -34,6 +38,7 @@ th {
   color: #fff;
   text-transform: uppercase;
 }
+
 td {
   padding: 15px;
   text-align: center;
