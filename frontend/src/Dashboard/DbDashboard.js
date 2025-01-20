@@ -4,6 +4,7 @@ import DbHomeContainer from "./DbDashboardHome";
 import NewsOverview from "./DbNewsOverview";
 import BinanceOverview from "./DbBinance";
 import DbSendReceiveTable from "./DbSendReceiveTable";
+
 const DbHome = () => {
   const generateNumber = () => {
     const randomNumber = Math.random(); // Generates a number between 0 and 1
