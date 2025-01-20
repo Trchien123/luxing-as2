@@ -66,7 +66,7 @@ svg #visualization {
     border: none;
     font-size: 20px;
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: color 1s ease;
 }
 
 .transaction-details .close-button:hover {
