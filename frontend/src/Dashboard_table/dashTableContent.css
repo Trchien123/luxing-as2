@@ -1,0 +1,53 @@
+/* General table styling */
+.table-wrapper {
+    margin: 20px auto;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff; /* White background for better visibility */
+}
+
+.table {
+    width: 100%;
+    min-width: 600px; /* Ensure the table has a minimum width */
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    white-space: nowrap; /* Prevent wrapping */
+    text-align: center; /* Center-align content */
+}
+
+/* Header styling */
+.tbl-header-sender {
+    background: #28a745; /* Green background */
+    color: #fff; /* White text for contrast */
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 8px 8px 0 0; /* Rounded top corners */
+}
+
+.tbl-content-sender {
+    overflow-y: auto;
+    max-height: 400px; /* Limit vertical height for scroll */
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 12px; /* Reduce font size */
+        padding: 8px; /* Reduce padding */
+    }
+}
+
+@media (max-width: 480px) {
+    .table th, .table td {
+        font-size: 10px; /* Further reduce font size */
+        padding: 6px; /* Further reduce padding */
+    }
+}
