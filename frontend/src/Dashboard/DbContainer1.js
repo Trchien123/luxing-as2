@@ -4,8 +4,8 @@ const DbContainer1 = () => {
   return (
     <div className="DB-main-container-1">
       <DbItem1 />
-      <DbItem1 />
-      <DbItem1 />
+      <DbItem2 />
+      <DbItem3 />
     </div>
   );
 };
@@ -14,35 +14,81 @@ export default DbContainer1;
 
 const DbItem1 = () => {
   return (
-    <div className="Db-main-1-items">
-      <div className="card-header">
-        <div className="title">
-          <svg
-            class="w-6 h-6 text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M12 14a3 3 0 0 1 3-3h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-4a3 3 0 0 1-3-3Zm3-1a1 1 0 1 0 0 2h4v-2h-4Z"
-              clip-rule="evenodd"
-            />
-            <path
-              fill-rule="evenodd"
-              d="M12.293 3.293a1 1 0 0 1 1.414 0L16.414 6h-2.828l-1.293-1.293a1 1 0 0 1 0-1.414ZM12.414 6 9.707 3.293a1 1 0 0 0-1.414 0L5.586 6h6.828ZM4.586 7l-.056.055A2 2 0 0 0 3 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2h-4a5 5 0 0 1 0-10h4a2 2 0 0 0-1.53-1.945L17.414 7H4.586Z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <span>Balance</span>
+    <div class="container">
+      <h1>Overview</h1>
+      <div class="info">
+        <i class="fas fa-wallet"></i>
+        <span>Address</span>
+      </div>
+      <div class="info">
+        <span>0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97</span>
+      </div>
+      <div class="dates-container">
+        <div class="date">
+          <div class="info">
+            <i class="fas fa-calendar-alt"></i>
+            <span>First active</span>
+          </div>
+          <span>Nov 15, 2023</span>
+          <span class="time">1 year ago</span>
+        </div>
+        <div class="date">
+          <div class="info">
+            <i class="fas fa-calendar-check"></i>
+            <span>Last active</span>
+          </div>
+          <span>Apr 4, 2024</span>
+          <span class="time">2 minutes ago</span>
         </div>
       </div>
-      <div className="card-body">
-        <div className="coin">53.000 ETH</div>
-        <div className="money">~ 104.872,43 USD</div>
+    </div>
+  );
+};
+const DbItem2 = () => {
+  return (
+    <div class="container">
+      <h1>Balance</h1>
+      <div class="info">
+        <i class="fas fa-coins icon"></i>
+        <span>Balance</span>
+      </div>
+      <div class="info-balance">
+        <p>188.91767 ETH</p>
+        <span>~ $443,172.52 USD</span>
+      </div>
+    </div>
+  );
+};
+const DbItem3 = () => {
+  return (
+    <div class="container">
+      <h1>Transactions Volume</h1>
+      <div className="info">
+        <i class="fa-solid fa-money-bill-transfer"></i>
+        <span>Transaction Details</span>
+      </div>
+      <div class="sent-received-container">
+        <div class="amount">
+          <div class="info">
+            <i class="fa-solid fa-arrow-up"></i>
+            <span>Sent</span>
+          </div>
+          <span>87,932.4</span>
+        </div>
+        <div class="amount">
+          <div class="info">
+            <i class="fa-solid fa-arrow-down"></i>
+            <span>Received</span>
+          </div>
+          <span>127,712.3</span>
+        </div>
+        <div class="amount">
+          <div class="info">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Total</span>
+          </div>
+          <span>215,644.7</span>
+        </div>
       </div>
     </div>
   );

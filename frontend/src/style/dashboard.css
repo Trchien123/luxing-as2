@@ -246,73 +246,84 @@
 .DB-main-container-1 {
   display: flex;
   flex-wrap: wrap;
-  gap: 50px;
+  gap: 30px;
   width: 100%;
   justify-content: space-around;
   padding: 20px 40px;
+  font-family: "Courier New", Courier, monospace;
 }
 
-.DB-main-container-1 .Db-main-1-items {
+.DB-main-container-1 .container {
   padding: 10px 20px;
   border-radius: 20px;
   background-color: #160c31;
-  align-items: center;
-  justify-content: center;
   min-width: 300px;
-  min-height: 150px;
+  min-height: 200px;
   cursor: pointer;
   transition: all 0.1s ease-in;
   box-shadow: 1px 4px 8px rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
-.DB-main-container-1 .Db-main-1-items:hover {
+.DB-main-container-1 .container:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.Db-main-1-items .card-header {
-  display: flex;
-  /* justify-content: space-between; */
+.DB-main-container-1 .container {
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 30%;
+  margin-bottom: 20px;
+  box-sizing: border-box;
 }
-.card-header .title {
-  display: flex;
-  color: white;
+.container h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
 }
-.title svg {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-  border-radius: 20%;
-  color: #845fff;
+.info {
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin-bottom: 10px;
 }
-/* .Db-main-1-items .title span {
-  color: #999;
-  font-size: 20px;
+.info i {
+  margin-right: 10px;
+  color: #845fff;
+}
+.info span {
+  font-size: 14px;
+}
+.dates-container,
+.sent-received-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.date span {
+  font-size: 14px;
+}
+.time {
+  font-size: 12px;
+  color: #a0a0a0;
+}
+/* BALANCE CARD */
+.container .info-balance p {
+  display: flex;
+  font-size: 40px;
+}
+.info-balance span {
+  color: #a0a0a0;
+}
+/* TRANSACTION CARD */
+.sent-received-container .amount {
+  font-size: 18px;
 }
 
-.Db-main-1-items .title p {
-  font-weight: 600;
-  font-size: 25px;
-  align-items: center;
-  color: white;
-  margin: 0;
-  line-height: 50px;
-} */
-.Db-main-1-items .card-body {
-  margin-top: 10px;
-  align-items: center;
-}
-.card-body .coin {
-  color: white;
-  font-size: 2em;
-  font-weight: bold;
-}
-.card-body .money {
-  color: #aaa;
-  font-size: 1em;
-}
 .DB-main-container-2 {
   display: flex;
   align-items: flex-start;
