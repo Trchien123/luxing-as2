@@ -30,14 +30,14 @@ const DbItem1 = () => {
             <span>First active</span>
           </div>
           <span>Nov 15, 2023</span>
-          <span class="time">1 year ago</span>
+          <span class="time">2 years ago</span>
         </div>
         <div class="date">
           <div class="info">
             <i class="fas fa-calendar-check"></i>
             <span>Last active</span>
           </div>
-          <span>Apr 4, 2024</span>
+          <span>Jan 1, 2025</span>
           <span class="time">2 minutes ago</span>
         </div>
       </div>
