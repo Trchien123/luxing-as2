@@ -72,17 +72,17 @@ function DrawCircle() {
                             <circle cx={point.x} cy={point.y} r={normalizedRadii[index].normalized} fill="none" stroke="white" strokeWidth={3} />
                             <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={3}/>
                             <rect x={midX - rectWidth / 2} y={midY - rectHeight / 2} width={rectWidth} height={rectHeight} fill="#442597" />
-                            <text x={midX} y={midY} fontSize="13" fill="white" textAnchor="middle" alignmentBaseline="middle">
+                            <text x={midX} y={midY} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
                                 {radii[index]}
                             </text>
-                            <text id="receivers" x={point.x+5} y={point.y-37} fontSize="13" fill="white" textAnchor="middle" alignmentBaseline="middle">
+                            <text id="receivers" x={point.x+5} y={point.y-37} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
                                 {names[index]}
                             </text>
                         </g>
                     )
                 })}
                 <circle id="main-circle" cx={300} cy={300} r={30} fill="white" />
-                <text id="sender" x="300" y="300" fontSize="15" fill="white" textAnchor="middle" alignmentBaseline="middle">{sender}</text>
+                <text id="sender" x="300" y="300" fontSize="17px" fill="white" textAnchor="middle" alignmentBaseline="middle">{sender}</text>
             </svg>
             
             <div
