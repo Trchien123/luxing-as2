@@ -50,8 +50,8 @@ function DrawCircle() {
     };
 
     return (
-        <div className="transaction-visualization" style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-            <svg id="visualization" width="600" height="600">
+        <div className="transaction-visualization">
+            <svg id="visualization" viewBox="0 0 600 600" width="50%" height="50%">
                 {points.map((point, index) => {
                     const adjustedX = point.x - normalizedRadii[index].normalized * Math.cos(point.alpha);
                     const adjustedY = point.y - normalizedRadii[index].normalized * Math.sin(point.alpha);
@@ -69,33 +69,35 @@ function DrawCircle() {
 
                     return (
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
-                            <circle cx={point.x} cy={point.y} r={normalizedRadii[index].normalized} fill="none" stroke="black" strokeWidth={3} />
-                            <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="black" strokeWidth={3}/>
+                            <circle cx={point.x} cy={point.y} r={normalizedRadii[index].normalized} fill="none" stroke="white" strokeWidth={3} />
+                            <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={3}/>
                             <rect x={midX - rectWidth / 2} y={midY - rectHeight / 2} width={rectWidth} height={rectHeight} fill="#442597" />
-                            <text x={midX} y={midY} fontSize="13" fill="black" textAnchor="middle" alignmentBaseline="middle">
+                            <text x={midX} y={midY} fontSize="13" fill="white" textAnchor="middle" alignmentBaseline="middle">
                                 {radii[index]}
                             </text>
-                            <text x={point.x+5} y={point.y-37} fontSize="13" fill="black" textAnchor="middle" alignmentBaseline="middle">
+                            <text id="receivers" x={point.x+5} y={point.y-37} fontSize="13" fill="white" textAnchor="middle" alignmentBaseline="middle">
                                 {names[index]}
                             </text>
-                            <circle id="main-circle" cx={300} cy={300} r={30} fill="black" />
-                            <text id="sender" x="300" y="300" fontSize="15" fill="black" textAnchor="middle" alignmentBaseline="middle">{sender}</text>
                         </g>
                     )
                 })}
+                <circle id="main-circle" cx={300} cy={300} r={30} fill="white" />
+                <text id="sender" x="300" y="300" fontSize="15" fill="white" textAnchor="middle" alignmentBaseline="middle">{sender}</text>
             </svg>
             
             <div
-                className={`transaction-details ${selectedNode ? "visible" : ""}`}>
+                className={`transaction-details-container ${selectedNode ? "visible" : ""}`}>
                 {selectedNode && (
-                    <div className={`transaction-details visible`}>
+                    <div className={`transaction-details-container visible`}>
                         <button className="close-button" onClick={handleClose}>
                             &times;
                         </button>
-                        <h3>Transaction Details</h3>
-                        <p>Sender: {selectedNode.sender}</p>
-                        <p>Receiver: {selectedNode.receiver}</p>
-                        <p>Transaction Value: {selectedNode.transaction}</p>
+                        <div className="transaction-details-content">
+                            <h3>Transaction Details</h3>
+                            <p>Sender: {selectedNode.sender}</p>
+                            <p>Receiver: {selectedNode.receiver}</p>
+                            <p>Transaction Value: {selectedNode.transaction}</p>
+                        </div>    
                     </div>
                 )}
             </div>
