@@ -3,12 +3,17 @@ import Item from "./BlurItem";
 import SwapContainer from "./SwapContainer";
 import PopUp from "./popup";
 import './style/home.css'
+const image1 = require("./asset/temp.png")
 const BlurContainer = () => {
     const containerRef = useRef(null);
     const [containerHeight, setContainerHeight] = useState(0);
     const [containerWidth, setContainerWidth] = useState(0);
     const [popUp, setPopUp] = useState(false)
-    const [block, setBlock] = useState(null)
+    const [block, setBlock] = useState({
+
+        image: image1,
+        span: "BTC"
+    })
 
 
     useLayoutEffect(() => {
@@ -18,7 +23,7 @@ const BlurContainer = () => {
     }, []);
 
     const handleOnClick = () => {
-        console.log("clicked")
+
         setPopUp(!popUp)
     }
 
@@ -69,7 +74,7 @@ const BlurContainer = () => {
                 <div className="home-component--content">
                     <h1 className="home-component--title">Swap anytime, anywhere</h1>
 
-                    <SwapContainer handleOnClick={handleOnClick} />
+                    <SwapContainer handleOnClick={handleOnClick} span={block.span} image={block.image} />
                     <p className="home-component--footer">the best crypto exchange</p>
 
                 </div>

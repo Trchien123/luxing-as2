@@ -9,6 +9,7 @@
     --btn-width: 6rem;
     --bez: cubic-bezier(0, 0, 0.43, 1.49);
     --home-background: linear-gradient(#160c31, #442597);
+    --background-image: url('../asset/temp.png')
 }
 
 html {
@@ -159,7 +160,7 @@ body {
     height: 28px;
     border-radius: 50%;
 
-    background-image: url("../asset/333a0f124c2d7fe9857e19e8636f36a8_916177912106998656.png");
+    background-image: var(--background-image);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
