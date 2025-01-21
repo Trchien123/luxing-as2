@@ -17,7 +17,6 @@
 .transaction-visualization {
     display: flex;
     flex-direction: row;
-    gap: 20px;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -29,19 +28,19 @@
     justify-content: flex-start; 
 }
 
-svg #visualization {
-    max-width: 600px;
-    transition: all 2s ease; 
+#visualization {
+    min-width: 300px; /* Ensure it doesn’t shrink too much */
+    min-height: 300px; /* Maintain a minimum height */
 }
 
-.transaction-details {
+.transaction-details-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: black;
     color: white;
-    padding: 20px;
+    padding: 10px;
     border-radius: 20px;
     text-align: center;
     width: auto;
@@ -52,15 +51,19 @@ svg #visualization {
     position: relative;
 }
 
-.transaction-details.visible {
+.transaction-details-container.visible {
     opacity: 1;
     transform: translateX(0);
 }
 
-.transaction-details .close-button {
+.transaction-details-content {
+    padding: 10px;
+}
+
+.transaction-details-container .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 0;
+    right: 5px;
     background-color: transparent;
     color: white;
     border: none;
@@ -73,8 +76,7 @@ svg #visualization {
     color: red;
 }
 
-#main-circle:hover,
-#sender:hover {
+#main-circle:hover{
     fill: orange;
 }
 
@@ -93,6 +95,28 @@ svg #visualization {
     fill: green;
 }
 
-.sender:hover text {
-    stroke: white;
+#sender:hover {
+    fill: black;
+}
+
+@media (max-width: 925px) {
+    .transaction-visualization {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center; /* Center align the elements */
+        gap: 20px; /* Add spacing between the graph and details */
+    }
+
+    .transaction-details-container {
+        width: 85%; /* Ensure the details container doesn't span the entire width */
+        max-width: 500px;
+    }
+
+    #visualization {
+        width: 90%;
+        height: 90%;
+    }
+
+    .Dbtable-component {
+        padding: 10px;
+    }
 }
