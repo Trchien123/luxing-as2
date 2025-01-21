@@ -1,0 +1,31 @@
+.report-container {
+    padding: 20px;
+    max-height: 380px;
+    overflow-y: auto;  
+}
+  
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+.report-table th {
+    border-bottom: 2px solid #ddd;
+    padding: 8px;
+    font-weight: bold;
+}
+
+.report-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+}
+
+@media (max-width: 768px) {
+    .report-container {
+        overflow-x: auto;
+    }
+  
+    .report-table {
+        min-width: 600px;
+    }
+}

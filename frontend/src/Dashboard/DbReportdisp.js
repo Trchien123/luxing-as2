@@ -1,12 +1,12 @@
 import React from "react";
-import BinanceChart from "./DbBiChart";
-const BinanceOverview = ({ title }) => {
+import ReportTable from "./DbReport";
+const ReportDis = ({ title }) => {
     return (
         <div className="binanceOverview">
             <h1 className="Bo--title">{title}</h1>
-            <BinanceChart />
+            <ReportTable />
         </div>
     )
 }
 
-export default BinanceOverview;
+export default ReportDis;

@@ -2,25 +2,65 @@ import React, { useState, useMemo } from "react";
 import * as d3 from "d3";
 
 const TransChart = () => {
-  const data = [
-    { x: 1, y: 1 },
-    { x: 2, y: 8 },
-    { x: 3, y: 4 },
-    { x: 4, y: 10 },
-    { x: 5, y: 6 },
-  ];
+  const dataForMonths = {
+    January: [
+      { x: 1, y: 5 },
+      { x: 2, y: 10 },
+      { x: 3, y: 7 },
+      { x: 4, y: 12 },
+      { x: 5, y: 8 },
+    ],
+    February: [
+      { x: 1, y: 3 },
+      { x: 2, y: 6 },
+      { x: 3, y: 4 },
+      { x: 4, y: 11 },
+      { x: 5, y: 9 },
+    ],
+    March: [
+      { x: 1, y: 4 },
+      { x: 2, y: 9 },
+      { x: 3, y: 6 },
+      { x: 4, y: 10 },
+      { x: 5, y: 7 },
+    ],
+    April: [
+      { x: 1, y: 2 },
+      { x: 2, y: 7 },
+      { x: 3, y: 5 },
+      { x: 4, y: 13 },
+      { x: 5, y: 10 },
+    ],
+    May: [
+      { x: 1, y: 6 },
+      { x: 2, y: 8 },
+      { x: 3, y: 3 },
+      { x: 4, y: 9 },
+      { x: 5, y: 6 },
+    ],
+    June: [
+      { x: 1, y: 4 },
+      { x: 2, y: 7 },
+      { x: 3, y: 6 },
+      { x: 4, y: 8 },
+      { x: 5, y: 7 },
+    ],
+  };
 
-  const width = 600; 
+  const width = 600;
   const height = 400;
-  const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+  const margin = { top: 20, right: 20, bottom: 80, left: 50 };
 
   const [tooltip, setTooltip] = useState({ x: 0, y: 0, visible: false, value: "" });
+  const [selectedMonth, setSelectedMonth] = useState("January"); 
+
+  const data = dataForMonths[selectedMonth];
 
   const xScale = useMemo(
     () =>
       d3
         .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.x) + 1]) 
+        .domain([0, d3.max(data, (d) => d.x) + 1])
         .range([margin.left, width - margin.right]),
     [data, width, margin]
   );
@@ -34,8 +74,20 @@ const TransChart = () => {
     [data, height, margin]
   );
 
+  const months = ["January", "February", "March", "April", "May", "June"];
+
+  const handleMonthClick = (month) => {
+    setSelectedMonth(month); 
+  };
+
   return (
-    <div style={{ position: "relative" }}>
+    <div
+      style={{
+        width: "100%",        
+        height: "420px",      
+        overflow: "auto",     
+      }}
+    >
       <svg width={width} height={height}>
         {/* X Axis */}
         <g transform={`translate(0, ${height - margin.bottom})`} style={{ fontSize: "12px" }}>
@@ -86,7 +138,8 @@ const TransChart = () => {
                   x: xScale(point.x),
                   y: yScale(point.y),
                   visible: true,
-                  value: `x: ${point.x}, y: ${point.y}`,
+                  value: `Time: ${point.x + point.y}`, 
+                  
                 })
               }
               onMouseLeave={() => setTooltip({ ...tooltip, visible: false })}
@@ -106,22 +159,59 @@ const TransChart = () => {
           />
         ))}
 
-        {/* Tooltip */}
+        {/* Tooltip Box */}
         {tooltip.visible && (
-          <text
-            x={tooltip.x}
-            y={tooltip.y - 15} 
-            textAnchor="middle"
-            style={{
-              fontSize: "16px", 
-              fontWeight: "bold",
-              fill: "black",
-              backgroundColor: "white",
-            }}
-          >
-            {tooltip.value}
-          </text>
+          <g transform={`translate(${tooltip.x - 20}, ${tooltip.y - 30})`}>
+            <rect
+              width="60"
+              height="25"
+              fill="lightblue"
+              stroke="black"
+              rx="5"
+              ry="5"
+            />
+            <text
+              x={30}
+              y={15}
+              textAnchor="middle"
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                fill: "black",
+                pointerEvents: "none", 
+              }}
+            >
+              {tooltip.value}
+            </text>
+          </g>
         )}
+
+        {/* Month Boxes at the Bottom */}
+        <g transform={`translate(${margin.left}, ${height - margin.bottom + 50})`}>
+          {months.map((month, index) => (
+            <g key={month} transform={`translate(${(width - margin.left - margin.right) / 6 * index}, 0)`}>
+              <rect
+                x={0}
+                y={0}
+                width={(width - margin.left - margin.right) / 6 - 10}  
+                height={30}
+                fill={selectedMonth === month ? "lightblue" : "lightgray"}
+                stroke="black"
+                cursor="pointer"
+                onClick={() => handleMonthClick(month)}
+              />
+              <text
+                x={(width - margin.left - margin.right) / 12 - 10}
+                y={20}
+                textAnchor="middle"
+                fill="black"
+                style={{ fontSize: "12px" }}
+              >
+                {month}
+              </text>
+            </g>
+          ))}
+        </g>
       </svg>
     </div>
   );

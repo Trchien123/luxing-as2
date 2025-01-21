@@ -5,6 +5,7 @@ import NewsOverview from "./DbNewsOverview";
 import BinanceOverview from "./DbBinance";
 import DbSendReceiveTable from "./DbSendReceiveTable";
 import StatChart from "./DbTranschart";
+import ReportDis from "./DbReportdisp";
 
 const DbHome = () => {
   const generateNumber = () => {
@@ -39,7 +40,9 @@ const DbHome = () => {
         <div className="Db-main-2-items Db-main-2-items-4 ">
           <StatChart title={"Activity"} />
         </div>
-        <div className="Db-main-2-items Db-main-2-items-5"></div>
+        <div className="Db-main-2-items Db-main-2-items-5">
+          <ReportDis title={"Report"} />
+        </div>
       </section>
       <section className="DB-main-container-2">
         <div className="Db-main-2-items Db-main-2-items-6 ">
