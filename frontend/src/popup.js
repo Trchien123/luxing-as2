@@ -1,9 +1,23 @@
 import React from "react";
 import "./style/popup.css"
 import Token from "./token";
-const PopUp = ({ onClick, setBlock, show }) => {
-    const handleTokenOnClick = (title) => {
-        setBlock(title)
+
+const DATA = [
+    { image: "https://picsum.photos/200/300", title: "Bitcoin", content: "BTC" },
+    { image: "https://picsum.photos/200/300", title: "Bitcoin", content: "BTC" },
+    { image: "https://picsum.photos/200/300", title: "Bitcoin", content: "BTC" },
+    { image: "https://picsum.photos/200/300", title: "Bitcoin", content: "BTC" },
+]
+
+const PopUp = ({ onClick, setBlock, show, }) => {
+    const handleTokenOnClick = (url, content) => {
+        setBlock({
+            image: url,
+            span: content
+        })
+        console.log("clicked")
+        onClick()
+
     }
     return (
         <div className={`home-component-1--popup ${show ? "show" : "hide"}`} >
@@ -26,14 +40,16 @@ const PopUp = ({ onClick, setBlock, show }) => {
 
                 <p className="home-component-1--tokens">Tokens</p>
                 <div className="home-component-1--card-container">
-                    <Token />
-                    <Token />
-                    <Token />
-                    <Token />
-                    <Token />
-                    <Token />
-                    <Token />
-                    <Token />
+                    {
+                        DATA.map(({ image, title, content }, index) => (
+                            <Token
+                                key={index}
+                                image={image}
+                                title={title}
+                                content={content}
+                                handleTokenOnClick={handleTokenOnClick} />
+                        ))
+                    }
 
                 </div>
 

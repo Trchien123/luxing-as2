@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import SwapBox from "./SwapBox";
 
-const SwapContainer = ({ handleOnClick }) => {
+const SwapContainer = ({ handleOnClick, span, image }) => {
     const input1Ref = useRef(null)
     const input2Ref = useRef(null)
     const [currentFocus, setCurrentFocus] = useState("input1")
@@ -41,7 +41,7 @@ const SwapContainer = ({ handleOnClick }) => {
                 </button>
             </div> */}
 
-            <SwapBox span={"Search"} ref={input2Ref} handleOnClick={handleOnClick} />
+            <SwapBox span={"Search"} ref={input2Ref} handleOnClick={handleOnClick} title={span} image={image} />
             <button className="swap-button" >Get Started </button>
         </div>
     )
