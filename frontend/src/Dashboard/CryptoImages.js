@@ -1,4 +1,4 @@
-const cryptoImages = {};
+const cryptoImages = [];
 
 // Require all images from the asset/cryptos folder
 const images = require.context('../asset/cryptos', false, /\.(png|jpe?g|svg)$/);

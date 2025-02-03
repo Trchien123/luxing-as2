@@ -4,7 +4,7 @@ import "./style/item.css"
 
 import { Link } from "react-router-dom";
 
-const Item = ({ top, left, animation, shape, cryptoIcon }) => {
+const Item = ({ top, left, animation, shape, crypto }) => {
     const [onHover, setOnHover] = useState(false)
 
     const getRandomDuration = (min, max) => {
@@ -16,12 +16,12 @@ const Item = ({ top, left, animation, shape, cryptoIcon }) => {
     }
     const isLeftPositionLarge = left > (window.innerWidth * 2 / 3);
     return (
-        <Link to={'/Dashboard'} state={cryptoIcon} className="blur-container--url" >
+        <Link to={'/Dashboard'} state={crypto.image} className="blur-container--url" >
             <div className={`item ${shape}`} style={
                 {
 
                     top: `${top}px`,
-                    backgroundImage: `url(${cryptoIcon})`,
+                    backgroundImage: `url(${crypto.image})`,
                     left: `${left}px`,
                     animation: `popUp 2s none, ${animation} ${getRandomDuration(4, 6)}s ease-in-out infinite`,
                     filter: `blur(${getRandomDuration(5, 20)}px)`,
@@ -33,7 +33,7 @@ const Item = ({ top, left, animation, shape, cryptoIcon }) => {
                 onMouseLeave={() => setOnHover(false)}
             >
 
-                {onHover && <ItemInfo isLeftPositionLarge={isLeftPositionLarge} />}
+                {onHover && <ItemInfo isLeftPositionLarge={isLeftPositionLarge} id={crypto.id} />}
             </div>
 
         </Link >
@@ -42,7 +42,7 @@ const Item = ({ top, left, animation, shape, cryptoIcon }) => {
 
 export default Item
 
-const ItemInfo = ({ isLeftPositionLarge }) => {
+const ItemInfo = ({ isLeftPositionLarge, id, name }) => {
     return (
         <div className="item--info"
             style={
@@ -51,7 +51,7 @@ const ItemInfo = ({ isLeftPositionLarge }) => {
                 }
             }
         >
-            <span className="item--info-name">SEL</span>
+            <span className="item--info-name">{id}</span>
             <span className="item--info-number"> 0.00%</span>
         </div>
     )

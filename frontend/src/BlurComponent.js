@@ -17,7 +17,15 @@ const BlurContainer = () => {
         image: image1,
         span: "BTC"
     })
+    const cryptos = [
+        { id: "BTC", name: "Bitcoin", image: cryptoImages["nft-0"] },
+        { id: "DOGE", name: "Dogecoin", image: cryptoImages["nft-1"] },
+        { id: "ETH", name: "Ehtereum", image: cryptoImages["nft-2"] },
+        { id: "PEPE", name: "Pepe", image: cryptoImages["nft-3"] },
+        { id: "POPCAT", name: "Popcat (SOL)", image: cryptoImages["nft-4"] },
+        { id: "SHIB", name: "Shiba Inu", image: cryptoImages["nft-5"] },
 
+    ]
 
     useLayoutEffect(() => {
         const container = containerRef.current;
@@ -58,7 +66,7 @@ const BlurContainer = () => {
                             return (
 
                                 <Item
-                                    cryptoIcon={cryptoImages[`nft-${index}`]}
+                                    crypto={cryptos[index]}
                                     key={index} // Assign a unique key to each item
                                     top={getRandomTop()} // Generate random top value
                                     left={getRandomLeft()} // Generate random left value
