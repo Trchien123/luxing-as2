@@ -1,4 +1,4 @@
-.report-container {
+/* .report-container {
     padding: 20px;
     max-height: 380px;
     overflow-y: auto;  
@@ -28,4 +28,43 @@
     .report-table {
         min-width: 600px;
     }
-}
+} */
+.report-table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .content-box {
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .lower-box {
+    font-size: 18px;
+    padding: 20px;
+    text-align: center;
+    font-size: 25px;
+  }
+  
+  .status-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+  }
+  .icon-and-log {
+    text-align: center;
+    margin-top: 10px;
+  }
+  .error-log {
+    font-size: 16px;
+    color: red;
+    font-weight: bold;
+    margin-top: 5px;
+  }

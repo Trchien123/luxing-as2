@@ -1,102 +1,108 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import * as d3 from "d3";
 
 const TransChart = () => {
+  const [chartWidth, setChartWidth] = useState(800); 
+  const height = 450; 
+  const margin = { top: 20, right: 20, bottom: 80, left: 60 };
+
+  const [selectedMonth, setSelectedMonth] = useState("January");
+  const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: "" });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newWidth = Math.min(window.innerWidth * 0.9, 800); 
+      setChartWidth(newWidth);
+    };
+
+    handleResize(); 
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
   const dataForMonths = {
-    January: [
-      { x: 1, y: 5 },
-      { x: 2, y: 10 },
-      { x: 3, y: 7 },
-      { x: 4, y: 12 },
-      { x: 5, y: 8 },
-    ],
-    February: [
-      { x: 1, y: 3 },
-      { x: 2, y: 6 },
-      { x: 3, y: 4 },
-      { x: 4, y: 11 },
-      { x: 5, y: 9 },
-    ],
-    March: [
-      { x: 1, y: 4 },
-      { x: 2, y: 9 },
-      { x: 3, y: 6 },
-      { x: 4, y: 10 },
-      { x: 5, y: 7 },
-    ],
-    April: [
-      { x: 1, y: 2 },
-      { x: 2, y: 7 },
-      { x: 3, y: 5 },
-      { x: 4, y: 13 },
-      { x: 5, y: 10 },
-    ],
-    May: [
-      { x: 1, y: 6 },
-      { x: 2, y: 8 },
-      { x: 3, y: 3 },
-      { x: 4, y: 9 },
-      { x: 5, y: 6 },
-    ],
-    June: [
-      { x: 1, y: 4 },
-      { x: 2, y: 7 },
-      { x: 3, y: 6 },
-      { x: 4, y: 8 },
-      { x: 5, y: 7 },
-    ],
+    January: {
+      Monday: { sent: 10, received: 15 },
+      Tuesday: { sent: 20, received: 25 },
+      Wednesday: { sent: 15, received: 10 },
+      Thursday: { sent: 30, received: 20 },
+      Friday: { sent: 25, received: 30 },
+      Saturday: { sent: 20, received: 15 },
+      Sunday: { sent: 10, received: 5 },
+    },
+    February: {
+      Monday: { sent: 12, received: 18 },
+      Tuesday: { sent: 22, received: 28 },
+      Wednesday: { sent: 18, received: 12 },
+      Thursday: { sent: 32, received: 22 },
+      Friday: { sent: 28, received: 35 },
+      Saturday: { sent: 25, received: 18 },
+      Sunday: { sent: 15, received: 8 },
+    },
+    March: {
+      Monday: { sent: 14, received: 20 },
+      Tuesday: { sent: 24, received: 30 },
+      Wednesday: { sent: 20, received: 15 },
+      Thursday: { sent: 34, received: 25 },
+      Friday: { sent: 30, received: 40 },
+      Saturday: { sent: 28, received: 20 },
+      Sunday: { sent: 18, received: 10 },
+    },
+    April: {
+      Monday: { sent: 16, received: 22 },
+      Tuesday: { sent: 26, received: 32 },
+      Wednesday: { sent: 22, received: 18 },
+      Thursday: { sent: 36, received: 28 },
+      Friday: { sent: 32, received: 38 },
+      Saturday: { sent: 30, received: 22 },
+      Sunday: { sent: 20, received: 12 },
+    },
+    May: {
+      Monday: { sent: 18, received: 24 },
+      Tuesday: { sent: 28, received: 34 },
+      Wednesday: { sent: 24, received: 20 },
+      Thursday: { sent: 38, received: 30 },
+      Friday: { sent: 34, received: 40 },
+      Saturday: { sent: 32, received: 24 },
+      Sunday: { sent: 22, received: 15 },
+    },
   };
-
-  const width = 600;
-  const height = 400;
-  const margin = { top: 20, right: 20, bottom: 80, left: 50 };
-
-  const [tooltip, setTooltip] = useState({ x: 0, y: 0, visible: false, value: "" });
-  const [selectedMonth, setSelectedMonth] = useState("January"); 
-
-  const data = dataForMonths[selectedMonth];
-
-  const xScale = useMemo(
-    () =>
-      d3
-        .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.x) + 1])
-        .range([margin.left, width - margin.right]),
-    [data, width, margin]
-  );
-
-  const yScale = useMemo(
-    () =>
-      d3
-        .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.y)])
-        .range([height - margin.bottom, margin.top]),
-    [data, height, margin]
-  );
-
-  const months = ["January", "February", "March", "April", "May", "June"];
 
   const handleMonthClick = (month) => {
-    setSelectedMonth(month); 
+    setSelectedMonth(month);
   };
+
+  const barWidth = (chartWidth - margin.left - margin.right) / (days.length * 3);
 
   return (
     <div
       style={{
-        width: "100%",        
-        height: "420px",      
-        overflow: "auto",     
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      <svg width={width} height={height}>
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${chartWidth} ${height}`}
+        preserveAspectRatio="xMidYMid meet"
+        style={{ maxWidth: "100%", height: "auto" }}
+      >
         {/* X Axis */}
         <g transform={`translate(0, ${height - margin.bottom})`} style={{ fontSize: "12px" }}>
-          <line x1={margin.left} x2={width - margin.right} stroke="black" />
-          {xScale.ticks(6).map((tick) => (
-            <g key={tick} transform={`translate(${xScale(tick)}, 0)`}>
-              <line y2={6} stroke="black" />
+          <line x1={margin.left} x2={chartWidth - margin.right} stroke="black" />
+          {days.map((day, index) => (
+            <g key={day} transform={`translate(${margin.left + index * barWidth * 3 + barWidth * 2}, 0)`}>
               <text y={15} dy="0.71em" textAnchor="middle">
-                {tick}
+                {day}
               </text>
             </g>
           ))}
@@ -105,8 +111,13 @@ const TransChart = () => {
         {/* Y Axis */}
         <g transform={`translate(${margin.left}, 0)`} style={{ fontSize: "12px" }}>
           <line y1={margin.top} y2={height - margin.bottom} stroke="black" />
-          {yScale.ticks(5).map((tick) => (
-            <g key={tick} transform={`translate(0, ${yScale(tick)})`}>
+          {d3.range(0, 45, 5).map((tick) => (
+            <g
+              key={tick}
+              transform={`translate(0, ${
+                height - margin.bottom - (tick * (height - margin.top - margin.bottom)) / 45
+              })`}
+            >
               <line x2={-6} stroke="black" />
               <text x={-10} dy="0.32em" textAnchor="end">
                 {tick}
@@ -115,71 +126,58 @@ const TransChart = () => {
           ))}
         </g>
 
-        {/* Line from (0, 0) to the first point */}
-        <line
-          x1={xScale(0)}
-          y1={yScale(0)}
-          x2={xScale(data[0].x)}
-          y2={yScale(data[0].y)}
-          stroke="red"
-        />
+        {/* Bar Chart */}
+        {days.map((day, index) => {
+          const dayData = dataForMonths[selectedMonth]?.[day];
+          if (!dayData) return null;
+          const sentHeight = (dayData.sent * (height - margin.top - margin.bottom)) / 45;
+          const receivedHeight = (dayData.received * (height - margin.top - margin.bottom)) / 45;
 
-        {/* Scatter Plot Points */}
-        {data.map((point, index) => (
-          <g key={index}>
-            {/* Circle */}
-            <circle
-              cx={xScale(point.x)}
-              cy={yScale(point.y)}
-              r={5}
-              fill="pink"
+          return (
+            <g
+              key={day}
+              transform={`translate(${margin.left + index * barWidth * 3 + barWidth * 1}, 0)`}
               onMouseEnter={() =>
                 setTooltip({
-                  x: xScale(point.x),
-                  y: yScale(point.y),
                   visible: true,
-                  value: `Time: ${point.x + point.y}`, 
-                  
+                  x: margin.left + index * barWidth * 3 + barWidth * 1.5,
+                  y: height - margin.bottom - Math.max(sentHeight, receivedHeight) - 10,
+                  value: `Sent: ${dayData.sent}, Received: ${dayData.received}`,
                 })
               }
-              onMouseLeave={() => setTooltip({ ...tooltip, visible: false })}
-            />
-          </g>
-        ))}
+              onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0, value: "" })}
+            >
+              {/* Sent Bar */}
+              <rect
+                x={0}
+                y={height - margin.bottom - sentHeight}
+                width={barWidth}
+                height={sentHeight}
+                fill="steelblue"
+              />
 
-        {/* Connecting Lines */}
-        {data.slice(0, -1).map((point, index) => (
-          <line
-            key={index}
-            x1={xScale(point.x)}
-            y1={yScale(point.y)}
-            x2={xScale(data[index + 1].x)}
-            y2={yScale(data[index + 1].y)}
-            stroke="red"
-          />
-        ))}
+              {/* Received Bar */}
+              <rect
+                x={barWidth + 5}
+                y={height - margin.bottom - receivedHeight}
+                width={barWidth}
+                height={receivedHeight}
+                fill="orange"
+              />
+            </g>
+          );
+        })}
 
-        {/* Tooltip Box */}
+        {/* Tooltip */}
         {tooltip.visible && (
-          <g transform={`translate(${tooltip.x - 20}, ${tooltip.y - 30})`}>
-            <rect
-              width="60"
-              height="25"
-              fill="lightblue"
-              stroke="black"
-              rx="5"
-              ry="5"
-            />
+          <g transform={`translate(${tooltip.x}, ${tooltip.y})`}>
+            <rect width="120" height="30" fill="white" stroke="black" rx="5" ry="5" />
             <text
-              x={30}
-              y={15}
+              x="60"
+              y="20"
               textAnchor="middle"
-              style={{
-                fontSize: "12px",
-                fontWeight: "bold",
-                fill: "black",
-                pointerEvents: "none", 
-              }}
+              fill="black"
+              style={{ fontSize: "12px" }}
             >
               {tooltip.value}
             </text>
@@ -187,31 +185,36 @@ const TransChart = () => {
         )}
 
         {/* Month Boxes at the Bottom */}
-        <g transform={`translate(${margin.left}, ${height - margin.bottom + 50})`}>
-          {months.map((month, index) => (
-            <g key={month} transform={`translate(${(width - margin.left - margin.right) / 6 * index}, 0)`}>
-              <rect
-                x={0}
-                y={0}
-                width={(width - margin.left - margin.right) / 6 - 10}  
-                height={30}
-                fill={selectedMonth === month ? "lightblue" : "lightgray"}
-                stroke="black"
-                cursor="pointer"
-                onClick={() => handleMonthClick(month)}
-              />
-              <text
-                x={(width - margin.left - margin.right) / 12 - 10}
-                y={20}
-                textAnchor="middle"
-                fill="black"
-                style={{ fontSize: "12px" }}
-              >
-                {month}
-              </text>
-            </g>
-          ))}
-        </g>
+<g transform={`translate(${margin.left}, ${height - margin.bottom + 50})`}>
+  {["January", "February", "March", "April", "May"].map((month, index) => (
+    <g key={month} transform={`translate(${index * (chartWidth - margin.left - margin.right) / 5}, 0)`}>
+      <rect
+        x={0}
+        y={0}
+        width={(chartWidth - margin.left - margin.right) / 5 - 10}
+        height={30}
+        fill={selectedMonth === month ? "lightblue" : "lightgray"}
+        stroke="black"
+        cursor="pointer"
+        onClick={() => handleMonthClick(month)}
+      />
+      {/* Text centered on the button */}
+      <text
+        x={((chartWidth - margin.left - margin.right) / 5 - 10) / 2}
+        y={20}
+        textAnchor="middle"
+        fill="black"
+        style={{
+          fontSize: "12px",
+          pointerEvents: "none",
+        }}
+      >
+        {month}
+      </text>
+    </g>
+  ))}
+</g>
+
       </svg>
     </div>
   );
