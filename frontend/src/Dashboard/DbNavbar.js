@@ -2,7 +2,7 @@ import React from "react";
 import DbItem from "./DbItem";
 import { Link } from "react-router-dom";
 
-const DbNavbar = ({ setShowBar }) => {
+const DbNavbar = ({ setShowBar, avatar }) => {
     const handleShowBar = () => {
         if (window.innerWidth <= 768) {
             setShowBar(false)
@@ -34,7 +34,9 @@ const DbNavbar = ({ setShowBar }) => {
 
             </div>
 
-            <div className="avatar">
+            <div className="avatar" style={{
+                backgroundImage: `url(${avatar})`,
+            }}>
 
             </div>
             <h1 className="navbar--name">Address</h1>

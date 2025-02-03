@@ -3,6 +3,9 @@ import Item from "./BlurItem";
 import SwapContainer from "./SwapContainer";
 import PopUp from "./popup";
 import './style/home.css'
+import cryptoImages from "./Dashboard/CryptoImages";
+
+console.log(cryptoImages)
 const image1 = require("./asset/temp.png")
 const BlurContainer = () => {
     const containerRef = useRef(null);
@@ -55,6 +58,7 @@ const BlurContainer = () => {
                             return (
 
                                 <Item
+                                    cryptoIcon={cryptoImages[`nft-${index}`]}
                                     key={index} // Assign a unique key to each item
                                     top={getRandomTop()} // Generate random top value
                                     left={getRandomLeft()} // Generate random left value

@@ -3,7 +3,8 @@ import "./style/item.css"
 
 
 import { Link } from "react-router-dom";
-const Item = ({ top, left, animation, shape }) => {
+
+const Item = ({ top, left, animation, shape, cryptoIcon }) => {
     const [onHover, setOnHover] = useState(false)
 
     const getRandomDuration = (min, max) => {
@@ -15,23 +16,27 @@ const Item = ({ top, left, animation, shape }) => {
     }
     const isLeftPositionLarge = left > (window.innerWidth * 2 / 3);
     return (
-        <Link to={'/Dashboard'} className="blur-container--url">
+        <Link to={'/Dashboard'} state={cryptoIcon} className="blur-container--url" >
             <div className={`item ${shape}`} style={
                 {
+
                     top: `${top}px`,
+                    backgroundImage: `url(${cryptoIcon})`,
                     left: `${left}px`,
                     animation: `popUp 2s none, ${animation} ${getRandomDuration(4, 6)}s ease-in-out infinite`,
-                    filter: `blur(${getRandomDuration(5, 20)}px)`
+                    filter: `blur(${getRandomDuration(5, 20)}px)`,
+                    AnimationTimeline: `view()`
                 }
 
             }
                 onMouseEnter={() => setOnHover(true)}
                 onMouseLeave={() => setOnHover(false)}
             >
+
                 {onHover && <ItemInfo isLeftPositionLarge={isLeftPositionLarge} />}
             </div>
 
-        </Link>
+        </Link >
     )
 }
 

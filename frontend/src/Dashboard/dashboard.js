@@ -1,13 +1,18 @@
 import { React, useState, useEffect, useRef } from "react";
 import '../style/dashboard.css';
 import {
-    Outlet
+    Outlet,
+    useLocation
 } from 'react-router-dom';
 
 import DbHeader from "./DbHeader";
 
 import DbNavbar from "./DbNavbar";
 const Dashboard = () => {
+    const location = useLocation();
+
+    const image = location.state
+    console.log(image)
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef(null);
     const [showBar, setShowBar] = useState(true)
@@ -31,7 +36,7 @@ const Dashboard = () => {
     return (
         <section className="DB-section">
             {
-                showBar && <DbNavbar setShowBar={setShowBar} />
+                showBar && <DbNavbar setShowBar={setShowBar} avatar={image} />
             }
             <div ref={containerRef} className="DB-container">
 
