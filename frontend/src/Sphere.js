@@ -3,12 +3,13 @@ import * as THREE from "three";
 import { OrbitControls } from "three-stdlib";
 import { getFresnelMat } from "./Sphere/getFresnelMat.js";
 import Small from "./Small__table";
-const Ratio = window.innerWidth * 2.56
+
+const Ratio = window.innerWidth * 2.56;
+
 const Sphere = () => {
   const [selectedDot, setSelectedDot] = useState(null);
 
   useEffect(() => {
-
     const container = document.getElementById("earth-container");
     if (!container) {
       console.error("'sphere-container' not found in the DOM.");
@@ -21,10 +22,9 @@ const Sphere = () => {
 
     const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
     if (Ratio / w < 2.5) {
-      camera.position.z = 2.5
-    }
-    else {
-      camera.position.z = Ratio / w
+      camera.position.z = 2.5;
+    } else {
+      camera.position.z = Ratio / w;
     }
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -37,7 +37,7 @@ const Sphere = () => {
     renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
     const earthGroup = new THREE.Group();
-    earthGroup.rotation.z = -23.4 * Math.PI / 180;
+    earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
     scene.add(earthGroup);
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -57,17 +57,22 @@ const Sphere = () => {
     const earthMesh = new THREE.Mesh(geometry, material);
     earthGroup.add(earthMesh);
 
-    // Dot creation
-    const dotGeometry = new THREE.SphereGeometry(0.04, 6);
-    const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xfc6c85, raycast: true, side: THREE.DoubleSide});
-    // const outlineGeometry = new THREE.EdgesGeometry(dotGeometry); // Generates edges from the hexagon geometry
-    // const outlineMaterial = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 1 });
+    const icons = ["/icon/icon1.png", 
+                  "/icon/icon2.png", 
+                  "/icon/icon3.png", 
+                  "/icon/icon4.png",
+                  "/icon/icon5.png", 
+                  "/icon/icon6.png", 
+                  "/icon/icon7.png", 
+                  "/icon/icon8.png", ];
+    const usedIcons = new Set();
+
     const dotMeshArray = [];
     const dotInitialPositions = [];
     const dotGroup = new THREE.Group();
     scene.add(dotGroup);
 
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 4; i++) {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.random() * Math.PI;
 
@@ -75,45 +80,39 @@ const Sphere = () => {
       const y = Math.sin(phi) * Math.sin(theta);
       const z = Math.cos(phi);
 
-      const dotMesh = new THREE.Mesh(dotGeometry, dotMaterial);
-      dotMesh.position.set(x * 1.1, y * 1.1, z * 1.1);
-      dotMesh.lookAt(0,0,0);
-      dotMeshArray.push(dotMesh);
+      let icon;
+      do {
+        icon = icons[Math.floor(Math.random() * icons.length)];
+      } while (usedIcons.has(icon));
+      usedIcons.add(icon);
 
-      // const outlineMesh = new THREE.LineSegments(outlineGeometry, outlineMaterial);
-      // outlineMesh.position.copy(dotMesh.position); // Match position with the hexagon
-      // outlineMesh.lookAt(0, 1, 1);
+      const iconTexture = loader.load(icon);
+      const iconMaterial = new THREE.SpriteMaterial({ map: iconTexture });
+      const iconSprite = new THREE.Sprite(iconMaterial);
+      iconSprite.scale.set(0.2, 0.2, 0.2);
+      iconSprite.position.set(x * 1.1, y * 1.1, z * 1.1);
 
-      dotMesh.userData = { index: i, x, y, z };
-      dotInitialPositions.push({ theta, phi }); // Store initial spherical coordinates for each dot
-      scene.add(dotMesh); // Ensure the dots are added to the scene
-      // scene.add(outlineMesh);
-      dotGroup.add(dotMesh);
+      dotMeshArray.push(iconSprite);
+      iconSprite.userData = { index: i, x, y, z };
+      dotInitialPositions.push({ theta, phi });
+      dotGroup.add(iconSprite);
     }
 
-    // Raycasting setup
     const raycaster = new THREE.Raycaster();
-
 
     function onMouseClick(event) {
       const rect = renderer.domElement.getBoundingClientRect();
       const mouse = new THREE.Vector2();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
+
       raycaster.setFromCamera(mouse, camera);
-      console.log("Raycaster origin:", raycaster.ray.origin); // Debug
-      console.log("Raycaster direction:", raycaster.ray.direction); // Debug
       const intersects = raycaster.intersectObjects(dotMeshArray, false);
-      console.log("Intersections:", intersects); // Debug
+
       if (intersects.length > 0) {
         const selected = intersects[0].object.userData;
-        console.log("Selected dot data:", selected); // Debug
-        setSelectedDot(selected); // Update selected dot
-      } else {
-        console.log("No intersection detected");
+        setSelectedDot(selected);
       }
-      
     }
 
     window.addEventListener("click", onMouseClick, false);
@@ -147,26 +146,23 @@ const Sphere = () => {
 
     function animate() {
       requestAnimationFrame(animate);
-  
-      dotGroup.rotation.y +=0.002;
-      dotGroup.rotation.x +=0.0005;
+
+      dotGroup.rotation.y += 0.002;
+      dotGroup.rotation.x += 0.0005;
       earthMesh.rotation.y += 0.002;
       lightsMesh.rotation.y += 0.002;
       cloudsMesh.rotation.y += 0.0023;
       glowMesh.rotation.y += 0.002;
 
-      // Rotate dots along with the sphere's rotation
       dotMeshArray.forEach((dot, i) => {
         const { theta, phi } = dotInitialPositions[i];
-
         const currentTheta = theta + earthGroup.rotation.y;
-        const currentPhi = phi;
-
-        const x = Math.sin(currentPhi) * Math.cos(currentTheta);
-        const y = Math.sin(currentPhi) * Math.sin(currentTheta);
-        const z = Math.cos(currentPhi);
+        const x = Math.sin(phi) * Math.cos(currentTheta);
+        const y = Math.sin(phi) * Math.sin(currentTheta);
+        const z = Math.cos(phi);
 
         dot.position.set(x * 1.1, y * 1.1, z * 1.1);
+        dot.lookAt(camera.position);
       });
 
       renderer.render(scene, camera);
@@ -178,17 +174,11 @@ const Sphere = () => {
       const w = container?.clientWidth || window.innerWidth;
       const h = container?.clientHeight || window.innerHeight;
       camera.aspect = w / h;
-      if (Ratio / w < 2.5) {
-        camera.position.z = 2.5
-      }
-      else {
-        camera.position.z = Ratio / w
-      }
-
+      camera.position.z = Ratio / w < 2.5 ? 2.5 : Ratio / w;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      console.log(camera.position.z)
     }
+
     window.addEventListener("resize", handleWindowResize);
 
     return () => {
@@ -199,10 +189,8 @@ const Sphere = () => {
     };
   }, []);
 
-
   return (
-    <div id="earth-container" className="sphere-container" >
-      {/* Pass selectedDot to Small */}
+    <div id="earth-container" className="sphere-container">
       <Small dotData={selectedDot} onClose={() => setSelectedDot(null)} />
     </div>
   );
