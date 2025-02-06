@@ -30,41 +30,97 @@
     }
 } */
 .report-table-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  
-  .content-box {
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .lower-box {
-    font-size: 18px;
-    padding: 20px;
-    text-align: center;
-    font-size: 25px;
-  }
-  
-  .status-icon {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-  }
-  .icon-and-log {
-    text-align: center;
-    margin-top: 10px;
-  }
-  .error-log {
-    font-size: 16px;
-    color: red;
-    font-weight: bold;
-    margin-top: 5px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  max-height:380px;
+}
+
+.lower-box {
+  font-size: 25px;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.icon-and-log {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.status-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.error-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-box {
+  display: flex;
+  align-items: flex-start;
+  border: 2px solid red;
+  background-color: #ffe5e5;
+  padding: 10px;
+  border-radius: 5px;
+  width: 300px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.error-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  object-fit: contain;
+}
+
+.error-text {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.error-details {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #333;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+.expanded .error-details {
+  max-height: 100px; 
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.see-more-button {
+  margin-top: 5px;
+  background: none;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: left;
+  padding: 0;
+}
+
+.see-more-button:hover {
+  text-decoration: underline;
+}
