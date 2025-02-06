@@ -2,12 +2,12 @@ import React from "react";
 import './style/sphere.css';
 
 const Sphere__head = () => {
-    return (
-        <div class="sphere--title">
+    // return (
+    //     <div class="sphere--title">
 
-            <h1 class="sphere--title-content">Data: The World in Motion</h1>
+    //         <h1 class="sphere--title-content">Data: The World in Motion</h1>
 
-        </div>
-    )
+    //     </div>
+    // )
 }
 export default Sphere__head;
