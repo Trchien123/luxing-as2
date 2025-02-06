@@ -84,3 +84,39 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 100;
 }
+.sphere-smalltable h2 {
+  margin-bottom: 5px;
+  font-size: 20px;
+  color: lightblue;
+  font-weight: 500;
+}
+
+.sphere-smalltable h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.sphere-smalltable p {
+  line-height: 1.8; 
+  margin: 8px 0;     
+}
+
+.sphere-smalltable hr {
+  margin: 15px 0;    
+}
+
+.sphere-smalltable button {
+  margin-top: 15px;
+  padding: 8px 12px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.sphere-smalltable button:hover {
+  background: #d32f2f;
+}
