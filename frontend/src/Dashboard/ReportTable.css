@@ -37,6 +37,7 @@
   padding: 20px;
   box-sizing: border-box;
   overflow-x: hidden;
+  max-height:380px;
 }
 
 .lower-box {

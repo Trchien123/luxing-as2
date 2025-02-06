@@ -8,7 +8,7 @@ const ReportTable = () => {
   const errorLogs = [
     { id: 1, message: "Error 1: Something went wrong.", details: "This is a long error description. It explains what went wrong in detail. If the error log is too long, it should scroll inside the box." },
     { id: 2, message: "Error 2: Failed to fetch data.", details: "Error 2 occurred due to network issues. Try checking your connection and retrying the request." },
-    { id: 3, message: "Error 3: Unexpected server response.", details: "Server returned an invalid response format. Ensure the API is responding correctly and check the logs." }
+    { id: 3, message: "Error 3: Unexpected server response.", details: "Server returned an invalid response format. Ensure the API is responding correctly and check the logs." },
   ];
 
   const handleToggleError = () => {
