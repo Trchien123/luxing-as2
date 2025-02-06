@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
+import React, { useRef, useLayoutEffect, useState } from "react";
 import Item from "./BlurItem";
 import SwapContainer from "./SwapContainer";
 import PopUp from "./popup";
