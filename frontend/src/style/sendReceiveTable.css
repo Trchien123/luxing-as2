@@ -48,6 +48,27 @@ td {
   color: #fff;
   border-bottom: solid 1px rgba(255, 255, 255, 0.1);
 }
+.button-container {
+  display: flex;
+  position: relative;
+  justify-content: flex-end;
+  margin: 20px 10px;
+}
+.more-details-button {
+  background-color: #845fff;
+  color: white;
+  padding: 14px 25px;
+  text-align: center;
+  justify-content: center;
+  text-decoration: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.more-details-button:hover {
+  background-color: #2d0e83;
+  color: #ccc;
+}
+
 @media (max-width: 600px) {
   th,
   td {
