@@ -1,0 +1,16 @@
+.bar {
+    transition: all 1s ease;
+  }
+  
+  .month-button {
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .month-button:hover {
+    filter: brightness(1.1);
+  }
+  
+  .tooltip {
+    transition: opacity 0.2s ease;
+  }
