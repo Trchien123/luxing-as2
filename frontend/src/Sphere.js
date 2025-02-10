@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three-stdlib";
 import { getFresnelMat } from "./Sphere/getFresnelMat.js";
-import Small from "./Small__table";
+import Small,  { coinData } from "./Small__table";
+
 
 const Ratio = window.innerWidth * 2.56;
 
@@ -57,22 +58,12 @@ const Sphere = () => {
     const earthMesh = new THREE.Mesh(geometry, material);
     earthGroup.add(earthMesh);
 
-    const icons = ["/icon/icon1.png", 
-                  "/icon/icon2.png", 
-                  "/icon/icon3.png", 
-                  "/icon/icon4.png",
-                  "/icon/icon5.png", 
-                  "/icon/icon6.png", 
-                  "/icon/icon7.png", 
-                  "/icon/icon8.png", ];
-    const usedIcons = new Set();
-
     const dotMeshArray = [];
     const dotInitialPositions = [];
     const dotGroup = new THREE.Group();
     scene.add(dotGroup);
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 6; i++) {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.random() * Math.PI;
 
@@ -80,12 +71,9 @@ const Sphere = () => {
       const y = Math.sin(phi) * Math.sin(theta);
       const z = Math.cos(phi);
 
-      let icon;
-      do {
-        icon = icons[Math.floor(Math.random() * icons.length)];
-      } while (usedIcons.has(icon));
-      usedIcons.add(icon);
+      
 
+      const icon = coinData[i].icon;
       const iconTexture = loader.load(icon);
       const iconMaterial = new THREE.SpriteMaterial({ map: iconTexture });
       const iconSprite = new THREE.Sprite(iconMaterial);
@@ -93,7 +81,10 @@ const Sphere = () => {
       iconSprite.position.set(x * 1.1, y * 1.1, z * 1.1);
 
       dotMeshArray.push(iconSprite);
-      iconSprite.userData = { index: i, x, y, z };
+      iconSprite.userData = { 
+        coinIndex: i,  
+        x, y, z 
+      };
       dotInitialPositions.push({ theta, phi });
       dotGroup.add(iconSprite);
     }
