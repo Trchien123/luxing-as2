@@ -1,16 +1,80 @@
 .bar {
     transition: all 1s ease;
+    opacity: 0.9;
   }
   
-  .month-button {
+.month-button {
     transition: all 0.2s ease;
     cursor: pointer;
-  }
+}
   
-  .month-button:hover {
+.month-button:hover {
     filter: brightness(1.1);
-  }
+}
+.month-button text {
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.month-button rect {
+  transition: all 0.2s;
+  rx: 5;
+  ry: 5;
+}
+
+.month-button:hover rect {
+  filter: brightness(1.1);
+}
   
-  .tooltip {
+.tooltip {
     transition: opacity 0.2s ease;
-  }
+    pointer-events: none;
+}
+.axis line, .axis path {
+  stroke: white;
+}
+
+.axis text {
+  fill: white;
+}
+
+.tooltip rect {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.tooltip text {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.bar:hover {
+  filter: brightness(1.2) drop-shadow(0 0 2px rgba(255, 255, 255, 0.7));
+  opacity: 1;
+  transform: translateY(-1px);
+  transition: 0.5s;
+}
+.chart-container {
+
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.tooltip-html {
+  position: absolute;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  pointer-events: none;
+  font-size: 14px;
+  color: #1f2937;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tooltip-html.visible {
+  opacity: 1;
+}
