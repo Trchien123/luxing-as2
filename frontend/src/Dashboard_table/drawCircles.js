@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; 
 import { 
     sender, 
     names, 
@@ -49,42 +49,61 @@ function DrawCircle() {
     const circleRadius = 250;
     const points = calculateCirclePoints(circleCenter.x, circleCenter.y, circleRadius, numPoints);
 
-    const normalizedamountsTransferred = Normalization(amountsTransferred, numPoints);
-
     const [selectedNode, setSelectedNode] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [currentTransactions, setCurrentTransactions] = useState(amountsTransferred.slice(0, 20));
+    const [currentNames, setCurrentNames] = useState(names.slice(0, 20)); // Add state for currentNames
 
-    const handleNodeClick = (index) => {
-        // Determine if the transaction is negative
-        const isNegativeTransaction = amountsTransferred[index] < 0;
-    
-        // Set sender and receiver based on the transaction amount (negative or positive)
-        setSelectedNode({
-            sender: isNegativeTransaction ? names[index] : sender[index], // Use names[index] for negative transactions, or sender[index] for positive
-            receiver: isNegativeTransaction ? sender[index] : names[index], // Use sender[index] for negative transactions, or names[index] for positive
-            transactionHash: transactionHashes[index],
-            timestamp: timestamps[index],
-            blockNumber: blockNumbers[index],
-            status: statuses[index],
-            amountTransferred: amountsTransferred[index],
-            transactionFee: transactionFees[index],
-            gasUsed: gasUsed[index],
-            gasPrice: gasPrices[index],
-            contractAddress: contractAddresses[index],
-            tokenType: tokenTypes[index],
-            tokenAmount: tokenAmounts[index],
-            confirmation: confirmations[index],
-            mempoolStatus: mempoolStatuses[index],
-            signature: signatures[index],
+    useEffect(() => {
+        // Update both transactions and names when the page changes
+        const start = currentPage * 20;
+        const end = (currentPage + 1) * 20;
+
+        setCurrentTransactions(amountsTransferred.slice(start, end));
+        setCurrentNames(names.slice(start, end)); // Update names for current page
+    }, [currentPage, amountsTransferred, names]); // Trigger whenever currentPage, amountsTransferred, or names changes
+
+    const normalizedamountsTransferred = Normalization(currentTransactions, numPoints);
+
+    const handleNodeClick = (index) => { 
+        const adjustedIndex = currentPage * 20 + index;
+        const isNegativeTransaction = currentTransactions[index] < 0;
+
+        setSelectedNode({ 
+            sender: isNegativeTransaction ? names[adjustedIndex] : sender[adjustedIndex],
+            receiver: isNegativeTransaction ? sender[adjustedIndex] : names[adjustedIndex],
+            transactionHash: transactionHashes[adjustedIndex],
+            timestamp: timestamps[adjustedIndex],
+            blockNumber: blockNumbers[adjustedIndex],
+            status: statuses[adjustedIndex],
+            amountTransferred: currentTransactions[index],
+            transactionFee: transactionFees[adjustedIndex],
+            gasUsed: gasUsed[adjustedIndex],
+            gasPrice: gasPrices[adjustedIndex],
+            contractAddress: contractAddresses[adjustedIndex],
+            tokenType: tokenTypes[adjustedIndex],
+            tokenAmount: tokenAmounts[adjustedIndex],
+            confirmation: confirmations[adjustedIndex],
+            mempoolStatus: mempoolStatuses[adjustedIndex],
+            signature: signatures[adjustedIndex],
         });
-    
+
         setIsModalOpen(true); // Show modal when a transaction is clicked
     };
-    
 
     const handleClose = () => {
         setSelectedNode(null);
         setIsModalOpen(false); // Hide modal
+    };
+
+    // Pagination handlers
+    const handleNextPage = () => {
+        if (currentPage < Math.ceil(amountsTransferred.length / 20) - 1) setCurrentPage(currentPage + 1);
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 0) setCurrentPage(currentPage - 1);
     };
 
     return (
@@ -97,7 +116,7 @@ function DrawCircle() {
                     const midX = (circleCenter.x + point.x) / 2;
                     const midY = (circleCenter.y + point.y) / 2;
 
-                    const textLength = amountsTransferred[index].toString().length * 7;
+                    const textLength = currentTransactions[index].toString().length * 7;
                     const padding = 4;
                     const rectWidth = textLength + padding;
                     const rectHeight = 18;
@@ -108,13 +127,13 @@ function DrawCircle() {
                             <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={5}/>
                             <rect x={midX - rectWidth / 2} y={midY - rectHeight / 2} width={rectWidth} height={rectHeight} fill="#442597" />
                             <text x={midX} y={midY} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                                {amountsTransferred[index]}
+                                {currentTransactions[index]}
                             </text>
                             <text id="receivers" x={point.x+5} y={point.y-37} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                                {names[index]}
+                                {currentNames[index]}  {/* Use currentNames here */}
                             </text>
                         </g>
-                    )
+                    );
                 })}
                 <circle id="main-circle" cx={350} cy={350} r={30} fill="white" />
                 <text id="chien-name" x={350} y={350} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
@@ -138,8 +157,6 @@ function DrawCircle() {
                         <h4>Sender & Receiver</h4>
                         <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
                         <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
-                        <p>🔢 <strong>Inputs:</strong> 1</p>
-                        <p>🔢 <strong>Outputs:</strong> 2</p>
 
                         <h4>Amount & Fees</h4>
                         <p>💰 <strong>Amount Transferred:</strong> {selectedNode.amountTransferred}</p>
@@ -159,8 +176,15 @@ function DrawCircle() {
                     </div>
                 )}
             </div>
+
+            {/* Pagination Controls */}
+            <div className="pagination-controls">
+                <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                <span>Page {currentPage + 1} of {2}</span>
+                <button onClick={handleNextPage} disabled={currentPage === 2 - 1}>Next</button>
+            </div>
         </div>
-    )
-};
+    );
+}
 
 export default DrawCircle;
