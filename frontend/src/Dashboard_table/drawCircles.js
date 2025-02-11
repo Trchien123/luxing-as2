@@ -30,35 +30,38 @@ function calculateCirclePoints(a, b, R, numPoints = 20) {
     return points;
 }
 
-function Normalization(radii, numRadii) {
-    const positiveRadii = radii.map(value => Math.abs(value));
-    const maxValue = Math.max(...positiveRadii);
-    const normalizedRadii = [];
+function Normalization(amountsTransferred, numamountsTransferred) {
+    const positiveamountsTransferred = amountsTransferred.map(value => Math.abs(value));
+    const maxValue = Math.max(...positiveamountsTransferred);
+    const normalizedamountsTransferred = [];
 
-    for (let i = 0; i < numRadii; i++) {
-        const normalized = (positiveRadii[i] / maxValue) * 20 + 10;
-        normalizedRadii.push({normalized});
+    for (let i = 0; i < numamountsTransferred; i++) {
+        const normalized = (positiveamountsTransferred[i] / maxValue) * 20 + 10;
+        normalizedamountsTransferred.push({normalized});
     }
     
-    return normalizedRadii;
+    return normalizedamountsTransferred;
 }
 
 function DrawCircle() {
     const numPoints = 20;
-    const circleCenter = {x: 300 , y: 300};
+    const circleCenter = {x: 350 , y: 350};
     const circleRadius = 250;
     const points = calculateCirclePoints(circleCenter.x, circleCenter.y, circleRadius, numPoints);
 
-    const normalizedRadii = Normalization(radii, numPoints);
+    const normalizedamountsTransferred = Normalization(amountsTransferred, numPoints);
 
     const [selectedNode, setSelectedNode] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleNodeClick = (index) => {
+        // Determine if the transaction is negative
+        const isNegativeTransaction = amountsTransferred[index] < 0;
+    
+        // Set sender and receiver based on the transaction amount (negative or positive)
         setSelectedNode({
-            sender: sender,
-            receiver: names[index],
-            transaction: radii[index],
+            sender: isNegativeTransaction ? names[index] : sender[index], // Use names[index] for negative transactions, or sender[index] for positive
+            receiver: isNegativeTransaction ? sender[index] : names[index], // Use sender[index] for negative transactions, or names[index] for positive
             transactionHash: transactionHashes[index],
             timestamp: timestamps[index],
             blockNumber: blockNumbers[index],
@@ -74,8 +77,10 @@ function DrawCircle() {
             mempoolStatus: mempoolStatuses[index],
             signature: signatures[index],
         });
+    
         setIsModalOpen(true); // Show modal when a transaction is clicked
     };
+    
 
     const handleClose = () => {
         setSelectedNode(null);
@@ -84,26 +89,26 @@ function DrawCircle() {
 
     return (
         <div className="transaction-visualization">
-            <svg id="visualization" viewBox="0 0 600 600" width="50%" height="50%">
+            <svg id="visualization" viewBox="0 0 700 700" width="50%" height="50%">
                 {points.map((point, index) => {
-                    const adjustedX = point.x - normalizedRadii[index].normalized * Math.cos(point.alpha);
-                    const adjustedY = point.y - normalizedRadii[index].normalized * Math.sin(point.alpha);
+                    const adjustedX = point.x - normalizedamountsTransferred[index].normalized * Math.cos(point.alpha);
+                    const adjustedY = point.y - normalizedamountsTransferred[index].normalized * Math.sin(point.alpha);
 
                     const midX = (circleCenter.x + point.x) / 2;
                     const midY = (circleCenter.y + point.y) / 2;
 
-                    const textLength = radii[index].toString().length * 7;
+                    const textLength = amountsTransferred[index].toString().length * 7;
                     const padding = 4;
                     const rectWidth = textLength + padding;
                     const rectHeight = 18;
 
                     return (
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
-                            <circle cx={point.x} cy={point.y} r={normalizedRadii[index].normalized} fill="none" stroke="white" strokeWidth={3} />
-                            <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={3}/>
+                            <circle cx={point.x} cy={point.y} r={normalizedamountsTransferred[index].normalized} fill="none" stroke="white" strokeWidth={5} />
+                            <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={5}/>
                             <rect x={midX - rectWidth / 2} y={midY - rectHeight / 2} width={rectWidth} height={rectHeight} fill="#442597" />
                             <text x={midX} y={midY} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                                {radii[index]}
+                                {amountsTransferred[index]}
                             </text>
                             <text id="receivers" x={point.x+5} y={point.y-37} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
                                 {names[index]}
@@ -111,8 +116,7 @@ function DrawCircle() {
                         </g>
                     )
                 })}
-                <circle id="main-circle" cx={300} cy={300} r={30} fill="white" />
-                <text id="sender" x="300" y="300" fontSize="17px" fill="white" textAnchor="middle" alignmentBaseline="middle">{sender}</text>
+                <circle id="main-circle" cx={350} cy={350} r={30} fill="white" />
             </svg>
             
             {isModalOpen && <div className="transaction-backdrop visible" onClick={handleClose}></div>}

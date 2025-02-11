@@ -1,8 +1,3 @@
-export const radii = [
-    9133, 5457, 3085, 2746, 4254, 8000, 1907, 8947, 3183, 8323, 7021, 6429, 
-    5252, -7054, 3571, 7741, 4020, 1702, 8688, 8458
-];
-
 export const transactionHashes = [
     "0x9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a",
     "0xa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
@@ -63,7 +58,10 @@ export const statuses = [
 ];
 
 export const sender = [
-    "Chien"
+    "Chien", "Chien", "Chien", "Chien", "Chien",
+    "Chien", "Chien", "Chien", "Chien", "Chien",
+    "Chien", "Chien", "Chien", "Chien", "Chien",
+    "Chien", "Chien", "Chien", "Chien", "Chien"
 ];
 
 export const names = [
@@ -84,10 +82,10 @@ export const outputCounts = [
 ];
 
 export const amountsTransferred = [
-    "0.75 ETH", "0.25 ETH", "1.0 ETH", "0.5 ETH", "0.3 ETH",
-    "0.9 ETH", "0.7 ETH", "1.2 ETH", "0.8 ETH", "0.6 ETH",
-    "1.5 ETH", "0.4 ETH", "0.95 ETH", "0.2 ETH", "0.6 ETH",
-    "0.8 ETH", "1.1 ETH", "0.4 ETH", "0.7 ETH", "0.3 ETH"
+    0.75, 0.25, 1.0, -0.5, 0.3,
+    0.9, 0.7, 1.2, 0.8, 0.6,
+    1.5, 0.4, 0.95, 0.2, 0.6,
+    0.8, 1.1, 0.4, 0.7, 0.3
 ];
 
 export const transactionFees = [
