@@ -143,10 +143,6 @@
     color: red;
 }
 
-.transaction-details-container .close-button:hover {
-    color: red;
-}
-
 #main-circle:hover {
     fill: #669900;
 }
@@ -184,14 +180,12 @@
 .transaction-details-content {
     width: 100%;
     text-align: left;
-    padding: 15px; /* Add some padding for breathing space */
-    overflow-wrap: break-word; /* Ensure long words break correctly */
+    padding: 15px;
+    overflow-wrap: break-word;
 }
 
 .transaction-details-content h3 {
     font-style: italic;
-    text-align: center;
-    font-size: 2vw; /* Adjusted for responsiveness */
     font-weight: bold;
     margin-bottom: 15px;
     padding-bottom: 5px;
@@ -201,36 +195,39 @@
     font-style: italic;
     border-top: 2px solid #669900;
     padding-bottom: 5px;
-    font-size: 1.75vw; /* Adjusted for responsiveness */
     text-align: center;
     padding-top: 20px;
 }
 
 .transaction-details-content p {
     padding-left: 10px;
-    font-size: 1.5vw; /* Ensure readability on small screens */
     margin-bottom: 10px;
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+    /* Container for the transaction details */
     .transaction-details-container {
         width: 90%;
-        max-width: 100%; /* Allow for better scaling */
-        padding: 10px; /* Adjust padding on smaller screens */
-        max-height: 80vh; /* Ensure it fits smaller screens */
+        max-width: 100%;
+        padding: 15px; /* Increased padding for better touch targets */
+        max-height: 70vh; /* Allow for better scaling */
+        overflow-y: auto; /* Ensure content is scrollable if too long */
     }
 
+    /* Transaction content */
     .transaction-details-content h3 {
-        font-size: 3vw; /* Larger font size for mobile */
+        font-size: 6vw; /* Larger font size for mobile */
+        text-align: center;
     }
 
     .transaction-details-content h4 {
-        font-size: 2.5vw;
+        font-size: 5vw;
+        text-align: center;
     }
 
     .transaction-details-content p {
-        font-size: 2vw; /* Ensure text is readable on small devices */
+        font-size: 4vw; /* Ensure readability on small screens */
     }
 
     .Dbtable-component {
@@ -240,16 +237,24 @@
 
 /* Larger Screen Enhancements */
 @media (min-width: 926px) {
+    .transaction-details-container {
+        width: 60%; /* Adjust width for larger screens */
+        padding: 30px;
+    }
 
+    /* Transaction content */
     .transaction-details-content h3 {
-        font-size: 1.5vw; /* Slightly smaller for larger screens */
+        font-size: 2.5vw; /* Slightly smaller font size */
+        text-align: left;
     }
 
     .transaction-details-content h4 {
-        font-size: 1.25vw;
+        font-size: 2vw;
+        text-align: left;
     }
 
     .transaction-details-content p {
-        font-size: 1vw;
+        font-size: 1.5vw; /* Ensure readability for larger screens */
     }
 }
+
