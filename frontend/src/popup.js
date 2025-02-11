@@ -3,16 +3,15 @@ import "./style/popup.css"
 import Token from "./token";
 
 const DATA = [
-    { image: "https://picsum.photos/200/300", title: "Bitcoin", content: "BTC" },
-    { image: "https://picsum.photos/200/301", title: "Ethereum", content: "ETH" },
-    { image: "https://picsum.photos/200/302", title: "Ripple", content: "XRP" },
-    { image: "https://picsum.photos/200/303", title: "Litecoin", content: "LTC" },
-    { image: "https://picsum.photos/200/304", title: "Cardano", content: "ADA" },
-    { image: "https://picsum.photos/200/305", title: "Polkadot", content: "DOT" },
-    { image: "https://picsum.photos/200/306", title: "Dogecoin", content: "DOGE" },
-    { image: "https://picsum.photos/200/307", title: "Chainlink", content: "LINK" },
-    { image: "https://picsum.photos/200/308", title: "Stellar", content: "XLM" },
-    { image: "https://picsum.photos/200/309", title: "USD Coin", content: "USDC" }
+    { image: require("./asset/cryptos/bitcoin-btc-logo.png"), title: "Bitcoin", content: "BTC" },
+    { image: require("./asset/cryptos/ethereum-eth-logo.png"), title: "Ethereum", content: "ETH" },
+    { image: require("./asset/cryptos/pepe-pepe-logo.png"), title: "Pepe", content: "PEPE" },
+    { image: require("./asset/cryptos/litecoin-ltc-logo.png"), title: "Litecoin", content: "LTC" },
+    { image: require("./asset/cryptos/cardano-ada-logo.png"), title: "Cardano", content: "ADA" },
+    { image: require("./asset/cryptos/polkadot-new-dot-logo.png"), title: "Polkadot", content: "DOT" },
+    { image: require("./asset/cryptos/dogecoin-doge-logo.png"), title: "Dogecoin", content: "DOGE" },
+    { image: require("./asset/cryptos/chainlink-link-logo.png"), title: "Chainlink", content: "LINK" },
+    { image: require("./asset/cryptos/stellar-xlm-logo.png"), title: "Stellar", content: "XLM" },
 ];
 
 const PopUp = ({ onClick, setBlock, show, }) => {
