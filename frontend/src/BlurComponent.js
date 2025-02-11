@@ -18,12 +18,12 @@ const BlurContainer = () => {
         span: "BTC"
     })
     const cryptos = [
-        { id: "BTC", name: "Bitcoin", image: cryptoImages["nft-0"] },
-        { id: "DOGE", name: "Dogecoin", image: cryptoImages["nft-1"] },
-        { id: "ETH", name: "Ehtereum", image: cryptoImages["nft-2"] },
-        { id: "PEPE", name: "Pepe", image: cryptoImages["nft-3"] },
-        { id: "POPCAT", name: "Popcat (SOL)", image: cryptoImages["nft-4"] },
-        { id: "SHIB", name: "Shiba Inu", image: cryptoImages["nft-5"] },
+        { id: "BTC", name: "Bitcoin", image: cryptoImages["bitcoin-btc-logo.png"] },
+        { id: "DOGE", name: "Dogecoin", image: cryptoImages["dogecoin-doge-logo.png"] },
+        { id: "ETH", name: "Ehtereum", image: cryptoImages["ethereum-eth-logo.png"] },
+        { id: "PEPE", name: "Pepe", image: cryptoImages["pepe-pepe-logo.png"] },
+        { id: "POPCAT", name: "Popcat (SOL)", image: cryptoImages["popcat-sol-popcat-logo.png"] },
+        { id: "SHIB", name: "Shiba Inu", image: cryptoImages["shiba-inu-shib-logo.png"] },
 
     ]
 

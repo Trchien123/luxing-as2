@@ -21,7 +21,7 @@ const iconsElement = [
 
 ]
 
-const DbNavbar = ({ setShowBar, avatar }) => {
+const DbNavbar = ({ setShowBar, crypto }) => {
     const handleShowBar = () => {
         if (window.innerWidth <= 768) {
             setShowBar(false)
@@ -54,7 +54,7 @@ const DbNavbar = ({ setShowBar, avatar }) => {
             </div>
 
             <div className="avatar" style={{
-                backgroundImage: `url(${avatar})`,
+                backgroundImage: `url(${crypto.image})`,
             }}>
 
             </div>
@@ -65,7 +65,7 @@ const DbNavbar = ({ setShowBar, avatar }) => {
                     iconsElement.map(({ icon, content }, index) => {
                         const url = content === "Dashboard" ? "" : content
                         return (
-                            <Link key={index} to={`/Dashboard/${url}`} state={avatar} className="navbar--name--url">
+                            <Link key={index} to={`/Dashboard/${url}`} state={crypto} className="navbar--name--url">
                                 <DbItem content={content} icon={icon} />
                             </Link>
                         )

@@ -16,7 +16,7 @@ const Item = ({ top, left, animation, shape, crypto }) => {
     }
     const isLeftPositionLarge = left > (window.innerWidth * 2 / 3);
     return (
-        <Link to={'/Dashboard'} state={crypto.image} className="blur-container--url" >
+        <Link to={'/Dashboard'} state={crypto} className="blur-container--url" >
             <div className={`item ${shape}`} style={
                 {
 
