@@ -117,6 +117,9 @@ function DrawCircle() {
                     )
                 })}
                 <circle id="main-circle" cx={350} cy={350} r={30} fill="white" />
+                <text id="chien-name" x={350} y={350} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
+                    Chien
+                </text>
             </svg>
             
             {isModalOpen && <div className="transaction-backdrop visible" onClick={handleClose}></div>}

@@ -74,7 +74,7 @@ function DashTableContent() {
                                 <tr key={index}>
                                     <td>{amountsTransferred[index] < 0 ? names[index] : sender[index]}</td> {/* Sender */}
                                     <td>{amountsTransferred[index] < 0 ? sender[index] : names[index]}</td> {/* Receiver */}
-                                    <td>{amountsTransferred[index]}</td>
+                                    <td>{Math.abs(amountsTransferred[index])}</td>
                                     <td>
                                         <button onClick={() => handleMoreDetails(index)} className="details-button">
                                             More Details

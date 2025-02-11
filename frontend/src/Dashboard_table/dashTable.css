@@ -33,13 +33,12 @@
     min-height: 300px; /* Maintain a minimum height */
 }
 
-/* Improved Popup Design */
+/* Pop-up Modal Styles */
 .transaction-details-container {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-
     position: fixed;
     top: 50%;
     left: 50%;
@@ -58,16 +57,50 @@
     
     opacity: 0; /* Initially hidden */
     visibility: hidden; /* Hide it from screen readers until it's shown */
+    display: none; /* Ensure it's removed from layout when hidden */
     transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
     
     z-index: 1000; /* Make sure it appears above everything */
 }
 
-/* When visible, fade in */
+/* Keyframes for the zoom-in effect */
+@keyframes zoomInFromCenter {
+    0% {
+        transform: translate(-50%, -50%) scale(0.7); /* Start small and centered */
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1); /* End at normal size */
+        opacity: 1;
+    }
+}
+
+/* Apply the animation when the popup becomes visible */
 .transaction-details-container.visible {
+    animation: zoomInFromCenter 0.4s ease-out; /* Smooth zoom-in effect */
     opacity: 1;
     visibility: visible;
-    transform: translate(-50%, -50%) scale(1); /* Add smooth scaling effect */
+    display: block; /* Ensure it's displayed properly when visible */
+}
+
+/* Keyframes for the zoom-out effect when closing */
+@keyframes zoomOutToCenter {
+    0% {
+        transform: translate(-50%, -50%) scale(1); /* Start at normal size */
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.7); /* Shrink and stay centered */
+        opacity: 0;
+    }
+}
+
+/* Apply the animation when the popup is being closed */
+.transaction-details-container.hidden {
+    animation: zoomOutToCenter 0.3s ease-in; /* Smooth zoom-out effect */
+    opacity: 0;
+    visibility: hidden;
+    display: none; /* Ensure it's removed from layout */
 }
 
 /* Add a backdrop effect */
@@ -80,16 +113,17 @@
     background-color: rgba(0, 0, 0, 0.6); /* Dark background effect */
     
     opacity: 0;
-    visibility: hidden;
+    visibility: hidden; /* Hide it by default */
+    display: none; /* Ensure it's removed from layout */
     transition: opacity 0.3s ease, visibility 0.3s ease;
     
     z-index: 999; /* Just below the modal */
 }
 
-/* When modal is open, show backdrop */
 .transaction-backdrop.visible {
     opacity: 1;
     visibility: visible;
+    display: block; /* Ensure the backdrop is displayed when visible */
 }
 
 /* Close Button Improvements */
@@ -103,6 +137,10 @@
     font-size: 1.5rem; /* Adjusted for responsiveness */
     cursor: pointer;
     transition: color 0.3s ease;
+}
+
+.transaction-details-container .close-button:hover {
+    color: red;
 }
 
 .transaction-details-container .close-button:hover {
@@ -128,6 +166,21 @@
     fill: #669900;
 }
 
+.child-nodes circle,
+.child-nodes line,
+.child-nodes text {
+    transition: all 0.3s ease; /* Apply transition to all properties */
+}
+
+#chien-name,
+#main-circle {
+    transition: fill 0.3s ease; /* Smooth transition */
+}
+
+#chien-name:hover {
+    fill: #669900; /* Change the color to green */
+}
+
 .transaction-details-content {
     width: 100%;
     text-align: left;
@@ -136,19 +189,25 @@
 }
 
 .transaction-details-content h3 {
+    font-style: italic;
+    text-align: center;
     font-size: 3vw; /* Adjusted for responsiveness */
     font-weight: bold;
     margin-bottom: 15px;
-    border-bottom: 2px solid #669900;
     padding-bottom: 5px;
 }
 
 .transaction-details-content h4 {
+    font-style: italic;
+    border-top: 2px solid #669900;
+    padding-bottom: 5px;
     font-size: 2.5vw; /* Adjusted for responsiveness */
+    text-align: center;
     padding-top: 20px;
 }
 
 .transaction-details-content p {
+    padding-left: 10px;
     font-size: 1.75vw; /* Ensure readability on small screens */
     margin-bottom: 10px;
 }
