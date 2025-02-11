@@ -173,10 +173,15 @@
     .transaction-details-content p {
         font-size: 4vw; /* Ensure text is readable on small devices */
     }
+
+    .Dbtable-component {
+        padding: 0px;
+    }
 }
 
 /* Larger Screen Enhancements */
 @media (min-width: 926px) {
+
     .transaction-details-content h3 {
         font-size: 2.5vw; /* Slightly smaller for larger screens */
     }

@@ -9,7 +9,7 @@
 
 .table {
     width: 100%;
-    min-width: 600px; /* Ensure the table has a minimum width */
+    min-width: 1000px; /* Ensure the table has a minimum width */
     border-collapse: collapse;
     text-align: left;
     font-size: 14px;
@@ -41,18 +41,40 @@
 }
 
 /* Responsive table */
+@media (max-width: 1024px) {
+    .table th, .table td {
+        font-size: 12px; /* Reduce font size */
+        padding: 10px; /* Adjust padding for medium devices */
+        white-space: normal; /* Allow wrapping for smaller screens */
+    }
+}
+
 @media (max-width: 768px) {
     .table th, .table td {
         font-size: 12px; /* Reduce font size */
         padding: 8px; /* Reduce padding */
         white-space: normal; /* Allow wrapping for smaller screens */
+        text-align: left; /* Align text to the left for readability */
+    }
+    .table-wrapper {
+        overflow-x: auto; /* Ensure horizontal scrolling */
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .table th, .table td {
         font-size: 10px; /* Further reduce font size */
         padding: 6px; /* Further reduce padding */
         white-space: normal; /* Allow wrapping for smaller screens */
+        text-align: left; /* Align text to the left */
+    }
+    .table-wrapper {
+        overflow-x: scroll; /* Enable scrolling on very small screens */
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1200px) {
+    .table-wrapper {
+        overflow-x: auto; /* Allow horizontal scrolling on larger screens (e.g., tablet or large phones) */
     }
 }
