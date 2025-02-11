@@ -42,7 +42,6 @@ export const transactionHashes = [
     "0xdef1234567890abcdef12345678901234567",
     "0x1234567890abcdef12345678901234567890",
     "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef",
-    "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef",
     "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdef"
 ];
 
@@ -90,8 +89,7 @@ export const timestamps = [
     "2025-01-05 12:00:00 UTC",
     "2025-01-04 10:45:00 UTC",
     "2025-01-03 09:30:00 UTC",
-    "2025-01-02 08:15:00 UTC",
-    "2025-01-01 07:00:00 UTC"
+    "2025-01-02 08:15:00 UTC"
 ];
 
 
@@ -103,7 +101,7 @@ export const blockNumbers = [
     1829491, 1829492, 1829493, 1829494, 1829495,
     1829496, 1829497, 1829498, 1829499, 1829500,
     1829501, 1829502, 1829503, 1829504, 1829505,
-    1829506, 1829507, 1829508, 1829509, 1829510
+    1829506, 1829507, 1829508, 1829509
 ];
 
 
@@ -114,7 +112,7 @@ export const statuses = [
     "Pending", "Confirmed", "Confirmed", "Failed", "Confirmed",
     "Pending", "Confirmed", "Confirmed", "Failed", "Confirmed",
     "Pending", "Confirmed", "Confirmed", "Failed", "Confirmed",
-    "Pending", "Confirmed", "Confirmed", "Failed", "Confirmed"
+    "Pending", "Confirmed", "Confirmed", "Failed"
 ];
 
 
@@ -126,7 +124,7 @@ export const sender = [
     "Chien", "Chien", "Chien", "Chien", "Chien",
     "Chien", "Chien", "Chien", "Chien", "Chien",
     "Chien", "Chien", "Chien", "Chien", "Chien",
-    "Chien", "Chien", "Chien", "Chien", "Chien"
+    "Chien", "Chien", "Chien", "Chien"
 ];
 
 export const names = [
@@ -137,21 +135,21 @@ export const names = [
     "Sophia Martinez", "William Garcia", "Mia Rodriguez", "David Lee", "Isabella Gonzalez",
     "Matthew Perez", "Ella Wilson", "James Anderson", "Ava Thomas", "Lucas Taylor",
     "Charlotte Brown", "Amelia Davis", "Ethan Johnson", "Harper Smith", "Liam White",
-    "Noah Harris", "Olivia Clark", "Emma Lewis", "Benjamin Walker", "Sophia Hall"
+    "Noah Harris", "Olivia Clark", "Emma Lewis", "Benjamin Walker"
 ];
 
 export const inputCounts = [
     1, 2, 3, 1, 2, 1, 3, 1, 2, 1,
     3, 1, 2, 1, 1, 2, 3, 1, 2, 3,
     1, 2, 3, 1, 2, 1, 3, 1, 2, 1,
-    3, 1, 2, 1, 1, 2, 3, 1, 2, 3
+    3, 1, 2, 1, 1, 2, 3, 1, 2
 ];
 
 export const outputCounts = [
     2, 3, 1, 2, 3, 1, 2, 3, 1, 2,
     3, 1, 2, 3, 2, 1, 2, 3, 1, 2,
     2, 3, 1, 2, 3, 1, 2, 3, 1, 2,
-    3, 1, 2, 3, 2, 1, 2, 3, 1, 2
+    3, 1, 2, 3, 2, 1, 2, 3, 1
 ];
 
 
@@ -163,7 +161,7 @@ export const amountsTransferred = [
     0.5, 0.6, 0.7, 0.8, 0.9,
     1.0, 1.1, 1.2, 1.3, 1.4,
     1.5, 1.6, 1.7, 1.8, 1.9,
-    2.0, 2.1, 2.2, 2.3, 2.4
+    2.0, 2.1, 2.2, 2.3
 ];
 
 export const transactionFees = [
@@ -173,7 +171,7 @@ export const transactionFees = [
     "0.0007 ETH", "0.0014 ETH", "0.0005 ETH", "0.0018 ETH", "0.0003 ETH",
     "0.0011 ETH", "0.0009 ETH", "0.0015 ETH", "0.0006 ETH", "0.0012 ETH",
     "0.0008 ETH", "0.0013 ETH", "0.0007 ETH", "0.0010 ETH", "0.0004 ETH",
-    "0.0017 ETH", "0.0005 ETH", "0.0018 ETH", "0.0002 ETH", "0.0003 ETH"
+    "0.0017 ETH", "0.0005 ETH", "0.0018 ETH", "0.0002 ETH"
 ];
 
 export const gasUsed = [
@@ -183,7 +181,7 @@ export const gasUsed = [
     25000, 22000, 24000, 21000, 23000,
     20000, 21000, 22000, 23000, 24000,
     25000, 26000, 27000, 28000, 29000,
-    30000, 31000, 32000, 33000, 34000
+    30000, 31000, 32000, 33000
 ];
 
 export const gasPrices = [
@@ -193,7 +191,7 @@ export const gasPrices = [
     "51 Gwei", "56 Gwei", "42 Gwei", "44 Gwei", "57 Gwei",
     "55 Gwei", "50 Gwei", "45 Gwei", "60 Gwei", "40 Gwei",
     "58 Gwei", "52 Gwei", "48 Gwei", "43 Gwei", "47 Gwei",
-    "49 Gwei", "53 Gwei", "51 Gwei", "56 Gwei", "42 Gwei"
+    "49 Gwei", "53 Gwei", "51 Gwei", "56 Gwei"
 ];
 
 export const contractAddresses = [
@@ -224,8 +222,7 @@ export const contractAddresses = [
     "0x67890abcdef123456789012345678901234",
     "0x7890abcdef1234567890123456789012345",
     "0x890abcdef12345678901234567890123456",
-    "0x90abcdef123456789012345678901234567",
-    "0x0abcdef1234567890123456789012345678"
+    "0x90abcdef123456789012345678901234567"
 ];
 
 
@@ -237,7 +234,7 @@ export const tokenTypes = [
     "ERC-20", "ERC-721", "ERC-20", "ERC-1155", "ERC-20",
     "ERC-721", "ERC-1155", "ERC-20", "ERC-721", "ERC-1155",
     "ERC-20", "ERC-721", "ERC-1155", "ERC-20", "ERC-721",
-    "ERC-1155", "ERC-20", "ERC-721", "ERC-1155", "ERC-20"
+    "ERC-1155", "ERC-20", "ERC-721", "ERC-1155"
 ];
 
 
@@ -249,7 +246,7 @@ export const tokenAmounts = [
     "600 USDT", "800 USDT", "1200 USDT", "400 USDT", "900 USDT",
     "250 USDT", "150 USDT", "300 USDT", "500 USDT", "700 USDT",
     "800 USDT", "900 USDT", "1000 USDT", "1100 USDT", "1200 USDT",
-    "1300 USDT", "1400 USDT", "1500 USDT", "1600 USDT", "1700 USDT"
+    "1300 USDT", "1400 USDT", "1500 USDT", "1600 USDT"
 ];
 
 
@@ -261,7 +258,7 @@ export const confirmations = [
     40, 41, 42, 43, 44,
     45, 46, 47, 48, 49,
     50, 51, 52, 53, 54,
-    55, 56, 57, 58, 59
+    55, 56, 57, 58
 ];
 
 
@@ -272,7 +269,7 @@ export const mempoolStatuses = [
     "Cleared", "Cleared", "Cleared", "Pending", "Cleared",
     "Pending", "Cleared", "Cleared", "Pending", "Cleared",
     "Cleared", "Pending", "Cleared", "Cleared", "Pending",
-    "Cleared", "Cleared", "Cleared", "Pending", "Cleared"
+    "Cleared", "Cleared", "Cleared", "Pending"  
 ];
 
 
@@ -283,7 +280,6 @@ export const signatures = [
     "0x1234567890abcdef1234567890abcdef12345678abcdef1234567890abcdef",
     "0x9876543210abcdef0987654321abcdef0987654321abcdef0987654321abcdef",
     "0x9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0aabcdefabcdefabcdef",
-    "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef",
     "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef",
     "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef",
     "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef"

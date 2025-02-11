@@ -25,10 +25,6 @@ function DashTableContent({ currentPage }) {
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-const totalItems = 0; // Total items for pagination, will be updated based on actual data
-
-
-
     const handleMoreDetails = (index) => {
         const startIndex = currentPage * entriesPerPage;
 

@@ -31,17 +31,22 @@ function calculateCirclePoints(a, b, R, numPoints = 20) {
     return points;
 }
 
-function Normalization(amountsTransferred, numamountsTransferred) {
-    const positiveamountsTransferred = amountsTransferred.map(value => Math.abs(value));
-    const maxValue = Math.max(...positiveamountsTransferred);
-    const normalizedamountsTransferred = [];
+function Normalization(amountsTransferred, numPoints = 20) {
+    const positiveAmountsTransferred = amountsTransferred.map(value => Math.abs(value));
+    const maxValue = Math.max(...positiveAmountsTransferred);
+    const normalizedAmountsTransferred = [];
 
-    for (let i = 0; i < numamountsTransferred; i++) {
-        const normalized = (positiveamountsTransferred[i] / maxValue) * 20 + 10;
-        normalizedamountsTransferred.push({normalized});
+    for (let i = 0; i < Math.min(amountsTransferred.length, numPoints); i++) {
+        const normalized = (positiveAmountsTransferred[i] / maxValue) * 20 + 10;
+        normalizedAmountsTransferred.push({ normalized });
     }
-    
-    return normalizedamountsTransferred;
+
+    // Handle if there are fewer data points than expected
+    while (normalizedAmountsTransferred.length < numPoints) {
+        normalizedAmountsTransferred.push({ normalized: 10 }); // Default radius for missing values
+    }
+
+    return normalizedAmountsTransferred;
 }
 
 function DrawCircle({currentPage}) { // Accept props as an argument
@@ -103,17 +108,17 @@ function DrawCircle({currentPage}) { // Accept props as an argument
     return (
         <div className="transaction-visualization">
             <svg id="visualization" viewBox="0 0 700 700" width="50%" height="50%">
-                {points.map((point, index) => {
-                    const adjustedX = point.x - normalizedamountsTransferred[index].normalized * Math.cos(point.alpha);
-                    const adjustedY = point.y - normalizedamountsTransferred[index].normalized * Math.sin(point.alpha);
+            {points.slice(0, currentTransactions.length).map((point, index) => {
+                const adjustedX = point.x - normalizedamountsTransferred[index].normalized * Math.cos(point.alpha);
+                const adjustedY = point.y - normalizedamountsTransferred[index].normalized * Math.sin(point.alpha);
 
-                    const midX = (circleCenter.x + point.x) / 2;
-                    const midY = (circleCenter.y + point.y) / 2;
+                const midX = (circleCenter.x + point.x) / 2;
+                const midY = (circleCenter.y + point.y) / 2;
 
-                    const textLength = currentTransactions[index].toString().length * 7;
-                    const padding = 4;
-                    const rectWidth = textLength + padding;
-                    const rectHeight = 18;
+                const textLength = currentTransactions[index].toString().length * 7;
+                const padding = 4;
+                const rectWidth = textLength + padding;
+                const rectHeight = 18;
 
                     return (
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
