@@ -14,13 +14,17 @@
     border-collapse: collapse;
     text-align: left;
     font-size: 14px;
+    table-layout: fixed; /* Use fixed table layout */
 }
 
 .table th, .table td {
     padding: 12px 15px;
     border: 1px solid #ddd;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap; /* Prevent word wrapping */
     text-align: center; /* Center-align content */
+    word-break: break-word; /* Ensure long words break and fit inside the cell */
+    overflow: hidden; /* Prevent overflow of text */
+    text-overflow: ellipsis; /* Add ellipsis for overflowed text */
 }
 
 /* Header styling */
@@ -42,6 +46,7 @@
     .table th, .table td {
         font-size: 12px; /* Reduce font size */
         padding: 8px; /* Reduce padding */
+        white-space: normal; /* Allow wrapping for smaller screens */
     }
 }
 
@@ -49,5 +54,6 @@
     .table th, .table td {
         font-size: 10px; /* Further reduce font size */
         padding: 6px; /* Further reduce padding */
+        white-space: normal; /* Allow wrapping for smaller screens */
     }
 }

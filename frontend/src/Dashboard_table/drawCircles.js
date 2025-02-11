@@ -1,4 +1,23 @@
 import React, { useState } from "react";
+import { 
+    sender, 
+    names, 
+    radii, 
+    transactionHashes, 
+    timestamps, 
+    blockNumbers, 
+    statuses, 
+    amountsTransferred, 
+    transactionFees, 
+    gasUsed, 
+    gasPrices, 
+    contractAddresses, 
+    tokenTypes, 
+    tokenAmounts, 
+    confirmations, 
+    mempoolStatuses, 
+    signatures 
+} from './data';
 
 function calculateCirclePoints(a, b, R, numPoints = 20) {
     const points = [];
@@ -12,12 +31,15 @@ function calculateCirclePoints(a, b, R, numPoints = 20) {
 }
 
 function Normalization(radii, numRadii) {
-    const maxValue = Math.max(...radii);
+    const positiveRadii = radii.map(value => Math.abs(value));
+    const maxValue = Math.max(...positiveRadii);
     const normalizedRadii = [];
+
     for (let i = 0; i < numRadii; i++) {
-        const normalized = (radii[i] / maxValue) * 20 + 10;
+        const normalized = (positiveRadii[i] / maxValue) * 20 + 10;
         normalizedRadii.push({normalized});
     }
+    
     return normalizedRadii;
 }
 
@@ -27,26 +49,37 @@ function DrawCircle() {
     const circleRadius = 250;
     const points = calculateCirclePoints(circleCenter.x, circleCenter.y, circleRadius, numPoints);
 
-    const sender = "Chien";
-    const names = ["Olivia Carter", "Liam Johnson", "Emma Smith", "Noah Davis", "Ava Wilson", 
-        "Jackson Brown", "Lam Dan", "Ethan Moore", "Isabella Taylor", "Lucas Anderson", 
-        "Mia Thomas", "Aiden Jackson", "Harper White", "Mason Harris", "Amelia Clark", 
-        "James Lewis", "Charlotte Walker", "Benjamin Scott", "Ella Hall", "Alexander Young"];
-    const radii = [9133, 5457, 3085, 2746, 4254, 8000, 1907, 8947, 3183, 8323, 7021, 6429, 5252, 7054, 3571, 7741, 4020, 1702, 8688, 8458]
     const normalizedRadii = Normalization(radii, numPoints);
 
     const [selectedNode, setSelectedNode] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleNodeClick = (index) => {
         setSelectedNode({
             sender: sender,
             receiver: names[index],
             transaction: radii[index],
+            transactionHash: transactionHashes[index],
+            timestamp: timestamps[index],
+            blockNumber: blockNumbers[index],
+            status: statuses[index],
+            amountTransferred: amountsTransferred[index],
+            transactionFee: transactionFees[index],
+            gasUsed: gasUsed[index],
+            gasPrice: gasPrices[index],
+            contractAddress: contractAddresses[index],
+            tokenType: tokenTypes[index],
+            tokenAmount: tokenAmounts[index],
+            confirmation: confirmations[index],
+            mempoolStatus: mempoolStatuses[index],
+            signature: signatures[index],
         });
+        setIsModalOpen(true); // Show modal when a transaction is clicked
     };
 
     const handleClose = () => {
-        setSelectedNode(null); // Reset the selected node to hide details
+        setSelectedNode(null);
+        setIsModalOpen(false); // Hide modal
     };
 
     return (
@@ -59,13 +92,10 @@ function DrawCircle() {
                     const midX = (circleCenter.x + point.x) / 2;
                     const midY = (circleCenter.y + point.y) / 2;
 
-                    // Measure the length of the text (approximation)
-                    const textLength = radii[index].toString().length * 7; // Rough estimate for text width
-
-                    // Add some padding for the background
+                    const textLength = radii[index].toString().length * 7;
                     const padding = 4;
                     const rectWidth = textLength + padding;
-                    const rectHeight = 18; // Set a fixed height for the background rectangle
+                    const rectHeight = 18;
 
                     return (
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
@@ -85,19 +115,40 @@ function DrawCircle() {
                 <text id="sender" x="300" y="300" fontSize="17px" fill="white" textAnchor="middle" alignmentBaseline="middle">{sender}</text>
             </svg>
             
-            <div
-                className={`transaction-details-container ${selectedNode ? "visible" : ""}`}>
+            {isModalOpen && <div className="transaction-backdrop visible" onClick={handleClose}></div>}
+            <div className={`transaction-details-container ${isModalOpen ? "visible" : ""}`}>
                 {selectedNode && (
-                    <div className={`transaction-details-container visible`}>
+                    <div className="transaction-details-content">
                         <button className="close-button" onClick={handleClose}>
                             &times;
                         </button>
-                        <div className="transaction-details-content">
-                            <h3>Transaction Details</h3>
-                            <p>Sender: {selectedNode.sender}</p>
-                            <p>Receiver: {selectedNode.receiver}</p>
-                            <p>Transaction Value: {selectedNode.transaction}</p>
-                        </div>    
+                        <h3>Transaction Details</h3>
+                        <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}</p>
+                        <p>📅 <strong>Timestamp:</strong> {selectedNode.timestamp}</p>
+                        <p>🔗 <strong>Block Number:</strong> {selectedNode.blockNumber}</p>
+                        <p>📊 <strong>Status:</strong> {selectedNode.status}</p>
+
+                        <h4>Sender & Receiver</h4>
+                        <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
+                        <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
+                        <p>🔢 <strong>Inputs:</strong> 1</p>
+                        <p>🔢 <strong>Outputs:</strong> 2</p>
+
+                        <h4>Amount & Fees</h4>
+                        <p>💰 <strong>Amount Transferred:</strong> {selectedNode.amountTransferred}</p>
+                        <p>⛽ <strong>Transaction Fee:</strong> {selectedNode.transactionFee}</p>
+                        <p>🔥 <strong>Gas Used:</strong> {selectedNode.gasUsed}</p>
+                        <p>💲 <strong>Gas Price:</strong> {selectedNode.gasPrice} Gwei</p>
+
+                        <h4>Smart Contract & Token Details (if applicable)</h4>
+                        <p>🏦 <strong>Contract Address:</strong> {selectedNode.contractAddress}</p>
+                        <p>🎟 <strong>Token Type:</strong> {selectedNode.tokenType}</p>
+                        <p>💎 <strong>Token Amount:</strong> {selectedNode.tokenAmount}</p>
+
+                        <h4>Confirmation & Security</h4>
+                        <p>✅ <strong>Confirmations:</strong> {selectedNode.confirmation}</p>
+                        <p>📌 <strong>Mempool Status:</strong> {selectedNode.mempoolStatus}</p>
+                        <p>🔏 <strong>Signature:</strong> {selectedNode.signature}</p>
                     </div>
                 )}
             </div>
@@ -105,4 +156,4 @@ function DrawCircle() {
     )
 };
 
-export default DrawCircle
+export default DrawCircle;
