@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import './style/sphere.css';
 
-const coinNames = ["Bitcoin", "Ethereum", "Ripple", "Litecoin", "Cardano", "Polkadot", "Solana", "Dogecoin", "Shiba Inu", "Avalanche"];
+export const coinData = [
+  { name: "Bitcoin", icon: "/icon/icon1.png" },
+  { name: "Ethereum", icon: "/icon/icon2.png" },
+  { name: "Shiba Inu", icon: "/icon/icon3.png" },
+  { name: "Dogecoin", icon: "/icon/icon4.png" },
+  { name: "Solana", icon: "/icon/icon5.png" },
+  { name: "Polkadot", icon: "/icon/icon6.png" },
+  { name: "XRP", icon: "/icon/icon7.png" },
+  { name: "Tether USDt", icon: "/icon/icon8.png" },
+];
 
 const getRandomValue = (min, max, isPercentage = false) => {
   const value = (Math.random() * (max - min) + min).toFixed(2);
@@ -9,13 +18,13 @@ const getRandomValue = (min, max, isPercentage = false) => {
 };
 
 const Small = ({ dotData, onClose }) => {
-  const [randomInfo, setRandomInfo] = useState(null);
+  const [coinInfo, setCoinInfo] = useState(null);
 
   useEffect(() => {
     if (dotData) {
-      const randomIndex = Math.floor(Math.random() * coinNames.length);
-      setRandomInfo({
-        name: coinNames[randomIndex],
+      const coin = coinData[dotData.coinIndex];
+      setCoinInfo({
+        name: coin.name,
         price: getRandomValue(100, 50000),
         marketCap: getRandomValue(1, 1000),
         volume: getRandomValue(10, 10000),
@@ -25,21 +34,21 @@ const Small = ({ dotData, onClose }) => {
     }
   }, [dotData]);
 
-  if (!dotData || !randomInfo) return null;
+  if (!dotData || !coinInfo) return null;
 
   return (
     <div className="sphere-smalltable">
-      <h2>{randomInfo.name}</h2>
-      <h3>Current Price: {randomInfo.price}</h3>
+      <h2>{coinInfo.name}</h2>
+      <h3>Current Price: {coinInfo.price}</h3>
 
       <hr />
 
       <p>
-        <strong>Name Index:</strong> {dotData.index + 1} <br />
-        <strong>Market Cap:</strong> {randomInfo.marketCap}M <br />
-        <strong>Volume (24h):</strong> {randomInfo.volume} <br />
-        <strong>Circulating Supply:</strong> {randomInfo.circulatingSupply} <br />
-        <strong>24h Change:</strong> {randomInfo.change24h}
+        <strong>Name Index:</strong> {dotData.coinIndex + 1} <br />
+        <strong>Market Cap:</strong> {coinInfo.marketCap}M <br />
+        <strong>Volume (24h):</strong> {coinInfo.volume} <br />
+        <strong>Circulating Supply:</strong> {coinInfo.circulatingSupply} <br />
+        <strong>24h Change:</strong> {coinInfo.change24h}
       </p>
 
       <button onClick={onClose}>Close</button>

@@ -215,7 +215,6 @@
 
 /* bell ringing animation keyframes*/
 @keyframes bellRing {
-
   0%,
   100% {
     transform-origin: top;
@@ -300,6 +299,12 @@
   font-size: 14px;
 }
 
+@media screen and (max-width: 1400px) {
+  .info span {
+    font-size: 12px;
+    overflow-wrap: break-word;
+  }
+}
 .dates-container,
 .sent-received-container {
   display: flex;
@@ -598,14 +603,14 @@
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.Dn-img-slider-btn>* {
+.Dn-img-slider-btn > * {
   stroke: white;
   fill: black;
   width: 2rem;
   height: 2rem;
 }
 
-.Dn-img-slider-btn:hover>* {
+.Dn-img-slider-btn:hover > * {
   animation: squish 0.2s ease-in-out;
 }
 
@@ -628,7 +633,7 @@
   scale: 1.2;
 }
 
-.Dn-img-slider-dotbtn>* {
+.Dn-img-slider-dotbtn > * {
   stroke: white;
   fill: black;
   height: 100%;
@@ -812,9 +817,12 @@
 }
 
 .Dbhistory--subcontainer {
-  background: linear-gradient(127.09deg,
+  background: linear-gradient(
+      127.09deg,
       rgba(6, 11, 40, 0.94) 19.41%,
-      rgba(10, 14, 35, 0.49) 76.65%) border-box;
+      rgba(10, 14, 35, 0.49) 76.65%
+    )
+    border-box;
   padding: 22px;
   overflow-x: scroll;
   box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;

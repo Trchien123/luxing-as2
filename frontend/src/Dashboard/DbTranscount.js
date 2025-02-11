@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as d3 from "d3";
+import './Transchart.css';
 
 const TransChart = () => {
   const [chartWidth, setChartWidth] = useState(800); 
@@ -149,6 +150,7 @@ const TransChart = () => {
             >
               {/* Sent Bar */}
               <rect
+                className="bar"
                 x={0}
                 y={height - margin.bottom - sentHeight}
                 width={barWidth}
@@ -158,6 +160,7 @@ const TransChart = () => {
 
               {/* Received Bar */}
               <rect
+                className="bar"
                 x={barWidth + 5}
                 y={height - margin.bottom - receivedHeight}
                 width={barWidth}
@@ -170,7 +173,7 @@ const TransChart = () => {
 
         {/* Tooltip */}
         {tooltip.visible && (
-          <g transform={`translate(${tooltip.x}, ${tooltip.y})`}>
+          <g className="tooltip" transform={`translate(${tooltip.x}, ${tooltip.y})`}>
             <rect width="120" height="30" fill="white" stroke="black" rx="5" ry="5" />
             <text
               x="60"
@@ -187,17 +190,20 @@ const TransChart = () => {
         {/* Month Boxes at the Bottom */}
 <g transform={`translate(${margin.left}, ${height - margin.bottom + 50})`}>
   {["January", "February", "March", "April", "May"].map((month, index) => (
-    <g key={month} transform={`translate(${index * (chartWidth - margin.left - margin.right) / 5}, 0)`}>
-      <rect
-        x={0}
-        y={0}
-        width={(chartWidth - margin.left - margin.right) / 5 - 10}
-        height={30}
-        fill={selectedMonth === month ? "lightblue" : "lightgray"}
-        stroke="black"
-        cursor="pointer"
-        onClick={() => handleMonthClick(month)}
-      />
+    <g
+    key={month}
+    className="month-button"
+    transform={`translate(${index * (chartWidth - margin.left - margin.right) / 5}, 0)`}
+    onClick={() => handleMonthClick(month)}
+  >
+    <rect
+      x={0}
+      y={0}
+      width={(chartWidth - margin.left - margin.right) / 5 - 10}
+      height={30}
+      fill={selectedMonth === month ? "lightblue" : "lightgray"}
+      stroke="black"
+    />
       {/* Text centered on the button */}
       <text
         x={((chartWidth - margin.left - margin.right) / 5 - 10) / 2}
