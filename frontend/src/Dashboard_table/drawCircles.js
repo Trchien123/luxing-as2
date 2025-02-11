@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"; 
+
 import { 
     sender, 
     names, 
@@ -43,7 +44,7 @@ function Normalization(amountsTransferred, numamountsTransferred) {
     return normalizedamountsTransferred;
 }
 
-function DrawCircle() {
+function DrawCircle({currentPage}) { // Accept props as an argument
     const numPoints = 20;
     const circleCenter = {x: 350 , y: 350};
     const circleRadius = 250;
@@ -51,14 +52,16 @@ function DrawCircle() {
 
     const [selectedNode, setSelectedNode] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [currentTransactions, setCurrentTransactions] = useState(amountsTransferred.slice(0, 20));
-    const [currentNames, setCurrentNames] = useState(names.slice(0, 20)); // Add state for currentNames
+
+    const itemsPerPage = 20; // Items per page
+
+    const [currentTransactions, setCurrentTransactions] = useState(amountsTransferred.slice(0, 20)); // Use itemsPerPage directly
+    const [currentNames, setCurrentNames] = useState(names.slice(0, 20)); // Use itemsPerPage directly
 
     useEffect(() => {
         // Update both transactions and names when the page changes
-        const start = currentPage * 20;
-        const end = (currentPage + 1) * 20;
+        const start = currentPage * 20; // Use graph current page from props
+        const end = (currentPage + 1) * 20; // Use itemsPerPage directly
 
         setCurrentTransactions(amountsTransferred.slice(start, end));
         setCurrentNames(names.slice(start, end)); // Update names for current page
@@ -67,7 +70,7 @@ function DrawCircle() {
     const normalizedamountsTransferred = Normalization(currentTransactions, numPoints);
 
     const handleNodeClick = (index) => { 
-        const adjustedIndex = currentPage * 20 + index;
+        const adjustedIndex = currentPage * itemsPerPage + index;
         const isNegativeTransaction = currentTransactions[index] < 0;
 
         setSelectedNode({ 
@@ -95,15 +98,6 @@ function DrawCircle() {
     const handleClose = () => {
         setSelectedNode(null);
         setIsModalOpen(false); // Hide modal
-    };
-
-    // Pagination handlers
-    const handleNextPage = () => {
-        if (currentPage < Math.ceil(amountsTransferred.length / 20) - 1) setCurrentPage(currentPage + 1);
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 0) setCurrentPage(currentPage - 1);
     };
 
     return (
@@ -175,13 +169,6 @@ function DrawCircle() {
                         <p>🔏 <strong>Signature:</strong> {selectedNode.signature}</p>
                     </div>
                 )}
-            </div>
-
-            {/* Pagination Controls */}
-            <div className="pagination-controls">
-                <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-                <span>Page {currentPage + 1} of {2}</span>
-                <button onClick={handleNextPage} disabled={currentPage === 2 - 1}>Next</button>
             </div>
         </div>
     );
