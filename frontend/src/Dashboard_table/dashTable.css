@@ -205,7 +205,7 @@
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
     /* Container for the transaction details */
     .transaction-details-container {
         width: 90%;
@@ -217,17 +217,17 @@
 
     /* Transaction content */
     .transaction-details-content h3 {
-        font-size: 5vw; /* Larger font size for mobile */
+        font-size: 4vw; /* Larger font size for mobile */
         text-align: center;
     }
 
     .transaction-details-content h4 {
-        font-size: 4vw;
+        font-size: 3vw;
         text-align: center;
     }
 
     .transaction-details-content p {
-        font-size: 4vw; /* Ensure readability on small screens */
+        font-size: 2.5vw; /* Ensure readability on small screens */
     }
 
     .Dbtable-component {
@@ -236,7 +236,7 @@
 }
 
 /* Larger Screen Enhancements */
-@media (min-width: 910px) {
+@media (min-width: 1100px) {
     #visualization {
         min-width: 700px;
         min-height: 700px;
@@ -249,17 +249,17 @@
 
     /* Transaction content */
     .transaction-details-content h3 {
-        font-size: 2vw; /* Slightly smaller font size */
+        font-size: 1.75vw; /* Slightly smaller font size */
         text-align: left;
     }
 
     .transaction-details-content h4 {
-        font-size: 1.75vw;
+        font-size: 1.5vw;
         text-align: left;
     }
 
     .transaction-details-content p {
-        font-size: 1.5vw; /* Ensure readability for larger screens */
+        font-size: 1.25vw; /* Ensure readability for larger screens */
     }
 }
 
