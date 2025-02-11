@@ -29,8 +29,8 @@
 }
 
 #visualization {
-    min-width: 300px; /* Ensure it doesn’t shrink too much */
-    min-height: 300px; /* Maintain a minimum height */
+    min-width: 500px; /* Ensure it doesn’t shrink too much */
+    min-height: 500px; /* Maintain a minimum height */
 }
 
 /* Pop-up Modal Styles */
@@ -217,12 +217,12 @@
 
     /* Transaction content */
     .transaction-details-content h3 {
-        font-size: 6vw; /* Larger font size for mobile */
+        font-size: 5vw; /* Larger font size for mobile */
         text-align: center;
     }
 
     .transaction-details-content h4 {
-        font-size: 5vw;
+        font-size: 4vw;
         text-align: center;
     }
 
@@ -236,7 +236,12 @@
 }
 
 /* Larger Screen Enhancements */
-@media (min-width: 926px) {
+@media (min-width: 910px) {
+    #visualization {
+        min-width: 700px;
+        min-height: 700px;
+    }
+
     .transaction-details-container {
         width: 60%; /* Adjust width for larger screens */
         padding: 30px;
@@ -244,12 +249,12 @@
 
     /* Transaction content */
     .transaction-details-content h3 {
-        font-size: 2.5vw; /* Slightly smaller font size */
+        font-size: 2vw; /* Slightly smaller font size */
         text-align: left;
     }
 
     .transaction-details-content h4 {
-        font-size: 2vw;
+        font-size: 1.75vw;
         text-align: left;
     }
 
@@ -258,3 +263,17 @@
     }
 }
 
+
+@media (max-width: 350px) {
+    #visualization {
+        min-width: 300px;
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 450px) {
+    #visualization {
+        min-width: 400px;
+        min-height: 400px;
+    }
+}
