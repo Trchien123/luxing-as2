@@ -36,7 +36,7 @@ const DbHome = () => {
           <BinanceOverview title={context.name} />
         </div>
         <div className="Db-main-2-items Db-main-2-items-3">
-          <NewsOverview />
+          <NewsOverview crypto={context} />
         </div>
       </section>
       <section className="DB-main-container-2">
@@ -49,7 +49,7 @@ const DbHome = () => {
       </section>
       <section className="DB-main-container-2">
         <div className="Db-main-2-items Db-main-2-items-6 ">
-          <DbSendReceiveTable />
+          <DbSendReceiveTable crypto={context} />
         </div>
       </section>
     </main>

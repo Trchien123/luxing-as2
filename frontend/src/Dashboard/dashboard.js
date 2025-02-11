@@ -41,7 +41,7 @@ const Dashboard = () => {
             <div ref={containerRef} className="DB-container">
 
                 <DbHeader scrolled={scrolled} setShowBar={setShowBar} showBar={showBar} />
-                <Outlet context={{ name: crypto.name }} />
+                <Outlet context={crypto} />
             </div>
 
 

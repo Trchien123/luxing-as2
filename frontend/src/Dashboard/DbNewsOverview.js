@@ -2,14 +2,14 @@ import React from "react";
 
 import newsImages from "./NewsImages";
 import { Link } from "react-router-dom"
-const NewsOverview = () => {
+const NewsOverview = ({ crypto }) => {
 
 
 
     return (
         <>
             <h1 className="newsOverview-title"> News</h1>
-            <Link to={'/Dashboard/News'} className="Db-navbar-url ">
+            <Link to={'/Dashboard/News'} state={crypto} className="Db-navbar-url ">
                 <div className="newsOverview-slider" style={{
                     "--width": `230px`,
                     "--height": "270px",

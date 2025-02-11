@@ -1,7 +1,7 @@
 import React from "react";
 import "../style/sendReceiveTable.css";
-
-const SendReceiveTable = () => {
+import { Link } from "react-router-dom"
+const SendReceiveTable = ({ crypto }) => {
   return (
     <section>
       <div id="table-container">
@@ -85,9 +85,9 @@ const SendReceiveTable = () => {
         </div>
       </div>
       <div className="button-container">
-        <a href="./Table" className="more-details-button">
+        <Link to={`/Dashboard/Table`} state={crypto} className="more-details-button">
           More Details...
-        </a>
+        </Link>
       </div>
     </section>
   );
