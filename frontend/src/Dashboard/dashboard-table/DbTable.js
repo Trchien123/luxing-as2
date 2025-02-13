@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import "../style/DbTableDrawCircles.css";
-import { names } from "./DashboardTable/DbTableMockdata.js"; // Correct path for names
+import "../../style/DbTableDrawCircles.css";
+import { names } from "./DbTableMockdata.js"; // Correct path for names
 
-import DrawCircle from "./DashboardTable/DbTableDrawCircles.js";
-import DashTableContent from "./DashboardTable/DbTableContent.js";
-import PaginationControl from "./DashboardTable/DbTablePaginationcontrol"; // Correct path for PaginationControl
+import DrawCircle from "./DbTableDrawCircles.js";
+import DashTableContent from "./DbTableContent.js";
+import PaginationControl from "./DbTablePaginationcontrol.js"; // Correct path for PaginationControl
 
 const DashTable = () => {
     const onPageChangeGraph = (newPage) => {
@@ -21,24 +21,24 @@ const DashTable = () => {
     return (
         <main className="DB-table">
             <h1 className="Dbtable-title">this is the graph</h1>
-            
+
             <div className="Dbtable-component">
                 <DrawCircle currentPage={currentPage} setCurrentPage={setCurrentPage} /> {/* Pass props to DrawCircle */}
 
                 <PaginationControl
-                    onPageChangeGraph={onPageChangeGraph} 
+                    onPageChangeGraph={onPageChangeGraph}
 
-                    currentPage={currentPage} 
-                    totalItems={totalItems} 
-                    itemsPerPage={20} 
-                    onPageChange={handlePageChange} 
+                    currentPage={currentPage}
+                    totalItems={totalItems}
+                    itemsPerPage={20}
+                    onPageChange={handlePageChange}
                 />
-                
-                <DashTableContent
-                    onPageChangeGraph={onPageChangeGraph} 
 
-                    currentPage={currentPage} 
-                    setCurrentPage={setCurrentPage} 
+                <DashTableContent
+                    onPageChangeGraph={onPageChangeGraph}
+
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
                 />
             </div>
         </main>

@@ -27,7 +27,7 @@ const DbHome = () => {
         <div
           className="Db-main-2-items Db-main-2-items-1 "
           style={{
-            backgroundImage: `url(${require(`../asset/db-background${number}.jpg`)})`,
+            backgroundImage: `url(${require(`../../asset/db-background${number}.jpg`)})`,
           }}
         >
           <DbHomeContainer Address={"User's name"} />

@@ -1,8 +1,8 @@
 
 import '../src/style/App.css';
 import Home from './Home/Home';
-import DbHome from './Dashboard/DbDashboard';
-import DashTable from './Dashboard/DashTable';
+import DbHome from './Dashboard/dashboard-dashboard/DbDashboard';
+import DashTable from './Dashboard/dashboard-table/DbTable';
 import {
 
   BrowserRouter as Router,
@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom';
 import Dashboard from './Dashboard/Db';
 
-import DashNews from './Dashboard/DbNews';
+import DashNews from './Dashboard/dashboard-news/DbNews';
 function App() {
   return (
     <div className="App">

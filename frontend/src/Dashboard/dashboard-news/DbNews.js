@@ -1,7 +1,7 @@
 import React from "react";
-import img1 from "../asset/DbNews-image-1.jpg"
-import img2 from "../asset/DbNews-image-2.jpg"
-import img3 from "../asset/DbNews-image-3.jpg"
+import img1 from "../../asset/DbNews-image-1.jpg"
+import img2 from "../../asset/DbNews-image-2.jpg"
+import img3 from "../../asset/DbNews-image-3.jpg"
 
 import DNImageSlider from "./DbNewsImageSlider";
 import Footer from "../../Home/Footer";
