@@ -1,4 +1,4 @@
-import './Container-1.css';
+import './HomeIntroduction.css';
 import container1 from './asset/container_1.jpg' 
 
 function Container1() {

@@ -18,7 +18,7 @@ import {
     confirmations, 
     mempoolStatuses, 
     signatures 
-} from './data';
+} from './DbTableMockdata';
 
 function calculateCirclePoints(a, b, R, numPoints = 20) {
     const points = [];

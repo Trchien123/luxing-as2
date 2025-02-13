@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import "../Dashboard_table/dashTable.css";
-import { names } from "../Dashboard_table/data"; // Correct path for names
+import "../Dashboard_table/DbTableDrawCircles.css";
+import { names } from "../Dashboard_table/DbTableMockdata.js"; // Correct path for names
 
-import DrawCircle from "../Dashboard_table/drawCircles.js";
-import DashTableContent from "../Dashboard_table/dashTableContent.js";
-import PaginationControl from "../Dashboard_table/paginationControl"; // Correct path for PaginationControl
+import DrawCircle from "../Dashboard_table/DbTableDrawCircles.js";
+import DashTableContent from "../Dashboard_table/DbTableContent.js";
+import PaginationControl from "../Dashboard_table/DbTablePaginationcontrol"; // Correct path for PaginationControl
 
 const DashTable = () => {
     const onPageChangeGraph = (newPage) => {

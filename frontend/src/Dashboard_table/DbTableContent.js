@@ -17,7 +17,7 @@ import {
     confirmations, 
     mempoolStatuses, 
     signatures 
-} from './data';
+} from './DbTableMockdata';
 
 const entriesPerPage = 20;
 
