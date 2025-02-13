@@ -21,7 +21,7 @@ const DbItem1 = () => {
         <span>Address</span>
       </div>
       <div class="info">
-        <span>0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97</span>
+        <span id="user-addr">0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97</span>
       </div>
       <div class="dates-container">
         <div class="date">

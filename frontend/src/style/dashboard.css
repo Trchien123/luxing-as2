@@ -6,7 +6,7 @@
   --font-fam: "Lato", sans-serif;
   --home-background: linear-gradient(#160c31, #442597);
 }
-*{
+* {
   font-family: "JetBrains Mono", monospace;
 }
 
@@ -301,12 +301,10 @@
 .info span {
   font-size: 14px;
 }
-
-@media screen and (max-width: 1400px) {
-  .info span {
-    font-size: 12px;
-    overflow-wrap: break-word;
-  }
+#user-addr {
+  font-size: 14px;
+  word-break: break-all;
+  white-space: normal;
 }
 .dates-container,
 .sent-received-container {
