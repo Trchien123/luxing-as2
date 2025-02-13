@@ -84,7 +84,7 @@ const BlurContainer = () => {
                 </div>
 
                 <div className="home-component--content">
-                    <h1 className="home-component--title">Swap anytime, anywhere</h1>
+                    <h1 className="home-component--title">Search anytime, anywhere</h1>
 
                     <SwapContainer handleOnClick={handleOnClick} span={block.span} image={block.image} />
                     <p className="home-component--footer">the best crypto exchange</p>
