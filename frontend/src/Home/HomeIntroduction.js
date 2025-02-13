@@ -1,5 +1,10 @@
-import './HomeIntroduction.css';
-import container1 from './asset/container_1.jpg' 
+<<<<<<< HEAD
+import '../HomeIntroduction.css';
+import container1 from '../asset/container_1.jpg'
+=======
+import '../style/HomeIntroduction.css';
+import container1 from '../asset/container_1.jpg'
+>>>>>>> a845243a3eb504ab9084be5b1bd320d9f2a3dea9
 
 function Container1() {
     return (
@@ -14,12 +19,12 @@ function Container1() {
                     <span>R</span>
                     <span>I</span>
                     <span>N</span>
-                    <span>G</span> <br/>
+                    <span>G</span> <br />
                     <span>E</span>
                     <span>V</span>
                     <span>E</span>
                     <span>R</span>
-                    <span>Y</span> <br/>
+                    <span>Y</span> <br />
                     <span>T</span>
                     <span>R</span>
                     <span>A</span>
@@ -30,7 +35,7 @@ function Container1() {
                     <span>T</span>
                     <span>I</span>
                     <span>O</span>
-                    <span>N</span> <br/>
+                    <span>N</span> <br />
                     <span>W</span>
                     <span>I</span>
                     <span>T</span>
@@ -39,7 +44,7 @@ function Container1() {
                     <span>S</span>
                 </p>
                 <p id="supporting-content">
-                    Trace and visualize transactions on the blockchain <br/>
+                    Trace and visualize transactions on the blockchain <br />
                     with powerful insights and analytics.
                 </p>
             </div>

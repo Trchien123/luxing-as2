@@ -1,5 +1,5 @@
 import React from 'react';
-import './DbTablePaginationcontrol.css';
+import '../../style/DbTablePaginationcontrol.css';
 
 const PaginationControl = ({ currentPage, totalItems, itemsPerPage, onPageChange, onPageChangeGraph }) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);

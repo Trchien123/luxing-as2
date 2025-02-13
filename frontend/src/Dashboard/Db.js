@@ -5,7 +5,7 @@ import {
     useLocation
 } from 'react-router-dom';
 
-import DbHeader from "./DbHeader";
+import DbHeader from "./DbDashboardHeader";
 
 import DbNavbar from "./DbNavbar";
 const Dashboard = () => {

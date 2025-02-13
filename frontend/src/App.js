@@ -9,7 +9,7 @@ import {
   Routes,
   Route
 } from 'react-router-dom';
-import Dashboard from './Dashboard/dashboard';
+import Dashboard from './Dashboard/Db';
 
 import DashNews from './Dashboard/DbNews';
 function App() {

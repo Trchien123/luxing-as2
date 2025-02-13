@@ -1,5 +1,5 @@
 import React from "react";
-import DbItem from "./DbItem";
+import DbItem from "./DbNavbarItem";
 import { Link } from "react-router-dom";
 const iconsElement = [
     {

@@ -7,5 +7,5 @@ images.keys().forEach((item, index) => {
     const imageName = item.replace('./', ''); // Remove the './' prefix
     cryptoImages[imageName] = images(item);
 });
-console.log(cryptoImages)
+
 export default cryptoImages;
