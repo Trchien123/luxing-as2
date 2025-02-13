@@ -4,7 +4,7 @@ function Menu() {
   return (
     <nav>
       <input type="checkbox" id="check" />
-      <div class="logo">Chenggong</div>
+      <div class="logo">Lu Xing</div>
       <div class="menus">
         <ul>
           <li>
