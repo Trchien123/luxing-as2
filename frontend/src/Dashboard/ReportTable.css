@@ -48,6 +48,7 @@
   border-radius: 5px;
   width: 100%;
   max-width: 600px;
+  color: white;
 }
 
 .icon-and-log {
@@ -123,4 +124,26 @@
 
 .see-more-button:hover {
   text-decoration: underline;
+}
+.toggle-button{
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #845fff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-button:hover {
+  background-color: #2d0e83;
+}
+
+.toggle-button:active {
+  background-color:  #845fff;
+}
+
+.toggle-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.3);
 }

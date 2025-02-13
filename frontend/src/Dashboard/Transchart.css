@@ -28,8 +28,15 @@
 }
   
 .tooltip {
-    transition: opacity 0.2s ease;
-    pointer-events: none;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  white-space: nowrap;
 }
 .axis line, .axis path {
   stroke: white;
@@ -55,7 +62,7 @@
   transition: 0.5s;
 }
 .chart-container {
-
+  position: relative;
   padding: 20px;
   border-radius: 8px;
 }
@@ -73,6 +80,7 @@
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.2s ease;
+  z-index: 100;
 }
 
 .tooltip-html.visible {
