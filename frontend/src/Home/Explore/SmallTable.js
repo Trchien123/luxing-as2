@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import '../../style/sphere.css';
 
 export const coinData = [
-  { name: "Bitcoin", icon: "../../public/icon/icon1.png" },
-  { name: "Ethereum", icon: "../../public/icon/icon2.png" },
-  { name: "Shiba Inu", icon: "../../public/icon/icon3.png" },
-  { name: "Dogecoin", icon: "../../public/icon/icon4.png" },
-  { name: "Solana", icon: "../../public/icon/icon5.png" },
-  { name: "Polkadot", icon: "../../public/icon/icon6.png" },
-  { name: "XRP", icon: "../../public/icon/icon7.png" },
-  { name: "Tether USDt", icon: "../../public/icon/icon8.png" },
+  { name: "Bitcoin", icon:  require ("../../asset/cryptos/bitcoin-btc-logo.png" )},
+  { name: "Ethereum", icon: require ("../../asset/cryptos/ethereum-eth-logo.png")},
+  { name: "Shiba Inu", icon: require ("../../asset/cryptos/shiba-inu-shib-logo.png" )},
+  { name: "Dogecoin", icon: require ("../../asset/cryptos/dogecoin-doge-logo.png" )},
+  { name: "Popcat", icon: require ("../../asset/cryptos/popcat-sol-popcat-logo.png")},
+  { name: "Polkadot", icon: require ("../../asset/cryptos/polkadot-new-dot-logo.png" )},
+  { name: "Stellar", icon: require ("../../asset/cryptos/stellar-xlm-logo.png" )},
+  { name: "Cardano", icon:require ("../../asset/cryptos/cardano-ada-logo.png" )},
 ];
 
 const getRandomValue = (min, max, isPercentage = false) => {
