@@ -1,10 +1,10 @@
 
 import '../src/style/App.css';
-import Home from './Home/Container-2';
+import Home from './Home/Home';
 import DbHome from './Dashboard/DbDashboard';
 import DashTable from './Dashboard/DashTable';
 import {
-  Link,
+
   BrowserRouter as Router,
   Routes,
   Route

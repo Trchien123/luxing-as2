@@ -1,12 +1,12 @@
 import React, { useRef, useLayoutEffect, useState } from "react";
-import Item from "./BlurItem";
-import SwapContainer from "./SwapContainer";
-import PopUp from "./popup";
-import './style/home.css'
-import cryptoImages from "./Dashboard/CryptoImages";
+import Item from "./HomeBlurContainerItem";
+import SwapContainer from "./HomeBlurContainerSwapContainer";
+import PopUp from "./HomeBlurContainerPopup";
+import '../style/home.css'
+import cryptoImages from "../Dashboard/CryptoImages";
 
 console.log(cryptoImages)
-const image1 = require("./asset/temp.png")
+const image1 = require("../asset/temp.png")
 const BlurContainer = () => {
     const containerRef = useRef(null);
     const [containerHeight, setContainerHeight] = useState(0);
