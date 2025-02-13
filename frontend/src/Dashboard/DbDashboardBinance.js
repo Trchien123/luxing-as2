@@ -1,5 +1,5 @@
 import React from "react";
-import BinanceChart from "./DbBiChart";
+import BinanceChart from "./DbDashboardBinanceBiChart";
 const BinanceOverview = ({ title }) => {
     return (
         <div className="binanceOverview">

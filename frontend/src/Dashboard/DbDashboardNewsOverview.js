@@ -1,6 +1,6 @@
 import React from "react";
 
-import newsImages from "./NewsImages";
+import newsImages from "./DbDashboardNewsOverviewNewsImages";
 import { Link } from "react-router-dom"
 const NewsOverview = ({ crypto }) => {
 

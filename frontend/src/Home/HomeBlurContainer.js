@@ -3,7 +3,7 @@ import Item from "./HomeBlurContainerItem";
 import SwapContainer from "./HomeBlurContainerSwapContainer";
 import PopUp from "./HomeBlurContainerPopup";
 import '../style/home.css'
-import cryptoImages from "../Dashboard/CryptoImages";
+import cryptoImages from "./HomeBlurContainerCryptoImages";
 
 console.log(cryptoImages)
 const image1 = require("../asset/temp.png")
