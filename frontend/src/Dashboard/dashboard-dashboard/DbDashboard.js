@@ -1,11 +1,11 @@
 import React from "react";
-import DbContainer1 from "./DbContainer1";
+import DbContainer1 from "../DbContainer1";
 import DbHomeContainer from "./DbDashboardHome";
 import NewsOverview from "./DbDashboardNewsOverview";
 import BinanceOverview from "./DbDashboardBinance";
-import DbSendReceiveTable from "./DbSendReceiveTable";
-import StatChart from "./DbTranschart";
-import ReportDis from "./DbReportdisp";
+import DbSendReceiveTable from "../DbSendReceiveTable";
+import StatChart from "../DbTranschart";
+import ReportDis from "../DbReportdisp";
 import { useOutletContext } from "react-router-dom";
 
 const DbHome = () => {
