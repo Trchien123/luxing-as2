@@ -34,14 +34,13 @@ const TransChart = () => {
 
   const handleMouseMove = (e, value, isSent) => {
     if (!containerRef.current) return;
-    
     const containerRect = containerRef.current.getBoundingClientRect();
-    setTooltip({
-      visible: true,
-      x: e.clientX - containerRect.left,
-      y: e.clientY - containerRect.top,
-      value: `${isSent ? 'Sent' : 'Received'}: ${value}`
-    });
+  setTooltip({
+    visible: true,
+    x: e.clientX - containerRect.left,
+    y: e.clientY - containerRect.top,
+    value: `${isSent ? 'Sent' : 'Received'}: ${value}`
+  });
   };
 
   return (
@@ -95,17 +94,7 @@ const TransChart = () => {
           );
         })}
 
-{tooltip.visible && (
-  <div 
-    className={`tooltip-html ${tooltip.visible ? 'visible' : ''}`}
-    style={{
-      left: tooltip.x,
-      top: tooltip.y
-    }}
-  >
-    {tooltip.value}
-  </div>
-        )}
+
 
         <g transform={`translate(${margin.left}, ${height - margin.bottom + 50})`}>
           {["January", "February", "March", "April", "May"].map((month, index) => (
@@ -113,13 +102,24 @@ const TransChart = () => {
               transform={`translate(${index * (chartWidth - margin.left - margin.right) / 5}, 0)`}
               onClick={() => setSelectedMonth(month)}>
               <rect width={(chartWidth - margin.left - margin.right) / 5 - 10} height={30} 
-                fill={selectedMonth === month ? "#3b82f6" : "#1f2937"} />
+                fill={selectedMonth === month ? "#845fff" : "#2d0e83"} />
               <text x={((chartWidth - margin.left - margin.right) / 5 - 10) / 2} y={20} 
                 textAnchor="middle" fill="white">{month}</text>
             </g>
           ))}
         </g>
       </svg>
+      {tooltip.visible && (
+  <div 
+  className={`tooltip-html ${tooltip.visible ? 'visible' : ''}`}
+  style={{
+    left: `${tooltip.x}px`,
+    top: `${tooltip.y}px`
+  }}
+  >
+    {tooltip.value}
+  </div>
+        )}
     </div>
   );
 };
