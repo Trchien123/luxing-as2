@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
-import './Transchart.css';
+import '../../style/Transchart.css';
 
 const TransChart = () => {
   const [chartWidth, setChartWidth] = useState(800);

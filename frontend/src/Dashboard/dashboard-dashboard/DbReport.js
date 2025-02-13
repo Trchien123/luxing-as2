@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "./ReportTable.css";
+import "../../style/ReportTable.css";
 
 const ReportTable = () => {
   const [hasError, setHasError] = useState(false);
@@ -30,15 +30,15 @@ const ReportTable = () => {
 
       {!hasError && (
         <div className="icon-and-log">
-          <img src="/icon/approve.png" alt="Approval icon" className="status-icon" />
+          <img src={require ("../../asset/approve.png")} alt="Approval icon" className="status-icon" />
         </div>
-      )}
+      )}  
 
       {hasError && (
         <div className="error-container">
           {errorLogs.map((error) => (
             <div key={error.id} className={`error-box ${expandedErrorId === error.id ? "expanded" : ""}`}>
-              <img src="/icon/error.png" alt="Error icon" className="error-icon" />
+              <img src={require ("../../asset/error.png")} alt="Error icon" className="error-icon" />
               <div className="error-text">
                 <span>{error.message}</span>
                 {expandedErrorId === error.id && <p className="error-details">{error.details}</p>}
