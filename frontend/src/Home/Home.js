@@ -1,11 +1,10 @@
 import React from "react";
 import Menu from "../Menu";
 import Footer from "../Footer"
-import Container1 from "../Container-1";
+import Container1 from "../HomeIntroduction";
 import BlurContainer from "./HomeBlurContainer";
 import IntroductionCard from "../gradientBorderCard";
-import Sphere from "../Sphere";
-import Sphere__head from "../Sphere__head";
+import Sphere from "../../src/Home/Explore/Sphere";
 const Home = () => {
     return (
         <>
@@ -13,7 +12,6 @@ const Home = () => {
             <Container1 />
             <BlurContainer />
             <IntroductionCard />
-            <Sphere__head />
             <Sphere />
             <Footer />
 

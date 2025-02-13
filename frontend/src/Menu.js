@@ -17,7 +17,7 @@ function Menu() {
             <a href="#introduction-card">Benefits</a>
           </li>
           <li>
-            <a href="#earth-container">Achievements</a>
+            <a href="#earth-container">Explore</a>
           </li>
           <li>
             <a href="#footer">Contact</a>

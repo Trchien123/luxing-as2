@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three-stdlib";
-import { getFresnelMat } from "./Sphere/getFresnelMat.js";
-import Small,  { coinData } from "./Small__table";
+import { getFresnelMat } from "./getFresnelMat.js";
+import Small,  { coinData } from "./SmallTable.js";
 
 
 const Ratio = window.innerWidth * 2.56;

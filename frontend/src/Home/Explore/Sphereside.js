@@ -1,7 +1,7 @@
 import React from "react";
-import './style/sphere.css'
+import '../../style/sphere.css';
 
-const Sphere__side = () => {
+const SphereSide = () => {
     return (
         <div class="sphere--side">
 
@@ -10,4 +10,4 @@ const Sphere__side = () => {
         </div>
     )
 }
-export default Sphere__side;
+export default SphereSide;

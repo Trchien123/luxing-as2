@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import './style/sphere.css';
+import '../../style/sphere.css';
 
 export const coinData = [
-  { name: "Bitcoin", icon: "/icon/icon1.png" },
-  { name: "Ethereum", icon: "/icon/icon2.png" },
-  { name: "Shiba Inu", icon: "/icon/icon3.png" },
-  { name: "Dogecoin", icon: "/icon/icon4.png" },
-  { name: "Solana", icon: "/icon/icon5.png" },
-  { name: "Polkadot", icon: "/icon/icon6.png" },
-  { name: "XRP", icon: "/icon/icon7.png" },
-  { name: "Tether USDt", icon: "/icon/icon8.png" },
+  { name: "Bitcoin", icon: "../../public/icon/icon1.png" },
+  { name: "Ethereum", icon: "../../public/icon/icon2.png" },
+  { name: "Shiba Inu", icon: "../../public/icon/icon3.png" },
+  { name: "Dogecoin", icon: "../../public/icon/icon4.png" },
+  { name: "Solana", icon: "../../public/icon/icon5.png" },
+  { name: "Polkadot", icon: "../../public/icon/icon6.png" },
+  { name: "XRP", icon: "../../public/icon/icon7.png" },
+  { name: "Tether USDt", icon: "../../public/icon/icon8.png" },
 ];
 
 const getRandomValue = (min, max, isPercentage = false) => {
