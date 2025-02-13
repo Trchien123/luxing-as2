@@ -4,7 +4,6 @@ import img2 from "../../asset/DbNews-image-2.jpg"
 import img3 from "../../asset/DbNews-image-3.jpg"
 
 import DNImageSlider from "./DbNewsImageSlider";
-import Footer from "../../Home/Footer";
 const IMAGES = [
     { url: img1, alt: "Image 1" },
     { url: img2, alt: "Image 2" },
@@ -39,7 +38,6 @@ const DashNews = () => {
                 width: "80%",
                 margin: "auto"
             }}></hr>
-            <Footer />
         </>
 
     )
