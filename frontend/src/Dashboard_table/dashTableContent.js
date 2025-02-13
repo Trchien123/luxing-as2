@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { 
     sender, 
     names, 
@@ -18,31 +19,38 @@ import {
     signatures 
 } from './data';
 
-function DashTableContent() {
+const entriesPerPage = 20;
+
+function DashTableContent({ currentPage }) {
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleMoreDetails = (index) => {
-        const isNegativeTransaction = amountsTransferred[index] < 0;
+        const startIndex = currentPage * entriesPerPage;
 
-        setSelectedTransaction({
-            sender: isNegativeTransaction ? names[index] : sender[index], // Use names[index] for negative transactions, or sender[index] for positive
-            receiver: isNegativeTransaction ? sender[index] : names[index], // Use sender[index] for negative transactions, or names[index] for positive
-            transactionHash: transactionHashes[index],
-            timestamp: timestamps[index],
-            blockNumber: blockNumbers[index],
-            status: statuses[index],
-            amountTransferred: amountsTransferred[index],
-            transactionFee: transactionFees[index],
-            gasUsed: gasUsed[index],
-            gasPrice: gasPrices[index],
-            contractAddress: contractAddresses[index],
-            tokenType: tokenTypes[index],
-            tokenAmount: tokenAmounts[index],
-            confirmation: confirmations[index],
-            mempoolStatus: mempoolStatuses[index],
-            signature: signatures[index],
-        });
+        // Check if the index is within bounds
+        if (startIndex + index < amountsTransferred.length) {
+            const isNegativeTransaction = amountsTransferred[startIndex + index] < 0;
+
+            setSelectedTransaction({
+                sender: isNegativeTransaction ? names[startIndex + index] : sender[startIndex + index],
+                receiver: isNegativeTransaction ? sender[startIndex + index] : names[startIndex + index],
+                transactionHash: transactionHashes[startIndex + index],
+                timestamp: timestamps[startIndex + index],
+                blockNumber: blockNumbers[startIndex + index],
+                status: statuses[startIndex + index],
+                amountTransferred: amountsTransferred[startIndex + index],
+                transactionFee: transactionFees[startIndex + index],
+                gasUsed: gasUsed[startIndex + index],
+                gasPrice: gasPrices[startIndex + index],
+                contractAddress: contractAddresses[startIndex + index],
+                tokenType: tokenTypes[startIndex + index],
+                tokenAmount: tokenAmounts[startIndex + index],
+                confirmation: confirmations[startIndex + index],
+                mempoolStatus: mempoolStatuses[startIndex + index],
+                signature: signatures[startIndex + index],
+            });
+        }
 
         setIsModalOpen(true);
     };
@@ -70,37 +78,42 @@ function DashTableContent() {
                 <div className="tbl-content-sender">
                     <table className="table" cellPadding="0" cellSpacing="0" border="0">
                         <tbody>
-                            {names.map((name, index) => (
-                                <tr key={index}>
-                                    <td>{amountsTransferred[index] < 0 ? names[index] : sender[index]}</td> {/* Sender */}
-                                    <td>{amountsTransferred[index] < 0 ? sender[index] : names[index]}</td> {/* Receiver */}
-                                    <td>{amountsTransferred[index]}</td>
-                                    <td>
-                                        <button onClick={() => handleMoreDetails(index)} className="details-button">
-                                            More Details
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {names.slice(currentPage * entriesPerPage, (currentPage + 1) * entriesPerPage).map((name, index) => {
+                                const startIndex = currentPage * entriesPerPage;
+                                return (
+                                    <tr key={index}>
+                                        <td>{amountsTransferred[startIndex + index] < 0 ? names[startIndex + index] : sender[startIndex + index]}</td>
+                                        <td>{amountsTransferred[startIndex + index] < 0 ? sender[startIndex + index] : names[startIndex + index]}</td>
+                                        <td>{Math.abs(amountsTransferred[startIndex + index])}</td>
+                                        <td>
+                                            <button onClick={() => handleMoreDetails(index)} className="details-button">
+                                                More Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })} 
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {/* Transaction Details Modal */}
             {isModalOpen && (
-            <div className={`transaction-backdrop ${isModalOpen ? "visible" : ""}`} onClick={handleClose}>
-                <div className={`transaction-details-container ${isModalOpen ? "visible" : ""}`}>
+                <div className={`transaction-backdrop ${isModalOpen ? "visible" : ""}`} onClick={handleClose}>
+                    <div className={`transaction-details-container ${isModalOpen ? "visible" : ""}`}>
                         <div className="transaction-details-content">
                             <button className="close-button" onClick={handleClose}>
                                 &times;
                             </button>
                             <h3>Transaction Details</h3>
-                            <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedTransaction.transactionHash}</p>
-                            <p>📅 <strong>Timestamp:</strong> {selectedTransaction.timestamp}</p>
-                            <p>🔗 <strong>Block Number:</strong> {selectedTransaction.blockNumber}</p>
-                            <p>📊 <strong>Status:</strong> {selectedTransaction.status}</p>
-
+                            {selectedTransaction && (
+                                <>
+                                    <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedTransaction.transactionHash}</p>
+                                    <p>📅 <strong>Timestamp:</strong> {selectedTransaction.timestamp}</p>
+                                    <p>🔗 <strong>Block Number:</strong> {selectedTransaction.blockNumber}</p>
+                                    <p>📊 <strong>Status:</strong> {selectedTransaction.status}</p>
+                                </>
+                            )}
                             <h4>Sender & Receiver</h4>
                             <p>📤 <strong>Sender Address:</strong> {selectedTransaction.sender}</p>
                             <p>📥 <strong>Receiver Address:</strong> {selectedTransaction.receiver}</p>
