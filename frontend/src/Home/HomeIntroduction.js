@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import '../HomeIntroduction.css';
 import container1 from '../asset/container_1.jpg'
+=======
+import '../style/HomeIntroduction.css';
+import container1 from '../asset/container_1.jpg'
+>>>>>>> a845243a3eb504ab9084be5b1bd320d9f2a3dea9
 
 function Container1() {
     return (
