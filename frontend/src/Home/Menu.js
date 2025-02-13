@@ -11,7 +11,7 @@ function Menu() {
             <a href="#">Home</a>
           </li>
           <li>
-            <a href="#home-component-1">Swap</a>
+            <a href="#home-component-1">Search</a>
           </li>
           <li>
             <a href="#introduction-card">Benefits</a>
