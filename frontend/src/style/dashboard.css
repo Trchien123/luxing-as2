@@ -6,6 +6,9 @@
   --font-fam: "Lato", sans-serif;
   --home-background: linear-gradient(#160c31, #442597);
 }
+*{
+  font-family: "JetBrains Mono", monospace;
+}
 
 .DB-section {
   display: flex;
