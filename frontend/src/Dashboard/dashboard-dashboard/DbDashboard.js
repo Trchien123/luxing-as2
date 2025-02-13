@@ -1,16 +1,16 @@
 import React from "react";
-import DbContainer1 from "../DbContainer1";
+import UserOverview from "./DbDashboardUserOverview";
 import DbHomeContainer from "./DbDashboardHome";
 import NewsOverview from "./DbDashboardNewsOverview";
 import BinanceOverview from "./DbDashboardBinance";
-import DbSendReceiveTable from "../DbSendReceiveTable";
+import SendReceiveTable from "./DbDashboardSendReceiveTable";
 import StatChart from "../DbTranschart";
 import ReportDis from "../DbReportdisp";
 import { useOutletContext } from "react-router-dom";
 
 const DbHome = () => {
-  const context = useOutletContext()
-  console.log(context)
+  const context = useOutletContext();
+  console.log(context);
   const generateNumber = () => {
     const randomNumber = Math.random(); // Generates a number between 0 and 1
     if (randomNumber < 0.07) {
@@ -22,7 +22,7 @@ const DbHome = () => {
   const number = generateNumber();
   return (
     <main className="DB-main">
-      <DbContainer1 />
+      <UserOverview />
       <section className="DB-main-container-2">
         <div
           className="Db-main-2-items Db-main-2-items-1 "
@@ -49,7 +49,7 @@ const DbHome = () => {
       </section>
       <section className="DB-main-container-2">
         <div className="Db-main-2-items Db-main-2-items-6 ">
-          <DbSendReceiveTable crypto={context} />
+          <SendReceiveTable crypto={context} />
         </div>
       </section>
     </main>

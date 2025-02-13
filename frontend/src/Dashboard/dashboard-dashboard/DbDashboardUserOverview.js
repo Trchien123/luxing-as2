@@ -1,6 +1,6 @@
 import React from "react";
 
-const DbContainer1 = () => {
+const UserOverview = () => {
   return (
     <div className="DB-main-container-1">
       <DbItem1 />
@@ -10,7 +10,7 @@ const DbContainer1 = () => {
   );
 };
 
-export default DbContainer1;
+export default UserOverview;
 
 const DbItem1 = () => {
   return (

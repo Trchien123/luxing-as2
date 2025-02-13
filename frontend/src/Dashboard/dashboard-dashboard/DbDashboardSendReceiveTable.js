@@ -1,6 +1,6 @@
 import React from "react";
-import "../style/sendReceiveTable.css";
-import { Link } from "react-router-dom"
+import "../../style/sendReceiveTable.css";
+import { Link } from "react-router-dom";
 const SendReceiveTable = ({ crypto }) => {
   return (
     <section>
@@ -85,7 +85,11 @@ const SendReceiveTable = ({ crypto }) => {
         </div>
       </div>
       <div className="button-container">
-        <Link to={`/Dashboard/Table`} state={crypto} className="more-details-button">
+        <Link
+          to={`/Dashboard/Table`}
+          state={crypto}
+          className="more-details-button"
+        >
           More Details...
         </Link>
       </div>
