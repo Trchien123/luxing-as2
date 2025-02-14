@@ -1,9 +1,9 @@
 import React from "react";
 
-const UserOverview = () => {
+const UserOverview = ({ address }) => {
   return (
     <div className="DB-main-container-1">
-      <DbItem1 />
+      <DbItem1 address={address} />
       <DbItem2 />
       <DbItem3 />
     </div>
@@ -12,7 +12,7 @@ const UserOverview = () => {
 
 export default UserOverview;
 
-const DbItem1 = () => {
+const DbItem1 = ({ address }) => {
   return (
     <div class="container">
       <h1>Overview</h1>
@@ -21,7 +21,7 @@ const DbItem1 = () => {
         <span>Address</span>
       </div>
       <div class="info">
-        <span id="user-addr">0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97</span>
+        <span id="user-addr">{address}</span>
       </div>
       <div class="dates-container">
         <div class="date">

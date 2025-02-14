@@ -1,9 +1,11 @@
-import { useState, React, forwardRef } from "react";
+import { useState, React } from "react";
 
-const SwapBox = forwardRef(({ span, handleOnClick, title, image }, ref) => {
+const SwapBox = ({ span, handleOnClick, setInput, title, image }) => {
 
     const [onFocus, setOnFocus] = useState(false)
-
+    const handleInput = (e) => {
+        setInput(e.target.value)
+    }
 
 
     const handleInputFocus = () => {
@@ -18,7 +20,7 @@ const SwapBox = forwardRef(({ span, handleOnClick, title, image }, ref) => {
                 <span className="swap-box--span">{span}</span>
                 <div className="swap-box--input">
                     <input type="text" placeholder="Type here..."
-                        ref={ref}
+                        onChange={handleInput}
                         onFocus={handleInputFocus}
                         onBlur={handleInputBlur}
 
@@ -39,6 +41,6 @@ const SwapBox = forwardRef(({ span, handleOnClick, title, image }, ref) => {
             </div>
         </>
     )
-});
+};
 
 export default SwapBox;

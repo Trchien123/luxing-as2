@@ -10,7 +10,7 @@ import { useOutletContext } from "react-router-dom";
 
 const DbHome = () => {
   const context = useOutletContext();
-  console.log(context);
+  // console.log(context);
   const generateNumber = () => {
     const randomNumber = Math.random(); // Generates a number between 0 and 1
     if (randomNumber < 0.07) {
@@ -22,7 +22,7 @@ const DbHome = () => {
   const number = generateNumber();
   return (
     <main className="DB-main">
-      <UserOverview />
+      <UserOverview address={context.address} />
       <section className="DB-main-container-2">
         <div
           className="Db-main-2-items Db-main-2-items-1 "
