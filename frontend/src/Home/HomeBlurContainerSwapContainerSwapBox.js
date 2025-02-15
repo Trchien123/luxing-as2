@@ -24,6 +24,7 @@ const SwapBox = ({ span, handleOnClick, setInput, title, image }) => {
                         onFocus={handleInputFocus}
                         onBlur={handleInputBlur}
 
+
                     ></input>
                     <div className="select-box" onClick={handleOnClick}>
                         <div className="select-box--img" style={{
@@ -38,7 +39,7 @@ const SwapBox = ({ span, handleOnClick, setInput, title, image }) => {
                 </div>
 
 
-            </div>
+            </div >
         </>
     )
 };

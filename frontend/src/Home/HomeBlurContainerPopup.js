@@ -16,10 +16,12 @@ const DATA = [
 ];
 
 const PopUp = ({ onClick, setBlock, show, }) => {
-    const handleTokenOnClick = (url, content) => {
+    const handleTokenOnClick = (url, title, content) => {
         setBlock({
             image: url,
-            span: content
+            id: content,
+            name: title
+
         })
         console.log("clicked")
         onClick()

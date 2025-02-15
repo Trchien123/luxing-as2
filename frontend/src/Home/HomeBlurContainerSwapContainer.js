@@ -10,19 +10,22 @@ const SwapContainer = ({ handleOnClick, id, image, name }) => {
         <div className="swap-box">
 
 
+            <form>
 
-            <SwapBox span={"Search"} handleOnClick={handleOnClick} setInput={setInput} title={id} image={image} />
-            <Link to={"/Dashboard "} state={
-                {
-                    address: input,
-                    id: id,
-                    image: image,
-                    name: name
-                }}>
-                <button className="swap-button" >Get Started </button>
-            </Link>
 
-        </div>
+                <SwapBox span={"Search"} handleOnClick={handleOnClick} setInput={setInput} title={id} image={image} />
+                <Link to={"/Dashboard "} state={
+                    {
+                        address: input,
+                        id: id,
+                        image: image,
+                        name: name
+                    }}>
+                    <button className="swap-button" >Get Started </button>
+
+                </Link>
+            </form>
+        </div >
     )
 }
 
