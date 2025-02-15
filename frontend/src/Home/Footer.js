@@ -22,7 +22,7 @@ function Footer() {
                 <li><a href="#earth-container">Explore</a></li>
                 <li><a href="#footer">Contact</a></li>
             </ul>
-            <p>Copyright © 2024-2025 Lu Xing®. All rights reserved.</p>
+            <p>Copyright © 2024-2025 LuXing®. All rights reserved.</p>
         </div>
     )
 }
