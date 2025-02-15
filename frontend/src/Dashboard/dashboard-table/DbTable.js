@@ -20,7 +20,7 @@ const DashTable = () => {
 
     return (
         <main className="DB-table">
-            <h1 className="Dbtable-title">this is the graph</h1>
+            <h1 className="Dbtable-title">Exploring Transactions</h1>
 
             <div className="Dbtable-component">
                 <DrawCircle currentPage={currentPage} setCurrentPage={setCurrentPage} /> {/* Pass props to DrawCircle */}
