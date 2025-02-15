@@ -21,7 +21,7 @@ const BlurContainer = () => {
     const cryptos = [
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "BTC", name: "Bitcoin", image: cryptoImages["bitcoin-btc-logo.png"] },
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "DOGE", name: "Dogecoin", image: cryptoImages["dogecoin-doge-logo.png"] },
-        { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "ETH", name: "Ehtereum", image: cryptoImages["ethereum-eth-logo.png"] },
+        { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "ETH", name: "Ethereum", image: cryptoImages["ethereum-eth-logo.png"] },
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "PEPE", name: "Pepe", image: cryptoImages["pepe-pepe-logo.png"] },
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "POPCAT", name: "Popcat (SOL)", image: cryptoImages["popcat-sol-popcat-logo.png"] },
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "SHIB", name: "Shiba Inu", image: cryptoImages["shiba-inu-shib-logo.png"] },
@@ -86,7 +86,7 @@ const BlurContainer = () => {
 
                 <div className="home-component--content">
                     <h1 className="home-component--title">Search anytime, anywhere</h1>
-
+                    {console.log(block)}
                     <SwapContainer handleOnClick={handleOnClick} id={block.id} image={block.image} name={block.name} />
                     <p className="home-component--footer">the best crypto exchange</p>
 

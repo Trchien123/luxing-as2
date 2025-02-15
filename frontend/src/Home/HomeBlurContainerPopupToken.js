@@ -3,7 +3,7 @@ import React from "react";
 const Token = ({ image, title, content, handleTokenOnClick }) => {
 
     return (
-        <div className="home-component-1--card--container" onClick={() => handleTokenOnClick(image, content)}>
+        <div className="home-component-1--card--container" onClick={() => handleTokenOnClick(image, title, content)}>
             <div className="card--container-1">
                 <div className="card--container-1-img" style={{
                     backgroundImage: `url(${image})`
