@@ -76,7 +76,7 @@
   background-color: #ffe5e5;
   padding: 10px;
   border-radius: 5px;
-  width: 300px;
+  
   font-size: 14px;
   font-weight: 500;
   text-align: left;
@@ -107,7 +107,7 @@
 }
 .expanded .error-details {
   max-height: 100px; 
-  overflow-y: auto;
+ 
   padding-right: 5px;
 }
 
@@ -146,4 +146,29 @@
 .toggle-button:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.3);
+}
+.report-table-container::-webkit-scrollbar {
+  width: 10px;
+  /* width of the scrollbar */
+  height: 10px;
+  /* height of the scrollbar */
+  /* background-color: #f5f5f5; */
+  /* background color of the scrollbar */
+}
+
+.report-table-container::-webkit-scrollbar-thumb {
+  background-color: #CCC;
+  /* color of the scrollbar thumb */
+  border-radius: 10px;
+  /* rounded corners of the scrollbar thumb */
+}
+
+.report-table-container::-webkit-scrollbar-thumb:hover {
+  background-color: #BBB;
+  /* hover color of the scrollbar thumb */
+}
+
+.report-table-container::-webkit-scrollbar-track {
+  /* background-color: #f5f5f5; */
+  /* background color of the scrollbar track */
 }
