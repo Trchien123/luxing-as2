@@ -6,6 +6,7 @@
   --font-fam: "Lato", sans-serif;
   --home-background: linear-gradient(#160c31, #442597);
 }
+
 * {
   font-family: "JetBrains Mono", monospace;
 }
@@ -185,6 +186,7 @@
 }
 
 .DB--items .Db--items-icon {
+  all: unset;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -218,6 +220,7 @@
 
 /* bell ringing animation keyframes*/
 @keyframes bellRing {
+
   0%,
   100% {
     transform-origin: top;
@@ -241,6 +244,85 @@
 
   75% {
     transform: rotateZ(2deg);
+  }
+}
+
+.notification {
+  position: absolute;
+  z-index: 60000;
+  width: 230px;
+  height: 330px;
+  top: 76px;
+  right: 45px;
+  background-color: #333366;
+  border-radius: 20px;
+  padding: 10px;
+  animation: movedown 0.3s forwards;
+}
+
+
+
+
+.notification--close {
+  all: unset;
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 5px 0;
+  color: white;
+  margin-right: 0;
+}
+
+.notification--close svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(45deg);
+  background-color: none;
+}
+
+.notification--container {
+  display: flex;
+  gap: 10px;
+  min-height: 50px;
+
+}
+
+.notification--header {
+  font-size: 1rem;
+  color: white;
+  padding: 10px 0;
+}
+
+.notification--container--wrapper {
+  width: 50px;
+  height: 50px;
+
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.notification--container--content {
+  font-size: 12px;
+  color: white;
+}
+
+.notification--container--wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+}
+
+@keyframes movedown {
+  from {
+    transform: translateY(-3px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -301,11 +383,13 @@
 .info span {
   font-size: 14px;
 }
+
 #user-addr {
   font-size: 14px;
   word-break: break-all;
   white-space: normal;
 }
+
 .dates-container,
 .sent-received-container {
   display: flex;
@@ -604,14 +688,14 @@
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.Dn-img-slider-btn > * {
+.Dn-img-slider-btn>* {
   stroke: white;
   fill: black;
   width: 2rem;
   height: 2rem;
 }
 
-.Dn-img-slider-btn:hover > * {
+.Dn-img-slider-btn:hover>* {
   animation: squish 0.2s ease-in-out;
 }
 
@@ -634,7 +718,7 @@
   scale: 1.2;
 }
 
-.Dn-img-slider-dotbtn > * {
+.Dn-img-slider-dotbtn>* {
   stroke: white;
   fill: black;
   height: 100%;
@@ -818,12 +902,9 @@
 }
 
 .Dbhistory--subcontainer {
-  background: linear-gradient(
-      127.09deg,
+  background: linear-gradient(127.09deg,
       rgba(6, 11, 40, 0.94) 19.41%,
-      rgba(10, 14, 35, 0.49) 76.65%
-    )
-    border-box;
+      rgba(10, 14, 35, 0.49) 76.65%) border-box;
   padding: 22px;
   overflow-x: scroll;
   box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;

@@ -16,6 +16,7 @@ const Dashboard = () => {
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef(null);
     const [showBar, setShowBar] = useState(true)
+    const [showNoti, setShowNoti] = useState(false)
     useEffect(() => {
         const handleScroll = () => {
             const container = containerRef.current;
@@ -33,6 +34,9 @@ const Dashboard = () => {
             container.removeEventListener("scroll", handleScroll);
         };
     }, []);
+
+
+
     return (
         <section className="DB-section">
             {
@@ -40,7 +44,10 @@ const Dashboard = () => {
             }
             <div ref={containerRef} className="DB-container">
 
+
                 <DbHeader scrolled={scrolled} setShowBar={setShowBar} showBar={showBar} />
+
+
                 <Outlet context={crypto} />
             </div>
 
