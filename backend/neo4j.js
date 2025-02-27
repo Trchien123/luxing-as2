@@ -5,35 +5,35 @@ const URI = 'neo4j+s://11abf5b1.databases.neo4j.io';
 const USER = 'neo4j';
 const PASSWORD = 'ROihidBZBZ-nZEpVv52H0U4SOb95NrKRpZjnl7c-EAU';
 
-(async () => {
+// (async () => {
 
-    let driver
+//     let driver
 
-    try {
-        driver = neo4j.driver(URI, neo4j.auth.basic(USER, PASSWORD))
-        const serverInfo = await driver.getServerInfo()
+//     try {
+//         driver = neo4j.driver(URI, neo4j.auth.basic(USER, PASSWORD))
+//         const serverInfo = await driver.getServerInfo()
 
 
 
-        console.log('Connection established')
-        console.log(serverInfo)
+//         console.log('Connection established')
+//         console.log(serverInfo)
 
-        const session = driver.session()
-        const query = 'MATCH p=()-[r:`CREATE TRANSACTION`]->() RETURN p,r ;'
+//         const session = driver.session()
+//         const query = 'MATCH p=()-[r:`CREATE TRANSACTION`]->() RETURN p,r ;'
 
-        const result = await session.run(query)
+//         const result = await session.run(query)
 
-        result.records.forEach(record => {
-            console.log(record.get('p'));
-            console.log(record.get('r'));
-        })
-        await session.close()
-    } catch (err) {
-        console.log(`Connection error\n${err}\nCause: ${err.cause}`)
-    } finally {
-        await driver.close()
-    }
-})();
+//         result.records.forEach(record => {
+//             console.log(record.get('p'));
+//             console.log(record.get('r'));
+//         })
+//         await session.close()
+//     } catch (err) {
+//         console.log(`Connection error\n${err}\nCause: ${err.cause}`)
+//     } finally {
+//         await driver.close()
+//     }
+// })();
 
 async function runNeo4Query(query) {
     const driver = neo4j.driver(URI, neo4j.auth.basic(USER, PASSWORD))
@@ -67,3 +67,18 @@ async function runNeo4Query(query) {
     }
 
 }
+
+(async () => {
+    const query = 'MATCH p=()-[r:`CREATE TRANSACTION`]->() RETURN p,r ;';
+    try {
+        const records = await runNeo4Query(query)
+        records.forEach(record => {
+            console.log('Path:', record.path)
+            console.log('Relationship:', record.relationship)
+
+        })
+
+    } catch (err) {
+        console.error(err)
+    }
+})();
