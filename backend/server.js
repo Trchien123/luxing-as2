@@ -50,13 +50,10 @@ app.get("/api/transactions/:address", async (req, res) => {
     }
   });
 
-// GraphQL API endpoint for Bitquery
-const BITQUERY_API_URL = "https://graphql.bitquery.io";
-
 // Fetch Bitcoin transactions for an address
 app.get("/api/bitcoin/transactions/:address", async (req, res) => {
   const { address } = req.params;
-
+  const BITQUERY_API_URL = "https://graphql.bitquery.io";
   // GraphQL query to get Bitcoin transactions for a specific address
   const query = {
     query: `
