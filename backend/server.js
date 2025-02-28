@@ -11,9 +11,6 @@ app.use(express.json());
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
 
-console.log("ETHERSCAN_API_KEY:", ETHERSCAN_API_KEY); // Check if the Etherscan API key is loaded
-console.log("BITQUERY_API_KEY:", BITQUERY_API_KEY); // Check if the Bitquery API key is loaded
-
 // Fetch Ethereum transactions for an address
 app.get("/api/transactions/:address", async (req, res) => {
     const { address } = req.params;
@@ -146,8 +143,6 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
       return;
     }
   
-    console.log("Bitquery Response:", response.data); // Log the full response for debugging
-  
     // Combine inbound and outbound transactions into a single array
     const transactions = [
       ...response.data.data.bitcoin.inbound,
@@ -173,6 +168,5 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
 // Start server
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
   console.log(`Server running on port ${PORT}`);
 });
