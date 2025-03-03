@@ -56,7 +56,7 @@ function DashTableContent({ currentPage, transactions }) {
                                     <td>{formatAddress(tx.to_address, screenWidth)}</td>
                                     <td>{Math.abs(tx.value)}</td>
                                     <td>
-                                        <button onClick={() => setSelectedTransaction(tx)} className="details-button">
+                                        <button onClick={() => { setSelectedTransaction(tx); setIsModalOpen(true); }} className="details-button">
                                             More Details
                                         </button>
                                     </td>

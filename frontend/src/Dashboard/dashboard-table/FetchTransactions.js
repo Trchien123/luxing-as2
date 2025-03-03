@@ -8,15 +8,20 @@ const FetchTransactions = (address) => {
 
     useEffect(() => {
         let isMounted = true;
-        
+
         if (!address) {
             setLoading(false);
             return;
         }
 
+        const isBitcoinAddress = (addr) => /^[13]|bc1/.test(addr);
+        const apiUrl = isBitcoinAddress(address)
+            ? `http://localhost:5000/api/bitcoin/transactions/${address}`
+            : `http://localhost:5000/api/transactions/${address}`;
+
         const fetchTransactions = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/transactions/${address}`);
+                const response = await axios.get(apiUrl);
                 if (isMounted) {
                     setTransactions(Array.isArray(response.data) ? response.data : []);
                     setError(null);
