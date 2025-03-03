@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import FetchTransactions from "./FetchTransactions.js";
 
 const entriesPerPage = 20;
 
@@ -10,16 +9,13 @@ function formatAddress(address, screenWidth) {
     return `${address.slice(0, 10)}...${address.slice(-10)}`; // Desktop
 }
 
-function DashTableContent({ currentPage, address }) {
-    const { transactions, loading, error } = FetchTransactions(address);
+function DashTableContent({ currentPage, transactions }) {
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [paginatedTransactions, setPaginatedTransactions] = useState([]);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
     useEffect(() => {
-        if (!Array.isArray(transactions) || transactions.length === 0) return;
-    
         const start = currentPage * entriesPerPage;
         const end = start + entriesPerPage;
         setPaginatedTransactions(transactions.slice(start, end));
@@ -31,18 +27,10 @@ function DashTableContent({ currentPage, address }) {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const handleMoreDetails = (transaction) => {
-        setSelectedTransaction(transaction);
-        setIsModalOpen(true);
-    };
-
     const handleClose = () => {
         setSelectedTransaction(null);
         setIsModalOpen(false);
     };
-
-    if (loading) return <div>Loading transactions...</div>;
-    if (error) return <div>Error: {error}</div>;
 
     return (
         <section id="table-container">
@@ -68,7 +56,7 @@ function DashTableContent({ currentPage, address }) {
                                     <td>{formatAddress(tx.to_address, screenWidth)}</td>
                                     <td>{Math.abs(tx.value)}</td>
                                     <td>
-                                        <button onClick={() => handleMoreDetails(tx)} className="details-button">
+                                        <button onClick={() => setSelectedTransaction(tx)} className="details-button">
                                             More Details
                                         </button>
                                     </td>

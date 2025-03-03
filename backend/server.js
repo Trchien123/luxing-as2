@@ -27,7 +27,7 @@ app.get("/api/transactions/:address", async (req, res) => {
             from_address: tx.from,
             to_address: tx.to,
             hash: tx.hash,
-            value: (tx.value / 1e18).toFixed(6), // Convert Wei to ETH
+            value: (tx.value / 1e18).toFixed(15), // Convert Wei to ETH
             input: tx.input,
             transaction_index: tx.transactionIndex,
             gas: tx.gas,

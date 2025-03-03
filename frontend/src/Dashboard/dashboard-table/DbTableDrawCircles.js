@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"; 
-import FetchTransactions from "./FetchTransactions.js";
 
 function calculateCirclePoints(a, b, R, numPoints = 20) {
     const points = [];
@@ -35,11 +34,10 @@ function Normalization(amountsTransferred, numPoints = 20) {
     return normalizedAmountsTransferred;
 }
 
-function DrawCircle({ currentPage, address }) {
+function DrawCircle({ currentPage, address, transactions }) {
     const numPoints = 20;
     const circleCenter = { x: 350, y: 350 };
     const circleRadius = 250;
-    const { transactions, loading, error } = FetchTransactions(address);
 
     const [selectedNode, setSelectedNode] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,9 +52,6 @@ function DrawCircle({ currentPage, address }) {
         const end = start + itemsPerPage;
         setPaginatedTransactions(transactions.slice(start, end));
     }, [currentPage, transactions]);
-
-    if (loading) return <div>Loading transactions...</div>;
-    if (error) return <div>Error: {error}</div>;
 
     const sender = paginatedTransactions.map(tx => tx.from_address);
     const receiver = paginatedTransactions.map(tx => tx.to_address);
