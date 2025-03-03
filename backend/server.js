@@ -59,7 +59,7 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
     query: `
       query ($network: BitcoinNetwork!, $address: String!, $from: ISO8601DateTime, $till: ISO8601DateTime) {
         bitcoin(network: $network) {
-            inbound: coinpath(
+            inbound: coinpath(  
             initialAddress: {is: $address}
             depth: {lteq: 1}
             options: {direction: inbound, desc: "block.timestamp.time"}

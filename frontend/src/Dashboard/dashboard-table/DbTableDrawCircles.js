@@ -1,24 +1,5 @@
 import React, { useState, useEffect } from "react"; 
-
-import { 
-    sender, 
-    names, 
-    radii, 
-    transactionHashes, 
-    timestamps, 
-    blockNumbers, 
-    statuses, 
-    amountsTransferred, 
-    transactionFees, 
-    gasUsed, 
-    gasPrices, 
-    contractAddresses, 
-    tokenTypes, 
-    tokenAmounts, 
-    confirmations, 
-    mempoolStatuses, 
-    signatures 
-} from './DbTableMockdata';
+import FetchTransactions from "./FetchTransactions.js";
 
 function calculateCirclePoints(a, b, R, numPoints = 20) {
     const points = [];
@@ -29,6 +10,11 @@ function calculateCirclePoints(a, b, R, numPoints = 20) {
         points.push({x, y, alpha});
     }
     return points;
+}
+
+function formatAddress(address, startLength = 4, endLength = 2) {
+    if (!address) return "";
+    return `${address.slice(0, startLength)}...${address.slice(-endLength)}`;
 }
 
 function Normalization(amountsTransferred, numPoints = 20) {
@@ -49,87 +35,92 @@ function Normalization(amountsTransferred, numPoints = 20) {
     return normalizedAmountsTransferred;
 }
 
-function DrawCircle({currentPage}) { // Accept props as an argument
+function DrawCircle({ currentPage, address }) {
     const numPoints = 20;
-    const circleCenter = {x: 350 , y: 350};
+    const circleCenter = { x: 350, y: 350 };
     const circleRadius = 250;
-    const points = calculateCirclePoints(circleCenter.x, circleCenter.y, circleRadius, numPoints);
+    const { transactions, loading, error } = FetchTransactions(address);
 
     const [selectedNode, setSelectedNode] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [paginatedTransactions, setPaginatedTransactions] = useState([]);
 
-    const itemsPerPage = 20; // Items per page
-
-    const [currentTransactions, setCurrentTransactions] = useState(amountsTransferred.slice(0, 20)); // Use itemsPerPage directly
-    const [currentNames, setCurrentNames] = useState(names.slice(0, 20)); // Use itemsPerPage directly
+    const itemsPerPage = 20;
 
     useEffect(() => {
-        // Update both transactions and names when the page changes
-        const start = currentPage * 20; // Use graph current page from props
-        const end = (currentPage + 1) * 20; // Use itemsPerPage directly
+        if (!transactions || transactions.length === 0) return;
+        
+        const start = currentPage * itemsPerPage;
+        const end = start + itemsPerPage;
+        setPaginatedTransactions(transactions.slice(start, end));
+    }, [currentPage, transactions]);
 
-        setCurrentTransactions(amountsTransferred.slice(start, end));
-        setCurrentNames(names.slice(start, end)); // Update names for current page
-    }, [currentPage, amountsTransferred, names]); // Trigger whenever currentPage, amountsTransferred, or names changes
+    if (loading) return <div>Loading transactions...</div>;
+    if (error) return <div>Error: {error}</div>;
 
-    const normalizedamountsTransferred = Normalization(currentTransactions, numPoints);
+    const sender = paginatedTransactions.map(tx => tx.from_address);
+    const receiver = paginatedTransactions.map(tx => tx.to_address);
+    const transactionHash = paginatedTransactions.map(tx => tx.hash);
+    const value = paginatedTransactions.map(tx => parseFloat(tx.value));
+    const gasUsed = paginatedTransactions.map(tx => tx.gas_used);
+    const gasPrices = paginatedTransactions.map(tx => tx.gas_price);
+    const timestamps = paginatedTransactions.map(tx => tx.block_timestamp);
+    const transactionFees = paginatedTransactions.map(tx => tx.transaction_fee);
+    const blockNumbers = paginatedTransactions.map(tx => tx.block_number);
+    const blockHash = paginatedTransactions.map(tx => tx.blockHash);
+    const direction = paginatedTransactions.map(tx => tx.direction);
 
-    const handleNodeClick = (index) => { 
-        const adjustedIndex = currentPage * itemsPerPage + index;
-        const isNegativeTransaction = currentTransactions[index] < 0;
+    const normalizedValues = Normalization(value, numPoints);
+    const points = calculateCirclePoints(circleCenter.x, circleCenter.y, circleRadius, numPoints);
 
-        setSelectedNode({ 
-            sender: isNegativeTransaction ? names[adjustedIndex] : sender[adjustedIndex],
-            receiver: isNegativeTransaction ? sender[adjustedIndex] : names[adjustedIndex],
-            transactionHash: transactionHashes[adjustedIndex],
-            timestamp: timestamps[adjustedIndex],
-            blockNumber: blockNumbers[adjustedIndex],
-            status: statuses[adjustedIndex],
-            amountTransferred: currentTransactions[index],
-            transactionFee: transactionFees[adjustedIndex],
-            gasUsed: gasUsed[adjustedIndex],
-            gasPrice: gasPrices[adjustedIndex],
-            contractAddress: contractAddresses[adjustedIndex],
-            tokenType: tokenTypes[adjustedIndex],
-            tokenAmount: tokenAmounts[adjustedIndex],
-            confirmation: confirmations[adjustedIndex],
-            mempoolStatus: mempoolStatuses[adjustedIndex],
-            signature: signatures[adjustedIndex],
+    const handleNodeClick = (index) => {
+        setSelectedNode({
+            sender: sender[index],
+            receiver: receiver[index],
+            transactionHash: transactionHash[index],
+            timestamp: timestamps[index],
+            blockNumber: blockNumbers[index],
+            value: value[index],
+            transactionFee: transactionFees[index],
+            gasUsed: gasUsed[index],
+            gasPrice: gasPrices[index],
+            blockHash: blockHash[index],
+            direction: direction[index]
         });
-
-        setIsModalOpen(true); // Show modal when a transaction is clicked
+        setIsModalOpen(true);
     };
 
     const handleClose = () => {
         setSelectedNode(null);
-        setIsModalOpen(false); // Hide modal
+        setIsModalOpen(false);
     };
 
     return (
         <div className="transaction-visualization">
             <svg id="visualization" viewBox="0 0 700 700" width="50%" height="50%">
-            {points.slice(0, currentTransactions.length).map((point, index) => {
-                const adjustedX = point.x - normalizedamountsTransferred[index].normalized * Math.cos(point.alpha);
-                const adjustedY = point.y - normalizedamountsTransferred[index].normalized * Math.sin(point.alpha);
+            {points.slice(0, value.length).map((point, index) => {
+                const adjustedX = point.x - normalizedValues[index].normalized * Math.cos(point.alpha);
+                const adjustedY = point.y - normalizedValues[index].normalized * Math.sin(point.alpha);
 
                 const midX = (circleCenter.x + point.x) / 2;
                 const midY = (circleCenter.y + point.y) / 2;
 
-                const textLength = currentTransactions[index].toString().length * 7;
+                const currentValueAtIndex = value[index];
+                const textLength = currentValueAtIndex ? currentValueAtIndex.toString().length * 7 : 0; // Check if defined
                 const padding = 4;
                 const rectWidth = textLength + padding;
                 const rectHeight = 18;
 
                     return (
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
-                            <circle cx={point.x} cy={point.y} r={normalizedamountsTransferred[index].normalized} fill="none" stroke="white" strokeWidth={5} />
+                            <circle cx={point.x} cy={point.y} r={normalizedValues[index].normalized} fill="none" stroke="white" strokeWidth={5} />
                             <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={5}/>
                             <rect x={midX - rectWidth / 2} y={midY - rectHeight / 2} width={rectWidth} height={rectHeight} fill="#442597" />
                             <text x={midX} y={midY} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                                {currentTransactions[index]}
+                                {value[index].toFixed(2)}
                             </text>
                             <text id="receivers" x={point.x+5} y={point.y-37} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                                {currentNames[index]}  {/* Use currentNames here */}
+                                {formatAddress(receiver[index])}  {/* Use currentNames here */}
                             </text>
                         </g>
                     );
@@ -140,41 +131,31 @@ function DrawCircle({currentPage}) { // Accept props as an argument
                 </text>
             </svg>
             
-            {isModalOpen && <div className="transaction-backdrop visible" onClick={handleClose}></div>}
-            <div className={`transaction-details-container ${isModalOpen ? "visible" : ""}`}>
-                {selectedNode && (
-                    <div className="transaction-details-content">
-                        <button className="close-button" onClick={handleClose}>
-                            &times;
-                        </button>
-                        <h3>Transaction Details</h3>
-                        <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}</p>
-                        <p>📅 <strong>Timestamp:</strong> {selectedNode.timestamp}</p>
-                        <p>🔗 <strong>Block Number:</strong> {selectedNode.blockNumber}</p>
-                        <p>📊 <strong>Status:</strong> {selectedNode.status}</p>
+            {isModalOpen && (
+                <div className="transaction-backdrop visible" onClick={handleClose}>
+                    <div className="transaction-details-container visible">
+                        <div className="transaction-details-content">
+                            <button className="close-button" onClick={handleClose}>&times;</button>
+                            <h3>Transaction Details</h3>
+                            <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}</p>
+                            <p>📅 <strong>Timestamp:</strong> {selectedNode.timestamp}</p>
+                            <p>🔗 <strong>Block Number:</strong> {selectedNode.blockNumber}</p>
+                            <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}</p> 
 
-                        <h4>Sender & Receiver</h4>
-                        <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
-                        <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
+                            <h4>Sender & Receiver</h4>
+                            <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
+                            <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
+                            <p>🏦 <strong>Direction:</strong> {selectedNode.direction}</p>
 
-                        <h4>Amount & Fees</h4>
-                        <p>💰 <strong>Amount Transferred:</strong> {selectedNode.amountTransferred}</p>
-                        <p>⛽ <strong>Transaction Fee:</strong> {selectedNode.transactionFee}</p>
-                        <p>🔥 <strong>Gas Used:</strong> {selectedNode.gasUsed}</p>
-                        <p>💲 <strong>Gas Price:</strong> {selectedNode.gasPrice} Gwei</p>
-
-                        <h4>Smart Contract & Token Details (if applicable)</h4>
-                        <p>🏦 <strong>Contract Address:</strong> {selectedNode.contractAddress}</p>
-                        <p>🎟 <strong>Token Type:</strong> {selectedNode.tokenType}</p>
-                        <p>💎 <strong>Token Amount:</strong> {selectedNode.tokenAmount}</p>
-
-                        <h4>Confirmation & Security</h4>
-                        <p>✅ <strong>Confirmations:</strong> {selectedNode.confirmation}</p>
-                        <p>📌 <strong>Mempool Status:</strong> {selectedNode.mempoolStatus}</p>
-                        <p>🔏 <strong>Signature:</strong> {selectedNode.signature}</p>
+                            <h4>Amount & Fees</h4>
+                            <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value}</p>
+                            <p>⛽ <strong>Transaction Fee:</strong> {selectedNode.transactionFee}</p>
+                            <p>🔥 <strong>Gas Used:</strong> {selectedNode.gasUsed}</p>
+                            <p>💲 <strong>Gas Price:</strong> {selectedNode.gasPrice} Gwei</p>
+                        </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }

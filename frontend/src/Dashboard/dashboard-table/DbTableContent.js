@@ -1,57 +1,38 @@
-import React, { useState } from 'react';
-
-import { 
-    sender, 
-    names, 
-    transactionHashes, 
-    timestamps, 
-    blockNumbers, 
-    statuses, 
-    amountsTransferred, 
-    transactionFees, 
-    gasUsed, 
-    gasPrices, 
-    contractAddresses, 
-    tokenTypes, 
-    tokenAmounts, 
-    confirmations, 
-    mempoolStatuses, 
-    signatures 
-} from './DbTableMockdata';
+import React, { useState, useEffect } from "react";
+import FetchTransactions from "./FetchTransactions.js";
 
 const entriesPerPage = 20;
 
-function DashTableContent({ currentPage }) {
+function formatAddress(address, screenWidth) {
+    if (!address) return "";
+    if (screenWidth < 768) return `${address.slice(0, 4)}...${address.slice(-2)}`; // Mobile
+    if (screenWidth < 1024) return `${address.slice(0, 6)}...${address.slice(-6)}`; // Tablet
+    return `${address.slice(0, 10)}...${address.slice(-10)}`; // Desktop
+}
+
+function DashTableContent({ currentPage, address }) {
+    const { transactions, loading, error } = FetchTransactions(address);
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [paginatedTransactions, setPaginatedTransactions] = useState([]);
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-    const handleMoreDetails = (index) => {
-        const startIndex = currentPage * entriesPerPage;
+    useEffect(() => {
+        if (!Array.isArray(transactions) || transactions.length === 0) return;
+    
+        const start = currentPage * entriesPerPage;
+        const end = start + entriesPerPage;
+        setPaginatedTransactions(transactions.slice(start, end));
+    }, [currentPage, transactions]);
 
-        // Check if the index is within bounds
-        if (startIndex + index < amountsTransferred.length) {
-            const isNegativeTransaction = amountsTransferred[startIndex + index] < 0;
+    useEffect(() => {
+        const handleResize = () => setScreenWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
-            setSelectedTransaction({
-                sender: isNegativeTransaction ? names[startIndex + index] : sender[startIndex + index],
-                receiver: isNegativeTransaction ? sender[startIndex + index] : names[startIndex + index],
-                transactionHash: transactionHashes[startIndex + index],
-                timestamp: timestamps[startIndex + index],
-                blockNumber: blockNumbers[startIndex + index],
-                status: statuses[startIndex + index],
-                amountTransferred: amountsTransferred[startIndex + index],
-                transactionFee: transactionFees[startIndex + index],
-                gasUsed: gasUsed[startIndex + index],
-                gasPrice: gasPrices[startIndex + index],
-                contractAddress: contractAddresses[startIndex + index],
-                tokenType: tokenTypes[startIndex + index],
-                tokenAmount: tokenAmounts[startIndex + index],
-                confirmation: confirmations[startIndex + index],
-                mempoolStatus: mempoolStatuses[startIndex + index],
-                signature: signatures[startIndex + index],
-            });
-        }
-
+    const handleMoreDetails = (transaction) => {
+        setSelectedTransaction(transaction);
         setIsModalOpen(true);
     };
 
@@ -59,6 +40,9 @@ function DashTableContent({ currentPage }) {
         setSelectedTransaction(null);
         setIsModalOpen(false);
     };
+
+    if (loading) return <div>Loading transactions...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <section id="table-container">
@@ -78,61 +62,42 @@ function DashTableContent({ currentPage }) {
                 <div className="tbl-content-sender">
                     <table className="table" cellPadding="0" cellSpacing="0" border="0">
                         <tbody>
-                            {names.slice(currentPage * entriesPerPage, (currentPage + 1) * entriesPerPage).map((name, index) => {
-                                const startIndex = currentPage * entriesPerPage;
-                                return (
-                                    <tr key={index}>
-                                        <td>{amountsTransferred[startIndex + index] < 0 ? names[startIndex + index] : sender[startIndex + index]}</td>
-                                        <td>{amountsTransferred[startIndex + index] < 0 ? sender[startIndex + index] : names[startIndex + index]}</td>
-                                        <td>{Math.abs(amountsTransferred[startIndex + index])}</td>
-                                        <td>
-                                            <button onClick={() => handleMoreDetails(index)} className="details-button">
-                                                More Details
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })} 
+                            {paginatedTransactions.map((tx, index) => (
+                                <tr key={index}>
+                                    <td>{formatAddress(tx.from_address, screenWidth)}</td>
+                                    <td>{formatAddress(tx.to_address, screenWidth)}</td>
+                                    <td>{Math.abs(tx.value)}</td>
+                                    <td>
+                                        <button onClick={() => handleMoreDetails(tx)} className="details-button">
+                                            More Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))} 
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {isModalOpen && (
-                <div className={`transaction-backdrop ${isModalOpen ? "visible" : ""}`} onClick={handleClose}>
-                    <div className={`transaction-details-container ${isModalOpen ? "visible" : ""}`}>
+            {isModalOpen && selectedTransaction && (
+                <div className="transaction-backdrop visible" onClick={handleClose}>
+                    <div className="transaction-details-container visible">
                         <div className="transaction-details-content">
                             <button className="close-button" onClick={handleClose}>
                                 &times;
                             </button>
                             <h3>Transaction Details</h3>
-                            {selectedTransaction && (
-                                <>
-                                    <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedTransaction.transactionHash}</p>
-                                    <p>📅 <strong>Timestamp:</strong> {selectedTransaction.timestamp}</p>
-                                    <p>🔗 <strong>Block Number:</strong> {selectedTransaction.blockNumber}</p>
-                                    <p>📊 <strong>Status:</strong> {selectedTransaction.status}</p>
-                                </>
-                            )}
+                            <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedTransaction.hash}</p>
+                            <p>📅 <strong>Timestamp:</strong> {selectedTransaction.block_timestamp}</p>
+                            <p>🔗 <strong>Block Number:</strong> {selectedTransaction.block_number}</p>
                             <h4>Sender & Receiver</h4>
-                            <p>📤 <strong>Sender Address:</strong> {selectedTransaction.sender}</p>
-                            <p>📥 <strong>Receiver Address:</strong> {selectedTransaction.receiver}</p>
-
+                            <p>📤 <strong>Sender Address:</strong> {selectedTransaction.from_address}</p>
+                            <p>📥 <strong>Receiver Address:</strong> {selectedTransaction.to_address}</p>
                             <h4>Amount & Fees</h4>
-                            <p>💰 <strong>Amount Transferred:</strong> {selectedTransaction.amountTransferred}</p>
-                            <p>⛽ <strong>Transaction Fee:</strong> {selectedTransaction.transactionFee}</p>
-                            <p>🔥 <strong>Gas Used:</strong> {selectedTransaction.gasUsed}</p>
-                            <p>💲 <strong>Gas Price:</strong> {selectedTransaction.gasPrice} Gwei</p>
-
-                            <h4>Smart Contract & Token Details</h4>
-                            <p>🏦 <strong>Contract Address:</strong> {selectedTransaction.contractAddress}</p>
-                            <p>🎟 <strong>Token Type:</strong> {selectedTransaction.tokenType}</p>
-                            <p>💎 <strong>Token Amount:</strong> {selectedTransaction.tokenAmount}</p>
-
-                            <h4>Confirmation & Security</h4>
-                            <p>✅ <strong>Confirmations:</strong> {selectedTransaction.confirmation}</p>
-                            <p>📌 <strong>Mempool Status:</strong> {selectedTransaction.mempoolStatus}</p>
-                            <p>🔏 <strong>Signature:</strong> {selectedTransaction.signature}</p>
+                            <p>💰 <strong>Amount Transferred:</strong> {selectedTransaction.value}</p>
+                            <p>⛽ <strong>Transaction Fee:</strong> {selectedTransaction.transaction_fee}</p>
+                            <p>🔥 <strong>Gas Used:</strong> {selectedTransaction.gas_used}</p>
+                            <p>💲 <strong>Gas Price:</strong> {selectedTransaction.gas_price} Gwei</p>
                         </div>
                     </div>
                 </div>

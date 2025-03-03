@@ -23,7 +23,11 @@ const DashTable = () => {
             <h1 className="Dbtable-title">Exploring Transactions</h1>
 
             <div className="Dbtable-component">
-                <DrawCircle currentPage={currentPage} setCurrentPage={setCurrentPage} /> {/* Pass props to DrawCircle */}
+                <DrawCircle 
+                    currentPage={currentPage} 
+                    setCurrentPage={setCurrentPage} 
+                    address="0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5"
+                /> {/* Pass props to DrawCircle */}
 
                 <PaginationControl
                     onPageChangeGraph={onPageChangeGraph}
@@ -39,6 +43,7 @@ const DashTable = () => {
 
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
+                    address="0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5"
                 />
             </div>
         </main>
