@@ -6,7 +6,7 @@ import DrawCircle from "./DbTableDrawCircles.js";
 import DashTableContent from "./DbTableContent.js";
 import PaginationControl from "./DbTablePaginationcontrol.js"; // Correct path for PaginationControl
 
-const address = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+const address = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
 
 const DashTable = () => {
     const onPageChangeGraph = (newPage) => {

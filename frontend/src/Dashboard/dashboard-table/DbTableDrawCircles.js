@@ -70,7 +70,7 @@ function DrawCircle({ currentPage, address, transactions }) {
 
     const handleNodeClick = (index) => {
         setSelectedNode({
-            sender: sender[index],
+            sender: sender[index],  // Outbound: lookup is sender, Inbound: lookup is receiver
             receiver: receiver[index],
             transactionHash: transactionHash[index],
             timestamp: timestamps[index],
@@ -93,36 +93,61 @@ function DrawCircle({ currentPage, address, transactions }) {
     return (
         <div className="transaction-visualization">
             <svg id="visualization" viewBox="0 0 700 700" width="50%" height="50%">
-            {points.slice(0, value.length).map((point, index) => {
-                const adjustedX = point.x - normalizedValues[index].normalized * Math.cos(point.alpha);
-                const adjustedY = point.y - normalizedValues[index].normalized * Math.sin(point.alpha);
+                {points.slice(0, value.length).map((point, index) => {
+                    const adjustedX = point.x - normalizedValues[index].normalized * Math.cos(point.alpha);
+                    const adjustedY = point.y - normalizedValues[index].normalized * Math.sin(point.alpha);
 
-                const midX = (circleCenter.x + point.x) / 2;
-                const midY = (circleCenter.y + point.y) / 2;
+                    let textOffset = 40; // Default offset
+                    let textX = (circleCenter.x + adjustedX) / 2;
+                    let textY = (circleCenter.y + adjustedY) / 2;
 
-                const currentValueAtIndex = value[index];
-                const textLength = currentValueAtIndex ? currentValueAtIndex.toString().length * 7 : 0; // Check if defined
-                const padding = 4;
-                const rectWidth = textLength + padding;
-                const rectHeight = 18;
+                    // Adjust text positioning based on angle
+                    if (Math.abs(point.alpha - Math.PI / 2) < 0.3) { 
+                        textY += (textOffset + 10); // Move text up at 12h
+                    } else if (Math.abs(point.alpha - (3 * Math.PI) / 2) < 0.3) { 
+                        textY -= (textOffset + 10); // Move text down at 6h
+                    } else {
+                        textX += textOffset * Math.cos(point.alpha);
+                        textY += textOffset * Math.sin(point.alpha);
+                    }
+
+                    const textWidth = 70;
+                    const textHeight = 20;
+
+                    // Format values for readability
+                    let displayValue = value[index] < 0.0001 ? value[index].toFixed(6) : value[index].toFixed(4);
+
+                    // Determine the fill color based on transaction direction
+                    const fillColor = direction[index]?.toLowerCase() === 'outbound' ? '#DC143C' : 'green';
 
                     return (
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
-                            <circle cx={point.x} cy={point.y} r={normalizedValues[index].normalized} fill="none" stroke="white" strokeWidth={5} />
-                            <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={5}/>
-                            <rect x={midX - rectWidth / 2} y={midY - rectHeight / 2} width={rectWidth} height={rectHeight} fill="#442597" />
-                            <text x={midX} y={midY} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                                {value[index].toFixed(2)}
+                            <circle cx={point.x} cy={point.y} r={normalizedValues[index].normalized} fill={fillColor} stroke="white" strokeWidth={5} />
+                            <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={5} />
+
+                            {/* Background rectangle for text */}
+                            <rect x={textX - textWidth / 2} y={textY - textHeight / 2} width={textWidth} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />    
+
+                            {/* Adjusted text positioning */}
+                            <text x={textX} y={textY} fontSize="14px" fill="white" textAnchor="middle" alignmentBaseline="middle"
+                                style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.6)" }}>
+                                {displayValue}
                             </text>
-                            <text id="receivers" x={point.x+5} y={point.y-37} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                                {formatAddress(receiver[index])}  {/* Use currentNames here */}
+
+                            {/* Background rectangle for receiver address */}
+                            <rect x={point.x - textWidth / 2} y={point.y - 35} width={textWidth} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />
+                            
+                            {/* Receiver address positioned away from value */}
+                            <text x={point.x} y={point.y - 25} fontSize="14px" fill="white" textAnchor="middle" alignmentBaseline="middle"
+                                style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.6)" }}>
+                                {formatAddress(direction[index] === "outbound" ? receiver[index] : sender[index])}
                             </text>
                         </g>
                     );
                 })}
-                <circle id="main-circle" cx={350} cy={350} r={30} fill="white" />
+                <circle id="main-circle" cx={350} cy={350} r={45} fill="white" />
                 <text id="chien-name" x={350} y={350} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                    Chien
+                    {formatAddress(direction[0] === "outbound" ? sender[0] : receiver[0])}
                 </text>
             </svg>
             

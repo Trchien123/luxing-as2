@@ -142,18 +142,30 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
   
     // Combine inbound and outbound transactions into a single array
     const transactions = [
-      ...response.data.data.bitcoin.inbound,
-      ...response.data.data.bitcoin.outbound
-    ].map((tx) => ({
-      hash: tx.transaction.hash,
-      from_address: tx.sender.address,
-      to_address: tx.receiver.address,
-      value: tx.amount, // Convert Satoshis to BTC
-      block_height: tx.block.height,
-      block_hash: tx.transaction.hash, // Assuming transaction hash represents block hash here, adjust as necessary
-      block_timestamp: tx.block.timestamp.time,
-    }));
-    transactions.sort((a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp))
+      ...response.data.data.bitcoin.inbound.map((tx) => ({
+        hash: tx.transaction.hash,
+        from_address: tx.sender.address,
+        to_address: tx.receiver.address,
+        value: tx.amount, // Value in BTC
+        block_height: tx.block.height,
+        block_hash: tx.transaction.hash, // Assuming transaction hash represents block hash here
+        block_timestamp: tx.block.timestamp.time,
+        direction: "inbound", // Explicitly mark as inbound
+      })),
+      ...response.data.data.bitcoin.outbound.map((tx) => ({
+        hash: tx.transaction.hash,
+        from_address: tx.sender.address,
+        to_address: tx.receiver.address,
+        value: tx.amount, // Value in BTC
+        block_height: tx.block.height,
+        block_hash: tx.transaction.hash,
+        block_timestamp: tx.block.timestamp.time,
+        direction: "outbound", // Explicitly mark as outbound
+      })),
+    ];
+    
+    // Sort transactions by most recent first
+    transactions.sort((a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp));
   
     res.json(transactions);
     } catch (error) {
