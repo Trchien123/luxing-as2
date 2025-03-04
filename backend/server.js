@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-
+const { runNeo4jQuery } = require("./neo4j");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -10,45 +10,57 @@ app.use(express.json());
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
-
+app.get("/api/transactions", async (req, res) => {
+  const query =
+    req.query.q || "MATCH p=()-[r:`TRANSACTION`]->() RETURN p,r"
+  try {
+    const records = await runNeo4jQuery(query)
+    res.json({
+      success: true,
+      data: records
+    })
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message })
+  }
+})
 // Fetch Ethereum transactions for an address
 app.get("/api/transactions/:address", async (req, res) => {
-    const { address } = req.params;
-    const API_URL = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
-  
-    try {
-      const response = await axios.get(API_URL);
-      console.log("Etherscan Response:", response.data);
-  
-      if (response.data.status === "1") {
-        const transactions = response.data.result.map((tx) => {
-          const isSender = tx.from.toLowerCase() === address.toLowerCase();
-          return {
-            from_address: tx.from,
-            to_address: tx.to,
-            hash: tx.hash,
-            value: (tx.value / 1e18).toFixed(20), // Convert Wei to ETH
-            input: tx.input,
-            transaction_index: tx.transactionIndex,
-            gas: tx.gas,
-            gas_used: tx.gasUsed,
-            gas_price: tx.gasPrice,
-            transaction_fee: ((tx.gasUsed * tx.gasPrice) / 1e18).toFixed(6),
-            block_number: tx.blockNumber,
-            block_hash: tx.blockHash,
-            block_timestamp: new Date(tx.timeStamp * 1000).toISOString(),
-            direction: isSender ? "outbound" : "inbound", // Correct direction logic
-          };
-        });
-        res.json(transactions);
-      } else {
-        res.status(500).json({ error: response.data.message || "Unknown error" });
-      }
-    } catch (error) {
-      console.error("Error fetching transactions from Etherscan:", error.message);
-      res.status(500).json({ error: "Error fetching transactions from Etherscan" });
+  const { address } = req.params;
+  const API_URL = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
+
+  try {
+    const response = await axios.get(API_URL);
+    console.log("Etherscan Response:", response.data);
+
+    if (response.data.status === "1") {
+      const transactions = response.data.result.map((tx) => {
+        const isSender = tx.from.toLowerCase() === address.toLowerCase();
+        return {
+          from_address: tx.from,
+          to_address: tx.to,
+          hash: tx.hash,
+          value: (tx.value / 1e18).toFixed(20), // Convert Wei to ETH
+          input: tx.input,
+          transaction_index: tx.transactionIndex,
+          gas: tx.gas,
+          gas_used: tx.gasUsed,
+          gas_price: tx.gasPrice,
+          transaction_fee: ((tx.gasUsed * tx.gasPrice) / 1e18).toFixed(6),
+          block_number: tx.blockNumber,
+          block_hash: tx.blockHash,
+          block_timestamp: new Date(tx.timeStamp * 1000).toISOString(),
+          direction: isSender ? "outbound" : "inbound", // Correct direction logic
+        };
+      });
+      res.json(transactions);
+    } else {
+      res.status(500).json({ error: response.data.message || "Unknown error" });
     }
-  });
+  } catch (error) {
+    console.error("Error fetching transactions from Etherscan:", error.message);
+    res.status(500).json({ error: "Error fetching transactions from Etherscan" });
+  }
+});
 
 // Fetch Bitcoin transactions for an address
 app.get("/api/bitcoin/transactions/:address", async (req, res) => {
@@ -122,7 +134,7 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
       till: null, // Example date range, adjust as needed
     },
   };
-  
+
   try {
     const response = await axios.post(
       BITQUERY_API_URL,
@@ -139,7 +151,7 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
       res.status(400).json({ error: response.data.errors });
       return;
     }
-  
+
     // Combine inbound and outbound transactions into a single array
     const transactions = [
       ...response.data.data.bitcoin.inbound.map((tx) => ({
@@ -163,12 +175,12 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
         direction: "outbound", // Explicitly mark as outbound
       })),
     ];
-    
+
     // Sort transactions by most recent first
     transactions.sort((a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp));
-  
+
     res.json(transactions);
-    } catch (error) {
+  } catch (error) {
     console.error("Error fetching Bitcoin transactions from Bitquery:", error.response ? error.response.data : error.message);
     res.status(500).json({ error: "Error fetching Bitcoin transactions from Bitquery" });
   }
