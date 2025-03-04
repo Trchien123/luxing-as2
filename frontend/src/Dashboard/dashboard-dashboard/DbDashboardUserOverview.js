@@ -51,14 +51,14 @@ const UserOverview = () => {
           const btcPrice = priceResponse.data.bitcoin.usd;
 
           const isBTC = isBitcoinAddress(address);
-          const balance = parseFloat(lastTx.value);
+          const balance = receivedTotal - sentTotal;
           const balanceUSD = isBitcoinAddress(address)
             ? (balance * btcPrice).toFixed(2)
             : (balance * ethPrice).toFixed(2);
 
           // Update userData state
           setUserData({
-            balance: parseFloat(lastTx.value).toFixed(5),
+            balance: balance.toFixed(5),
             balanceUSD,
             currency: isBTC ? "BTC" : "ETH",
             firstActive: new Date(firstTx.block_timestamp).toLocaleDateString(
