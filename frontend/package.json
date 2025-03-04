@@ -7,6 +7,7 @@
     "axios": "^1.8.1",
     "cra-template": "1.2.0",
     "d3": "^7.9.0",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.471.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

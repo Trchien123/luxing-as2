@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from "react";
 import "../../style/sendReceiveTable.css";
 import { Link } from "react-router-dom";
-import axios from "axios"; // thư viện giúp gửi HTTP request để lấy dữ liệu từ backend.
+import axios from "axios";
 
-const shortenAddress = (address) => {
+const address = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
+
+const shortenAddress = () => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 
 const SendReceiveTable = ({ crypto }) => {
-  // mảng rỗng để lưu danh sách người gửi/nhận
   const [senderData, setSenderData] = useState([]);
   const [receiverData, setReceiverData] = useState([]);
 
   useEffect(() => {
-    // fetch dữ liệu từ backend
     const fetchTransactions = async () => {
       try {
-        // Thay đổi địa chỉ ví cần lấy dữ liệu
-        const user = "0x4047252A11dEfE9E7F62A3Fe9d23A102c84c6D2F";
-
         const response = await axios.get(
-          `http://localhost:5000/api/transactions/${user}`
-        ); // gửi http get request cho backend và gán vào response
-        const transactions = response.data; // lưu vào transactions
+          `http://localhost:5000/api/transactions/${address}`
+        );
+        const transactions = response.data;
 
-        // Tạo danh sách tổng hợp số lần gửi/nhận
+        // Create a list of sending and receiving
         const senderMap = new Map();
         const receiverMap = new Map();
 
@@ -50,30 +47,36 @@ const SendReceiveTable = ({ crypto }) => {
           }
         });
 
-        // Chuyển dữ liệu thành mảng và tính phần trăm
+        // Convert data into array and calculate percentage
         const totalSent = [...senderMap.values()].reduce(
           (currentTotal, currentValue) => currentTotal + currentValue,
           0
-        ); // array.reduce((accumulator, currentValue) => a+b, 0), 0 đại diện cho giá trị ban đầu của accumlator (currentTotal)
+        ); // array.reduce((accumulator, currentValue) => a+b, 0), 0 is the first value of accumlator
         const totalReceived = [...receiverMap.values()].reduce(
           (currentTotal, currentValue) => currentTotal + currentValue,
           0
         );
 
         setSenderData(
-          [...senderMap.entries()].map(([address, count]) => ({
-            address,
-            transaction: count,
-            percentage: ((count / totalSent) * 100).toFixed(2),
-          }))
+          [...senderMap.entries()]
+            .map(([address, count]) => ({
+              address,
+              transaction: count,
+              percentage: ((count / totalSent) * 100).toFixed(2),
+            }))
+            .sort((a, b) => b.transaction - a.transaction) //  descending transaction
+            .slice(0, 5)
         );
 
         setReceiverData(
-          [...receiverMap.entries()].map(([address, count]) => ({
-            address,
-            transaction: count,
-            percentage: ((count / totalReceived) * 100).toFixed(2),
-          }))
+          [...receiverMap.entries()]
+            .map(([address, count]) => ({
+              address,
+              transaction: count,
+              percentage: ((count / totalReceived) * 100).toFixed(2),
+            }))
+            .sort((a, b) => b.transaction - a.transaction)
+            .slice(0, 5)
         );
       } catch (error) {
         console.error("Error fetching transactions:", error);
