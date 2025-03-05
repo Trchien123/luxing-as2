@@ -77,15 +77,27 @@ function DashTableContent({ currentPage, transactions }) {
                             <h3>Transaction Details</h3>
                             <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedTransaction.hash}</p>
                             <p>📅 <strong>Timestamp:</strong> {selectedTransaction.block_timestamp}</p>
-                            <p>🔗 <strong>Block Number:</strong> {selectedTransaction.block_number}</p>
+                            {selectedTransaction.coin_name !== "bitcoin" ? (
+                                <>
+                                    <p>🔗 <strong>Block Number:</strong> {selectedTransaction.block_number}</p>
+                                    <p>🏦 <strong>Block Hash:</strong> {selectedTransaction.block_hash}</p>
+                                </>
+                            ) : (
+                                <p>🏦 <strong>Block Height:</strong> {selectedTransaction.block_height}</p> 
+                            )}
+
                             <h4>Sender & Receiver</h4>
                             <p>📤 <strong>Sender Address:</strong> {selectedTransaction.from_address}</p>
                             <p>📥 <strong>Receiver Address:</strong> {selectedTransaction.to_address}</p>
                             <h4>Amount & Fees</h4>
                             <p>💰 <strong>Amount Transferred:</strong> {selectedTransaction.value}</p>
-                            <p>⛽ <strong>Transaction Fee:</strong> {selectedTransaction.transaction_fee}</p>
-                            <p>🔥 <strong>Gas Used:</strong> {selectedTransaction.gas_used}</p>
-                            <p>💲 <strong>Gas Price:</strong> {selectedTransaction.gas_price} Gwei</p>
+                            {selectedTransaction.coin_name !== "bitcoin" && (
+                            <>
+                                <p>⛽ <strong>Transaction Fee:</strong> {selectedTransaction.transaction_fee}</p>
+                                <p>🔥 <strong>Gas Used:</strong> {selectedTransaction.gas_used}</p>
+                                <p>💲 <strong>Gas Price:</strong> {selectedTransaction.gas_price} Gwei</p>
+                            </>
+                            )}
                         </div>
                     </div>
                 </div>

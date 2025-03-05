@@ -36,8 +36,9 @@ app.get("/api/transactions/:address", async (req, res) => {
             transaction_fee: ((tx.gasUsed * tx.gasPrice) / 1e18).toFixed(6),
             block_number: tx.blockNumber,
             block_hash: tx.blockHash,
-            block_timestamp: new Date(tx.timeStamp * 1000).toISOString(),
+            block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
             direction: isSender ? "outbound" : "inbound", // Correct direction logic
+            coin_name: "ethereum"
           };
         });
         res.json(transactions);
@@ -147,10 +148,10 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
         from_address: tx.sender.address,
         to_address: tx.receiver.address,
         value: tx.amount, // Value in BTC
-        block_height: tx.block.height,
         block_hash: tx.transaction.hash, // Assuming transaction hash represents block hash here
         block_timestamp: tx.block.timestamp.time,
         direction: "inbound", // Explicitly mark as inbound
+        coin_name: "bitcoin"
       })),
       ...response.data.data.bitcoin.outbound.map((tx) => ({
         hash: tx.transaction.hash,
@@ -158,9 +159,9 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
         to_address: tx.receiver.address,
         value: tx.amount, // Value in BTC
         block_height: tx.block.height,
-        block_hash: tx.transaction.hash,
         block_timestamp: tx.block.timestamp.time,
         direction: "outbound", // Explicitly mark as outbound
+        coin_name: "bitcoin"
       })),
     ];
     

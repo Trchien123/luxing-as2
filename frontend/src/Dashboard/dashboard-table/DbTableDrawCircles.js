@@ -62,8 +62,10 @@ function DrawCircle({ currentPage, address, transactions }) {
     const timestamps = paginatedTransactions.map(tx => tx.block_timestamp);
     const transactionFees = paginatedTransactions.map(tx => tx.transaction_fee);
     const blockNumbers = paginatedTransactions.map(tx => tx.block_number);
-    const blockHash = paginatedTransactions.map(tx => tx.blockHash);
+    const blockHash = paginatedTransactions.map(tx => tx.block_hash);
+    const blockHeight = paginatedTransactions.map(tx => tx.block_height);
     const direction = paginatedTransactions.map(tx => tx.direction);
+    const coin_name = paginatedTransactions.map(tx => tx.coin_name);
 
     const normalizedValues = Normalization(value, numPoints);
     const points = calculateCirclePoints(circleCenter.x, circleCenter.y, circleRadius, numPoints);
@@ -80,7 +82,9 @@ function DrawCircle({ currentPage, address, transactions }) {
             gasUsed: gasUsed[index],
             gasPrice: gasPrices[index],
             blockHash: blockHash[index],
-            direction: direction[index]
+            blockHeight: blockHeight[index],
+            direction: direction[index],
+            coin_name: coin_name[index]
         });
         setIsModalOpen(true);
     };
@@ -159,8 +163,14 @@ function DrawCircle({ currentPage, address, transactions }) {
                             <h3>Transaction Details</h3>
                             <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}</p>
                             <p>📅 <strong>Timestamp:</strong> {selectedNode.timestamp}</p>
-                            <p>🔗 <strong>Block Number:</strong> {selectedNode.blockNumber}</p>
-                            <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}</p> 
+                            {selectedNode.coin_name !== "bitcoin" ? (
+                                <>
+                                    <p>🔗 <strong>Block Number:</strong> {selectedNode.blockNumber}</p>
+                                    <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}</p> 
+                                </>
+                            ) : (
+                                <p>🏦 <strong>Block Height:</strong> {selectedNode.blockHeight}</p> 
+                            )}
 
                             <h4>Sender & Receiver</h4>
                             <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
@@ -169,9 +179,13 @@ function DrawCircle({ currentPage, address, transactions }) {
 
                             <h4>Amount & Fees</h4>
                             <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value}</p>
-                            <p>⛽ <strong>Transaction Fee:</strong> {selectedNode.transactionFee}</p>
-                            <p>🔥 <strong>Gas Used:</strong> {selectedNode.gasUsed}</p>
-                            <p>💲 <strong>Gas Price:</strong> {selectedNode.gasPrice} Gwei</p>
+                            {selectedNode.coin_name !== "bitcoin" && (
+                            <>
+                                <p>⛽ <strong>Transaction Fee:</strong> {selectedNode.transactionFee}</p>
+                                <p>🔥 <strong>Gas Used:</strong> {selectedNode.gasUsed}</p>
+                                <p>💲 <strong>Gas Price:</strong> {selectedNode.gasPrice} Gwei</p>
+                            </>
+                            )}
                         </div>
                     </div>
                 </div>
