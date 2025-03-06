@@ -11,20 +11,20 @@ app.use(express.json());
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
 
+
+// NEO4j DATABASE
 app.get("/api/transactions", async (req, res) => {
-  const query =
-    req.query.q || "MATCH p=()-[r:`TRANSACTION`]->() RETURN p,r"
+  const query = req.query.q || "MATCH p=()-[r:`TRANSACTION`]->() RETURN p,r";
   try {
-    const records = await runNeo4jQuery(query)
+    const records = await runNeo4jQuery(query);
     res.json({
       success: true,
-      data: records
-    })
+      data: records,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message })
+    res.status(500).json({ success: false, error: error.message });
   }
 })
-
 // Fetch Ethereum transactions for an address
 app.get("/api/transactions/:address", async (req, res) => {
   const { address } = req.params;
@@ -52,7 +52,7 @@ app.get("/api/transactions/:address", async (req, res) => {
           block_hash: tx.blockHash,
           block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
           direction: isSender ? "outbound" : "inbound", // Correct direction logic
-          coin_name: "ethereum"
+            coin_name: "ethereum"
         };
       });
       res.json(transactions);
@@ -61,7 +61,9 @@ app.get("/api/transactions/:address", async (req, res) => {
     }
   } catch (error) {
     console.error("Error fetching transactions from Etherscan:", error.message);
-    res.status(500).json({ error: "Error fetching transactions from Etherscan" });
+    res
+      .status(500)
+      .json({ error: "Error fetching transactions from Etherscan" });
   }
 });
 
@@ -157,15 +159,11 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
   };
 
   try {
-    const response = await axios.post(
-      BITQUERY_API_URL,
-      query,
-      {
-        headers: {
-          "Authorization": `Bearer ${BITQUERY_API_KEY}`,  // Include API Key in the request headers
-        },
-      }
-    );
+    const response = await axios.post(BITQUERY_API_URL, query, {
+      headers: {
+        Authorization: `Bearer ${BITQUERY_API_KEY}`, // Include API Key in the request headers
+      },
+    });
 
     // Check for errors in the response
     if (response.data.errors) {
@@ -183,7 +181,7 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
         block_height: tx.block.height,
         block_timestamp: tx.block.timestamp.time,
         direction: "inbound", // Explicitly mark as inbound
-        coin_name: "bitcoin"
+        coin_name: "bitcoin",
       })),
       ...response.data.data.bitcoin.outbound.map((tx) => ({
         hash: tx.transaction.hash,
@@ -193,7 +191,7 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
         block_height: tx.block.height,
         block_timestamp: tx.block.timestamp.time,
         direction: "outbound", // Explicitly mark as outbound
-        coin_name: "bitcoin"
+        coin_name: "bitcoin",
       })),
     ];
     const general_info = [
@@ -213,12 +211,19 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
     ];
 
     // Sort transactions by most recent first
-    transactions.sort((a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp));
+    transactions.sort(
+      (a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp)
+    );
 
     res.json({transactions, general_info});
   } catch (error) {
-    console.error("Error fetching Bitcoin transactions from Bitquery:", error.response ? error.response.data : error.message);
-    res.status(500).json({ error: "Error fetching Bitcoin transactions from Bitquery" });
+    console.error(
+      "Error fetching Bitcoin transactions from Bitquery:",
+      error.response ? error.response.data : error.message
+    );
+    res
+      .status(500)
+      .json({ error: "Error fetching Bitcoin transactions from Bitquery" });
   }
 });
 
