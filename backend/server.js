@@ -50,8 +50,7 @@ app.get("/api/transactions/:address", async (req, res) => {
     try {
       const records = await runNeo4jQuery(query);
       res.json({
-        success: true,
-        data: records,
+        transactions: records
       });
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });

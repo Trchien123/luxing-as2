@@ -52,31 +52,32 @@ async function runNeo4Query(query) {
 //   }
 // })();
 
-
+const moment = require("moment")
 async function runNeo4jQuery(query) {
   const driver = neo4j.driver(URI, neo4j.auth.basic(USER, PASSWORD));
   const session = driver.session({ database: "neo4j" }); // Default to "neo4j" if DATABASE is unset
 
   try {
     const result = await session.run(query);
-    const records = result.records.map((record) => {
+    const transformedRecords = result.records.flatMap((record) => {
       const path = record.get("p");
-      // const relationship = record.get("r");
-      return {
-        path: {
-          start: path.start.properties,
-          end: path.end.properties,
-          segments: path.segments.map((seg) => ({
-            start: seg.start.properties,
-            relationship: seg.relationship.properties,
-            end: seg.end.properties,
-          })),
-        },
-        // relationship: relationship.properties,
-      };
+      return path.segments.map((seg) => ({
+        hash: seg.relationship.properties.hash,
+        from_address: seg.start.properties.addressId, // Assuming 'addressId' is the key
+        to_address: seg.end.properties.addressId,     // Assuming 'addressId' is the key
+        value: seg.relationship.properties.value / 1e18, // Convert wei to ETH
+        block_height: seg.relationship.properties.block_number,
+        block_timestamp: seg.relationship.properties.block_timestamp
+          ? moment.unix(Number(seg.relationship.properties.block_timestamp)).utc().format('YYYY-MM-DD HH:mm:ss')
+          : "unknown", // Fallback if timestamp is missing,
+        direction: "outbound", // Adjust logic if needed
+        coin_name: "seelecoin"
+      }));
     });
-    console.log("Query result:", JSON.stringify(records, null, 2));
-    return records;
+
+    console.log("Transformed result:", JSON.stringify(transformedRecords, null, 2));
+    return transformedRecords;
+
   } catch (err) {
     console.error(`Connection error: ${err.message}`);
     throw err;

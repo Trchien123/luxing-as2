@@ -27,8 +27,8 @@ const FetchTransactions = (address, coin) => {
                     setError(null);
                 }
                 if (isMounted && coin === "Seelecoin") {
-                    console.log(response.data)
-                    setTransactions(response.data)
+                    const transactionsData = response.data.transactions || []; // Get only transactions
+                    setTransactions(Array.isArray(transactionsData) ? transactionsData : [])
                     setError(null)
                 }
             } catch (err) {

@@ -13,7 +13,7 @@ const DbHome = () => {
   const context = useOutletContext();
   // console.log(context);
   const response = FetchTransactions(
-    "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+    context.address, context.name
   );
   console.log(response);
   const generateNumber = () => {
