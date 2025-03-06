@@ -15,8 +15,8 @@ const BlurContainer = () => {
     const [block, setBlock] = useState({
 
         image: image1,
-        id: "BTC",
-        name: "Bitcoin"
+        id: "SEL",
+        name: "Seelecoin"
     })
     const cryptos = [
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "BTC", name: "Bitcoin", image: cryptoImages["bitcoin-btc-logo.png"] },
@@ -25,7 +25,7 @@ const BlurContainer = () => {
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "PEPE", name: "Pepe", image: cryptoImages["pepe-pepe-logo.png"] },
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "POPCAT", name: "Popcat (SOL)", image: cryptoImages["popcat-sol-popcat-logo.png"] },
         { address: "0x4838b106fce9647bdf1e7877bf73ce8b0bad5f97", id: "SHIB", name: "Shiba Inu", image: cryptoImages["shiba-inu-shib-logo.png"] },
-
+        { address: "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4", id: "SEL", name: "Seelecoin", image: image1 }
     ]
 
     useLayoutEffect(() => {

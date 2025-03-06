@@ -22,9 +22,14 @@ const FetchTransactions = (address, coin) => {
                     setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
                     setError(null);
                 }
-                if (isMounted && coin ===  "Ethereum") {
+                if (isMounted && coin === "Ethereum") {
                     setTransactions(Array.isArray(response.data) ? response.data : []);
                     setError(null);
+                }
+                if (isMounted && coin === "Seelecoin") {
+                    console.log(response.data)
+                    setTransactions(response.data)
+                    setError(null)
                 }
             } catch (err) {
                 if (isMounted) setError(err.message);
