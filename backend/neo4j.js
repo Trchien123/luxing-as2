@@ -61,7 +61,7 @@ async function runNeo4jQuery(query) {
     const result = await session.run(query);
     const records = result.records.map((record) => {
       const path = record.get("p");
-      const relationship = record.get("r");
+      // const relationship = record.get("r");
       return {
         path: {
           start: path.start.properties,
@@ -72,7 +72,7 @@ async function runNeo4jQuery(query) {
             end: seg.end.properties,
           })),
         },
-        relationship: relationship.properties,
+        // relationship: relationship.properties,
       };
     });
     console.log("Query result:", JSON.stringify(records, null, 2));

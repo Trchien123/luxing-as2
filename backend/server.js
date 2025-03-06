@@ -10,9 +10,14 @@ app.use(express.json());
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
-app.get("/api/transactions", async (req, res) => {
+app.get("/api/sel/:address", async (req, res) => {
+  const { address } = req.params;
+
   const query =
-    req.query.q || "MATCH p=()-[r:`TRANSACTION`]->() RETURN p,r"
+    req.query.q ||
+    `MATCH p=(n)-[:TRANSACTION]->() 
+    WHERE n.addressId = "${address}"  
+    RETURN p`
   try {
     const records = await runNeo4jQuery(query)
     res.json({
