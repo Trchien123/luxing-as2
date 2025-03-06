@@ -7,10 +7,15 @@ import SendReceiveTable from "./DbDashboardSendReceiveTable";
 import StatChart from "./DbTranschart";
 import ReportDis from "./DbReportdisp";
 import { useOutletContext } from "react-router-dom";
+import FetchTransactions from "../dashboard-table/FetchTransactions";
 
 const DbHome = () => {
   const context = useOutletContext();
   // console.log(context);
+  const response = FetchTransactions(
+    "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+  );
+  console.log(response);
   const generateNumber = () => {
     const randomNumber = Math.random(); // Generates a number between 0 and 1
     if (randomNumber < 0.07) {
@@ -22,7 +27,10 @@ const DbHome = () => {
   const number = generateNumber();
   return (
     <main className="DB-main">
-      <UserOverview address={context.address} />
+      <UserOverview
+        address={context.address}
+        transactions={response.transactions}
+      />
       <section className="DB-main-container-2">
         <div
           className="Db-main-2-items Db-main-2-items-1 "
@@ -49,7 +57,10 @@ const DbHome = () => {
       </section>
       <section className="DB-main-container-2">
         <div className="Db-main-2-items Db-main-2-items-6 ">
-          <SendReceiveTable crypto={context} />
+          <SendReceiveTable
+            crypto={context}
+            transactions={response.transactions}
+          />
         </div>
       </section>
     </main>
