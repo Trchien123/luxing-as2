@@ -23,7 +23,8 @@ const FetchTransactions = (address) => {
             try {
                 const response = await axios.get(apiUrl);
                 if (isMounted) {
-                    setTransactions(Array.isArray(response.data) ? response.data : []);
+                    const transactionsData = response.data.transactions || []; // Get only transactions
+                    setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
                     setError(null);
                 }
             } catch (err) {

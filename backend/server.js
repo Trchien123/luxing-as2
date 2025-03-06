@@ -10,6 +10,7 @@ app.use(express.json());
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
+
 app.get("/api/transactions", async (req, res) => {
   const query =
     req.query.q || "MATCH p=()-[r:`TRANSACTION`]->() RETURN p,r"
@@ -23,6 +24,7 @@ app.get("/api/transactions", async (req, res) => {
     res.status(500).json({ success: false, error: error.message })
   }
 })
+
 // Fetch Ethereum transactions for an address
 app.get("/api/transactions/:address", async (req, res) => {
   const { address } = req.params;
@@ -50,7 +52,7 @@ app.get("/api/transactions/:address", async (req, res) => {
           block_hash: tx.blockHash,
           block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
           direction: isSender ? "outbound" : "inbound", // Correct direction logic
-            coin_name: "ethereum"
+          coin_name: "ethereum"
         };
       });
       res.json(transactions);
@@ -72,60 +74,78 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
     query: `
       query ($network: BitcoinNetwork!, $address: String!, $from: ISO8601DateTime, $till: ISO8601DateTime) {
         bitcoin(network: $network) {
-            inbound: coinpath(  
+          addressStats(address: {is: $address}) {
+            address {
+              balance
+              firstActive {
+                time(format: "%Y-%m-%d %H:%M:%S")
+              }
+              lastActive {
+                time(format: "%Y-%m-%d %H:%M:%S")
+              }
+              inboundTransactions
+              inflows
+              outboundTransactions
+              outflows
+              uniqueReceivers
+              uniqueSenders
+              uniqueDaysWithTransfers
+            }
+          }
+          inbound: coinpath(
             initialAddress: {is: $address}
             depth: {lteq: 1}
             options: {direction: inbound, desc: "block.timestamp.time"}
             date: {since: $from, till: $till}
-            ) {
+          ) {
             sender {
-                address
-                annotation
+              address
+              annotation
             }
             receiver {
-                address
-                annotation
+              address
+              annotation
             }
             amount
             block {
-                timestamp {
+              timestamp {
                 time(format: "%Y-%m-%d %H:%M:%S")
-                }
-                height
+              }
+              height
             }
             transaction {
-                index
-                hash
+              index
+              hash
             }
-            }
-            outbound: coinpath(
+          }
+          outbound: coinpath(
             initialAddress: {is: $address}
             depth: {lteq: 1}
             options: {direction: outbound, desc: "block.timestamp.time"}
             date: {since: $from, till: $till}
-            ) {
+          ) {
             sender {
-                address
-                annotation
+              address
+              annotation
             }
             receiver {
-                address
-                annotation
+              address
+              annotation
             }
             amount
             block {
-                timestamp {
+              timestamp {
                 time(format: "%Y-%m-%d %H:%M:%S")
-                }
-                height
+              }
+              height
             }
             transaction {
-                index
-                hash
+              index
+              hash
             }
-            }
+          }
         }
-        }
+      }
     `,
     variables: {
       network: "bitcoin", // You may need to pass the network if it's dynamic
@@ -160,7 +180,7 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
         from_address: tx.sender.address,
         to_address: tx.receiver.address,
         value: tx.amount, // Value in BTC
-        block_hash: tx.transaction.hash, // Assuming transaction hash represents block hash here
+        block_height: tx.block.height,
         block_timestamp: tx.block.timestamp.time,
         direction: "inbound", // Explicitly mark as inbound
         coin_name: "bitcoin"
@@ -176,11 +196,26 @@ app.get("/api/bitcoin/transactions/:address", async (req, res) => {
         coin_name: "bitcoin"
       })),
     ];
+    const general_info = [
+      ...response.data.data.bitcoin.addressStats.map((tx) => ({
+        address: tx.address.address,
+        first_active: tx.address.firstActive.time,
+        last_active: tx.address.lastActive.time,
+        balance: tx.address.balance,
+        inbound_transactions: tx.address.inboundTransactions,
+        inflows: tx.address.inflows,
+        outbound_transactions: tx.address.outboundTransactions,
+        outflows: tx.address.outflows,
+        unique_receivers: tx.address.uniqueReceivers,
+        unique_senders: tx.address.uniqueSenders,
+        unique_days: tx.address.uniqueDaysWithTransfers,
+      })),
+    ];
 
     // Sort transactions by most recent first
     transactions.sort((a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp));
 
-    res.json(transactions);
+    res.json({transactions, general_info});
   } catch (error) {
     console.error("Error fetching Bitcoin transactions from Bitquery:", error.response ? error.response.data : error.message);
     res.status(500).json({ error: "Error fetching Bitcoin transactions from Bitquery" });

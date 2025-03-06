@@ -34,7 +34,7 @@ function Normalization(amountsTransferred, numPoints = 20) {
     return normalizedAmountsTransferred;
 }
 
-function DrawCircle({ currentPage, address, transactions }) {
+function DrawCircle({ currentPage, transactions }) {
     const numPoints = 20;
     const circleCenter = { x: 350, y: 350 };
     const circleRadius = 250;
