@@ -4,7 +4,7 @@ import axios from "axios";
 
 const address = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
 
-const UserOverview = () => {
+const UserOverview = ({ transactions }) => {
   const [userData, setUserData] = useState({
     balance: 0,
     balanceUSD: 0,
@@ -14,88 +14,83 @@ const UserOverview = () => {
     received: 0,
     total: 0,
   });
-  useEffect(() => {
-    // Checking address
-    const isBitcoinAddress = (addr) => /^(1|3|bc1)/.test(addr);
-    const apiURL = isBitcoinAddress(address)
-      ? `http://localhost:5000/api/bitcoin/transactions/${address}`
-      : `http://localhost:5000/api/transactions/${address}`;
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(apiURL);
-        const transactions = response.data;
 
-        //First and Last Active
-        if (transactions.length > 0) {
-          const firstTx = transactions[transactions.length - 1];
-          const lastTx = transactions[0];
+  const DataProcessing = async (transactions) => {
+    //First and Last Active
+    if (transactions.length > 0) {
+      const firstTx = transactions[transactions.length - 1];
+      const lastTx = transactions[0];
 
-          const firstActiveDate = new Date(firstTx.block_timestamp);
-          const lastActiveDate = new Date(lastTx.block_timestamp);
-          // Total of sent and received
-          let sentTotal = 0;
-          let receivedTotal = 0;
+      const firstActiveDate = new Date(firstTx.block_timestamp);
+      const lastActiveDate = new Date(lastTx.block_timestamp);
+      // Total of sent and received
+      let sentTotal = 0;
+      let receivedTotal = 0;
 
-          transactions.forEach((tx) => {
-            if (tx.direction == "outbound") {
-              sentTotal += parseFloat(tx.value);
-            } else {
-              receivedTotal += parseFloat(tx.value);
-            }
-          });
-          // Call API to get the current BTC and ETH price
-          const priceResponse = await axios.get(
-            "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
-          );
-          const ethPrice = priceResponse.data.ethereum.usd;
-          const btcPrice = priceResponse.data.bitcoin.usd;
-
-          const isBTC = isBitcoinAddress(address);
-          const balance = receivedTotal - sentTotal;
-          const balanceUSD = isBitcoinAddress(address)
-            ? (balance * btcPrice).toFixed(2)
-            : (balance * ethPrice).toFixed(2);
-
-          // Update userData state
-          setUserData({
-            balance: balance.toFixed(5),
-            balanceUSD,
-            currency: isBTC ? "BTC" : "ETH",
-            firstActive: new Date(firstTx.block_timestamp).toLocaleDateString(
-              "en-US",
-              {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              }
-            ),
-            lastActive: new Date(lastTx.block_timestamp).toLocaleDateString(
-              "en-US",
-              {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              }
-            ),
-            firstActiveAgo: formatDistanceToNow(firstActiveDate, {
-              addSuffix: true,
-            }),
-            lastActiveAgo: formatDistanceToNow(lastActiveDate, {
-              addSuffix: true,
-            }),
-            sent: sentTotal.toFixed(2),
-            received: receivedTotal.toFixed(2),
-            total: (sentTotal + receivedTotal).toFixed(5),
-          });
+      transactions.forEach((tx) => {
+        if (tx.direction === "outbound") {
+          sentTotal += parseFloat(tx.value);
+        } else {
+          receivedTotal += parseFloat(tx.value);
         }
+      });
+      // Call API to get the current BTC and ETH price
+      let priceResponse;
+      try {
+        priceResponse = await axios.get(
+          "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
+        );
       } catch (error) {
-        console.error("Error fetching transaction data:", error);
+        console.error(error);
       }
-    };
-    if (address) {
-      fetchData();
+
+      const ethPrice = priceResponse.data.ethereum.usd;
+      const btcPrice = priceResponse.data.bitcoin.usd;
+
+      const isBitcoinAddress = (addr) => /^(1|3|bc1)/.test(addr);
+      const isBTC = isBitcoinAddress(address);
+      const balance = receivedTotal - sentTotal;
+      const balanceUSD = isBitcoinAddress(address)
+        ? (balance * btcPrice).toFixed(2)
+        : (balance * ethPrice).toFixed(2);
+
+      // Update userData state
+      setUserData({
+        balance: balance.toFixed(5),
+        balanceUSD,
+        currency: isBTC ? "BTC" : "ETH",
+        firstActive: new Date(firstTx.block_timestamp).toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }
+        ),
+        lastActive: new Date(lastTx.block_timestamp).toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }
+        ),
+        firstActiveAgo: formatDistanceToNow(firstActiveDate, {
+          addSuffix: true,
+        }),
+        lastActiveAgo: formatDistanceToNow(lastActiveDate, {
+          addSuffix: true,
+        }),
+        sent: sentTotal.toFixed(2),
+        received: receivedTotal.toFixed(2),
+        total: (sentTotal + receivedTotal).toFixed(5),
+      });
     }
-  }, [address]);
+  };
+
+  useEffect(() => {
+    DataProcessing(transactions);
+  });
   return (
     <div className="DB-main-container-1">
       <DbItem1

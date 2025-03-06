@@ -1,90 +1,79 @@
 import React, { useEffect, useState } from "react";
 import "../../style/sendReceiveTable.css";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
-const address = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
+const address = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
 
 const shortenAddress = () => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 
-const SendReceiveTable = ({ crypto }) => {
+const SendReceiveTable = ({ crypto, transactions }) => {
   const [senderData, setSenderData] = useState([]);
   const [receiverData, setReceiverData] = useState([]);
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/transactions/${address}`
+  const DataProcessing = (transactions) => {
+    // Create a list of sending and receiving
+    const senderMap = new Map();
+    const receiverMap = new Map();
+
+    transactions.forEach((tx) => {
+      if (tx.direction === "outbound") {
+        senderMap.set(
+          tx.from_address,
+          (senderMap.get(tx.from_address) || 0) + 1
         );
-        const transactions = response.data;
-
-        // Create a list of sending and receiving
-        const senderMap = new Map();
-        const receiverMap = new Map();
-
-        transactions.forEach((tx) => {
-          if (tx.direction === "outbound") {
-            senderMap.set(
-              tx.from_address,
-              (senderMap.get(tx.from_address) || 0) + 1
-            );
-            receiverMap.set(
-              tx.to_address,
-              (receiverMap.get(tx.to_address) || 0) + 1
-            );
-          } else {
-            senderMap.set(
-              tx.from_address,
-              (senderMap.get(tx.from_address) || 0) + 1
-            );
-            receiverMap.set(
-              tx.to_address,
-              (receiverMap.get(tx.to_address) || 0) + 1
-            );
-          }
-        });
-
-        // Convert data into array and calculate percentage
-        const totalSent = [...senderMap.values()].reduce(
-          (currentTotal, currentValue) => currentTotal + currentValue,
-          0
-        ); // array.reduce((accumulator, currentValue) => a+b, 0), 0 is the first value of accumlator
-        const totalReceived = [...receiverMap.values()].reduce(
-          (currentTotal, currentValue) => currentTotal + currentValue,
-          0
+        receiverMap.set(
+          tx.to_address,
+          (receiverMap.get(tx.to_address) || 0) + 1
         );
-
-        setSenderData(
-          [...senderMap.entries()]
-            .map(([address, count]) => ({
-              address,
-              transaction: count,
-              percentage: ((count / totalSent) * 100).toFixed(2),
-            }))
-            .sort((a, b) => b.transaction - a.transaction) //  descending transaction
-            .slice(0, 5)
+      } else {
+        senderMap.set(
+          tx.from_address,
+          (senderMap.get(tx.from_address) || 0) + 1
         );
-
-        setReceiverData(
-          [...receiverMap.entries()]
-            .map(([address, count]) => ({
-              address,
-              transaction: count,
-              percentage: ((count / totalReceived) * 100).toFixed(2),
-            }))
-            .sort((a, b) => b.transaction - a.transaction)
-            .slice(0, 5)
+        receiverMap.set(
+          tx.to_address,
+          (receiverMap.get(tx.to_address) || 0) + 1
         );
-      } catch (error) {
-        console.error("Error fetching transactions:", error);
       }
-    };
+    });
 
-    fetchTransactions();
-  }, []);
+    // Convert data into array and calculate percentage
+    const totalSent = [...senderMap.values()].reduce(
+      (currentTotal, currentValue) => currentTotal + currentValue,
+      0
+    ); // array.reduce((accumulator, currentValue) => a+b, 0), 0 is the first value of accumlator
+    const totalReceived = [...receiverMap.values()].reduce(
+      (currentTotal, currentValue) => currentTotal + currentValue,
+      0
+    );
+
+    setSenderData(
+      [...senderMap.entries()]
+        .map(([address, count]) => ({
+          address,
+          transaction: count,
+          percentage: ((count / totalSent) * 100).toFixed(2),
+        }))
+        .sort((a, b) => b.transaction - a.transaction) //  descending transaction
+        .slice(0, 5)
+    );
+
+    setReceiverData(
+      [...receiverMap.entries()]
+        .map(([address, count]) => ({
+          address,
+          transaction: count,
+          percentage: ((count / totalReceived) * 100).toFixed(2),
+        }))
+        .sort((a, b) => b.transaction - a.transaction)
+        .slice(0, 5)
+    );
+  };
+  useEffect(() => {
+    DataProcessing(transactions);
+  }, [transactions]);
 
   return (
     <section>
