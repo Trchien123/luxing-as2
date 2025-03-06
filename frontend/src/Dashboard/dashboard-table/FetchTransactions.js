@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const FetchTransactions = (address) => {
+const FetchTransactions = (address, coin) => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,17 +14,16 @@ const FetchTransactions = (address) => {
             return;
         }
 
-        const isBitcoinAddress = (addr) => /^[13]|bc1/.test(addr);
-        const apiUrl = isBitcoinAddress(address)
-            ? `http://localhost:5000/api/bitcoin/transactions/${address}`
-            : `http://localhost:5000/api/transactions/${address}`;
-
         const fetchTransactions = async () => {
             try {
-                const response = await axios.get(apiUrl);
-                if (isMounted) {
+                const response = await axios.get(`http://localhost:5000/api/transactions/${address}?coin=${coin}`);
+                if (isMounted && coin === "Bitcoin") {
                     const transactionsData = response.data.transactions || []; // Get only transactions
                     setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
+                    setError(null);
+                }
+                if (isMounted && coin ===  "Ethereum") {
+                    setTransactions(Array.isArray(response.data) ? response.data : []);
                     setError(null);
                 }
             } catch (err) {
@@ -39,7 +38,7 @@ const FetchTransactions = (address) => {
         return () => {
             isMounted = false;
         };
-    }, [address]);
+    }, [address, coin]);
 
     return { transactions, loading, error };
 };

@@ -11,11 +11,12 @@ const DashTable = () => {
   const context = useOutletContext();
   console.log(context);
   const address = context.address;
+  const coin_type = context.name;
   const onPageChangeGraph = (newPage) => {
     console.log("Graph page changed to:", newPage);
   };
 
-  const { transactions, loading, error } = FetchTransactions(address);
+  const { transactions, loading, error } = FetchTransactions(address, coin_type);
   const [currentPage, setCurrentPage] = useState(0);
   const totalItems = transactions.length; // Total items for pagination
 
