@@ -11,10 +11,8 @@ import FetchTransactions from "../dashboard-table/FetchTransactions";
 
 const DbHome = () => {
   const context = useOutletContext();
-  // console.log(context);
-  const response = FetchTransactions(
-    context.address, context.name
-  );
+  console.log(context);
+  const response = FetchTransactions(context.address, context.name, context.id);
   console.log(response);
   const generateNumber = () => {
     const randomNumber = Math.random(); // Generates a number between 0 and 1
@@ -30,6 +28,8 @@ const DbHome = () => {
       <UserOverview
         address={context.address}
         transactions={response.transactions}
+        coinName={context.name}
+        coinId={context.id}
       />
       <section className="DB-main-container-2">
         <div
@@ -60,6 +60,7 @@ const DbHome = () => {
           <SendReceiveTable
             crypto={context}
             transactions={response.transactions}
+            address={context.address}
           />
         </div>
       </section>

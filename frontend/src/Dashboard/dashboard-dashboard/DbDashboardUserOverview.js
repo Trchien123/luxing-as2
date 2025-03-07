@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import axios from "axios";
 
-const address = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
-
-const UserOverview = ({ transactions }) => {
+const UserOverview = ({ transactions, address, coinName, coinId }) => {
   const [userData, setUserData] = useState({
     balance: 0,
     balanceUSD: 0,
@@ -14,7 +11,19 @@ const UserOverview = ({ transactions }) => {
     received: 0,
     total: 0,
   });
-
+  const fetchCryptoPrice = async (coin) => {
+    coin = coin.toLowerCase();
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/crypto-price?coin=${coin}`
+      );
+      const data = await response.json();
+      console.log("Crypto Price:", data);
+      return data.price;
+    } catch (error) {
+      console.error("Error fetching crypto price:", error);
+    }
+  };
   const DataProcessing = async (transactions) => {
     //First and Last Active
     if (transactions.length > 0) {
@@ -34,31 +43,18 @@ const UserOverview = ({ transactions }) => {
           receivedTotal += parseFloat(tx.value);
         }
       });
-      // Call API to get the current BTC and ETH price
-      let priceResponse;
-      try {
-        priceResponse = await axios.get(
-          "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
-        );
-      } catch (error) {
-        console.error(error);
-      }
-
-      const ethPrice = priceResponse.data.ethereum.usd;
-      const btcPrice = priceResponse.data.bitcoin.usd;
-
-      const isBitcoinAddress = (addr) => /^(1|3|bc1)/.test(addr);
-      const isBTC = isBitcoinAddress(address);
+      const cryptoPrice = await fetchCryptoPrice(coinName);
+      if (!cryptoPrice) return;
       const balance = receivedTotal - sentTotal;
-      const balanceUSD = isBitcoinAddress(address)
-        ? (balance * btcPrice).toFixed(2)
-        : (balance * ethPrice).toFixed(2);
+      const balanceUSD = cryptoPrice
+        ? (balance * cryptoPrice).toFixed(2)
+        : "N/A";
+      console.log(balanceUSD);
 
       // Update userData state
       setUserData({
         balance: balance.toFixed(5),
         balanceUSD,
-        currency: isBTC ? "BTC" : "ETH",
         firstActive: new Date(firstTx.block_timestamp).toLocaleDateString(
           "en-US",
           {
@@ -103,7 +99,7 @@ const UserOverview = ({ transactions }) => {
       <DbItem2
         balance={userData.balance}
         balanceUSD={userData.balanceUSD}
-        currency={userData.currency}
+        coinId={coinId}
       />
       <DbItem3
         sent={userData.sent}
@@ -154,7 +150,7 @@ const DbItem1 = ({
     </div>
   );
 };
-const DbItem2 = ({ balance, balanceUSD, currency }) => {
+const DbItem2 = ({ balance, balanceUSD, coinId }) => {
   return (
     <div class="container">
       <h1>Balance</h1>
@@ -164,7 +160,7 @@ const DbItem2 = ({ balance, balanceUSD, currency }) => {
       </div>
       <div class="info-balance">
         <p>
-          {balance} {currency}
+          {balance} {coinId}
         </p>
         <span>~ {balanceUSD} USD</span>
       </div>
