@@ -10,7 +10,6 @@ app.use(express.json());
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
-const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 app.get("/api/sel/:address", async (req, res) => {
   const { address } = req.params;
 
@@ -29,33 +28,8 @@ app.get("/api/sel/:address", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-app.get("/api/crypto-price", async (req, res) => {
-  const { coin } = req.query; // Example: BTC, ETH
-  if (!coin) return res.status(400).json({ error: "Coin symbol is required" });
 
-  try {
-    const response = await axios.get(
-      "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest",
-      {
-        params: {
-          symbol: coin.toUpperCase(), // e.g., "BTC"
-          convert: "USD",
-        },
-        headers: {
-          "X-CMC_PRO_API_KEY": COINMARKETCAP_API_KEY,
-        },
-      }
-    );
-
-    const price = response.data.data[coin.toUpperCase()].quote.USD.price;
-    res.json({ coin, price });
-  } catch (error) {
-    console.error("CoinMarketCap API Error:", error.message);
-    res.status(500).json({ error: "Failed to fetch crypto price" });
-  }
-});
-
-// Fetch Ethereum transactions for an address
+// Fetch transactions for an address
 app.get("/api/transactions/:address", async (req, res) => {
   const { address } = req.params;
   const API_URL = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
@@ -70,11 +44,11 @@ app.get("/api/transactions/:address", async (req, res) => {
 
     const query =
       req.query.q ||
-      `MATCH p=(n)-[:TRANSACTION]->() 
+      `MATCH p=(n)-[:TRANSACTION]->(m) 
     WHERE n.addressId = "${address}"  
     RETURN p`;
     try {
-      const records = await runNeo4jQuery(query);
+      const records = await runNeo4jQuery(query, address);
       res.json({
         transactions: records,
       });

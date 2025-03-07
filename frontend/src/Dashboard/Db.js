@@ -6,17 +6,18 @@ import {
 } from 'react-router-dom';
 
 import DbHeader from "./dashboard-dashboard/DbDashboardHeader"
-
+import FetchTransactions from "./dashboard-table/FetchTransactions";
 import DbNavbar from "./DbNavbar";
 const Dashboard = () => {
     const location = useLocation();
 
     const crypto = location.state
-
+    const response = FetchTransactions(crypto.address, crypto.name);
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef(null);
     const [showBar, setShowBar] = useState(true)
     const [showNoti, setShowNoti] = useState(false)
+
     useEffect(() => {
         const handleScroll = () => {
             const container = containerRef.current;
@@ -48,7 +49,10 @@ const Dashboard = () => {
                 <DbHeader scrolled={scrolled} setShowBar={setShowBar} showBar={showBar} />
 
 
-                <Outlet context={crypto} />
+                <Outlet context={{
+                    crypto,
+                    response,
+                }} />
             </div>
 
 

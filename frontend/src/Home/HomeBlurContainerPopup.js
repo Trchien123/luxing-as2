@@ -23,7 +23,7 @@ const PopUp = ({ onClick, setBlock, show, }) => {
             name: title
 
         })
-        console.log("clicked")
+
         onClick()
 
     }
