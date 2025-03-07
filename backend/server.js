@@ -10,26 +10,8 @@ app.use(express.json());
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
-app.get("/api/sel/:address", async (req, res) => {
-  const { address } = req.params;
 
-  const query =
-    req.query.q ||
-    `MATCH p=(n)-[:TRANSACTION]->() 
-    WHERE n.addressId = "${address}"  
-    RETURN p`
-  try {
-    const records = await runNeo4jQuery(query);
-    res.json({
-      success: true,
-      data: records,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-})
-
-// Fetch Ethereum transactions for an address
+// Fetch transactions for an address
 app.get("/api/transactions/:address", async (req, res) => {
   const { address } = req.params;
   const API_URL = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
@@ -49,7 +31,7 @@ app.get("/api/transactions/:address", async (req, res) => {
     OR m.addressId = "${address}"
     RETURN p`
     try {
-      const records = await runNeo4jQuery(query);
+      const records = await runNeo4jQuery(query, address);
       res.json({
         transactions: records
       });

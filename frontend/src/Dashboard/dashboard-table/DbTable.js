@@ -8,15 +8,15 @@ import PaginationControl from "./DbTablePaginationcontrol.js"; // Correct path f
 import { useOutletContext } from "react-router-dom";
 
 const DashTable = () => {
-  const context = useOutletContext();
-  console.log(context);
-  const address = context.address;
-  const coin_type = context.name;
+  const { crypto, response } = useOutletContext();
+  console.log(crypto);
+  const address = crypto.address;
+  const { transactions, loading, error } = response
   const onPageChangeGraph = (newPage) => {
     console.log("Graph page changed to:", newPage);
   };
 
-  const { transactions, loading, error } = FetchTransactions(address, coin_type);
+
   const [currentPage, setCurrentPage] = useState(0);
   const totalItems = transactions.length; // Total items for pagination
 

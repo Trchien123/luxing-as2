@@ -58,7 +58,7 @@ const DbNavbar = ({ setShowBar, crypto }) => {
             }}>
 
             </div>
-            <h1 className="navbar--name">Address</h1>
+            <h1 className="navbar--name">{crypto.name}</h1>
 
             <div className="content">
                 {

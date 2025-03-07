@@ -5,7 +5,7 @@ import PopUp from "./HomeBlurContainerPopup";
 import '../style/home.css'
 import cryptoImages from "./HomeBlurContainerCryptoImages";
 
-console.log(cryptoImages)
+
 const image1 = require("../asset/temp.png")
 const BlurContainer = () => {
     const containerRef = useRef(null);
@@ -86,7 +86,7 @@ const BlurContainer = () => {
 
                 <div className="home-component--content">
                     <h1 className="home-component--title">Search anytime, anywhere</h1>
-                    {console.log(block)}
+
                     <SwapContainer handleOnClick={handleOnClick} id={block.id} image={block.image} name={block.name} />
                     <p className="home-component--footer">the best crypto exchange</p>
 

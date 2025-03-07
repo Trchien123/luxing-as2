@@ -7,15 +7,10 @@ import SendReceiveTable from "./DbDashboardSendReceiveTable";
 import StatChart from "./DbTranschart";
 import ReportDis from "./DbReportdisp";
 import { useOutletContext } from "react-router-dom";
-import FetchTransactions from "../dashboard-table/FetchTransactions";
+
 
 const DbHome = () => {
-  const context = useOutletContext();
-  // console.log(context);
-  const response = FetchTransactions(
-    context.address, context.name
-  );
-  console.log(response);
+  const { crypto, response } = useOutletContext()
   const generateNumber = () => {
     const randomNumber = Math.random(); // Generates a number between 0 and 1
     if (randomNumber < 0.07) {
@@ -28,7 +23,7 @@ const DbHome = () => {
   return (
     <main className="DB-main">
       <UserOverview
-        address={context.address}
+        address={crypto.address}
         transactions={response.transactions}
       />
       <section className="DB-main-container-2">
@@ -41,10 +36,10 @@ const DbHome = () => {
           <DbHomeContainer Address={"User's name"} />
         </div>
         <div className="Db-main-2-items Db-main-2-items-2">
-          <BinanceOverview title={context.name} />
+          <BinanceOverview title={crypto.name} />
         </div>
         <div className="Db-main-2-items Db-main-2-items-3">
-          <NewsOverview crypto={context} />
+          <NewsOverview crypto={crypto} />
         </div>
       </section>
       <section className="DB-main-container-2">
@@ -58,7 +53,7 @@ const DbHome = () => {
       <section className="DB-main-container-2">
         <div className="Db-main-2-items Db-main-2-items-6 ">
           <SendReceiveTable
-            crypto={context}
+            crypto={crypto}
             transactions={response.transactions}
           />
         </div>

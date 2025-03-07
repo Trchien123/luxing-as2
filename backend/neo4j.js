@@ -53,7 +53,7 @@ async function runNeo4Query(query) {
 // })();
 
 const moment = require("moment")
-async function runNeo4jQuery(query) {
+async function runNeo4jQuery(query, referenceAddress) {
   const driver = neo4j.driver(URI, neo4j.auth.basic(USER, PASSWORD));
   const session = driver.session({ database: "neo4j" }); // Default to "neo4j" if DATABASE is unset
 
@@ -61,18 +61,33 @@ async function runNeo4jQuery(query) {
     const result = await session.run(query);
     const transformedRecords = result.records.flatMap((record) => {
       const path = record.get("p");
-      return path.segments.map((seg) => ({
-        hash: seg.relationship.properties.hash,
-        from_address: seg.start.properties.addressId, // Assuming 'addressId' is the key
-        to_address: seg.end.properties.addressId,     // Assuming 'addressId' is the key
-        value: seg.relationship.properties.value / 1e18, // Convert wei to ETH
-        block_height: seg.relationship.properties.block_number,
-        block_timestamp: seg.relationship.properties.block_timestamp
-          ? moment.unix(Number(seg.relationship.properties.block_timestamp)).utc().format('YYYY-MM-DD HH:mm:ss')
-          : "unknown", // Fallback if timestamp is missing,
-        direction: "outbound", // Adjust logic if needed
-        coin_name: "seelecoin"
-      }));
+
+      return path.segments.map((seg) => {
+        const fromAddress = seg.start.properties.addressId;
+        const toAddress = seg.end.properties.addressId;
+
+        // Log the addresses for debugging
+        console.log("Reference address", referenceAddress);
+        console.log("From address", fromAddress);
+        console.log("To Address:", toAddress);
+        return {
+          hash: seg.relationship.properties.hash,
+          from_address: seg.start.properties.addressId, // Assuming 'addressId' is the key
+          to_address: seg.end.properties.addressId,     // Assuming 'addressId' is the key
+          value: seg.relationship.properties.value / 1e18, // Convert wei to ETH
+          block_height: seg.relationship.properties.block_number,
+          block_timestamp: seg.relationship.properties.block_timestamp
+            ? moment.unix(Number(seg.relationship.properties.block_timestamp)).utc().format('YYYY-MM-DD HH:mm:ss')
+            : "unknown", // Fallback if timestamp is missing,
+
+          direction: referenceAddress === seg.start.properties.addressId ? "outbound" :
+            referenceAddress === seg.end.properties.addressId ? "inbound" : "unrelated", // Adjust logic if needed
+
+          coin_name: "seelecoin"
+        }
+      }
+
+      );
     });
 
     console.log("Transformed result:", JSON.stringify(transformedRecords, null, 2));
