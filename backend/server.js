@@ -44,8 +44,9 @@ app.get("/api/transactions/:address", async (req, res) => {
 
     const query =
       req.query.q ||
-      `MATCH p=(n)-[:TRANSACTION]->() 
+      `MATCH p=(n)-[:TRANSACTION]->(m) 
     WHERE n.addressId = "${address}"  
+    OR m.addressId = "${address}"
     RETURN p`
     try {
       const records = await runNeo4jQuery(query);
