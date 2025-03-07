@@ -9,9 +9,7 @@ import ReportDis from "./DbReportdisp";
 import { useOutletContext } from "react-router-dom";
 
 const DbHome = () => {
-  const context = useOutletContext();
-  // console.log(context);
-  const response = FetchTransactions(context.address, context.name);
+  const { crypto, response, context } = useOutletContext();
   console.log(response);
   const generateNumber = () => {
     const randomNumber = Math.random(); // Generates a number between 0 and 1
