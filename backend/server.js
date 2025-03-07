@@ -10,6 +10,38 @@ app.use(express.json());
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
+
+app.get("/api/crypto-price", async (req, res) => {
+  const { coin } = req.query; // Example: BTC, ETH
+  if (!coin) return res.status(400).json({ error: "Coin symbol is required" });
+
+  try {
+    const response = await axios.get(
+      "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest",
+      {
+        params: {
+          symbol: coin.toUpperCase(), // Example: BTC
+          convert: "USD",
+        },
+        headers: {
+          "X-CMC_PRO_API_KEY": COINMARKETCAP_API_KEY,
+          Accept: "application/json",
+        },
+      }
+    );
+
+    const price = response.data.data[coin.toUpperCase()].quote.USD.price;
+    res.json({ coin, price });
+  } catch (error) {
+    console.error(
+      "CoinMarketCap API Error:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({ error: "Failed to fetch crypto price" });
+  }
+});
+
 app.get("/api/sel/:address", async (req, res) => {
   const { address } = req.params;
 

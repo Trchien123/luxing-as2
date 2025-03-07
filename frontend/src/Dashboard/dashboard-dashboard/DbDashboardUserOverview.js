@@ -12,7 +12,7 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     total: 0,
   });
   const fetchCryptoPrice = async (coin) => {
-    coin = coin.toLowerCase();
+    coin = coin.toUpperCase();
     try {
       const response = await fetch(
         `http://localhost:5000/api/crypto-price?coin=${coin}`
@@ -35,21 +35,33 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
       // Total of sent and received
       let sentTotal = 0;
       let receivedTotal = 0;
-
-      transactions.forEach((tx) => {
-        if (tx.direction === "outbound") {
-          sentTotal += parseFloat(tx.value);
-        } else {
-          receivedTotal += parseFloat(tx.value);
-        }
-      });
-      const cryptoPrice = await fetchCryptoPrice(coinName);
+      let feesTotal = 0;
+      let balance = 0;
+      if (coinName === "Bitcoin") {
+        transactions.forEach((tx) => {
+          if (tx.direction === "outbound") {
+            sentTotal += parseFloat(tx.value);
+          } else {
+            receivedTotal += parseFloat(tx.value);
+          }
+          balance = receivedTotal - sentTotal;
+        });
+      } else {
+        transactions.forEach((tx) => {
+          if (tx.direction === "inbound") {
+            receivedTotal += parseFloat(tx.value);
+          } else if (tx.direction === "outbound") {
+            sentTotal += parseFloat(tx.value);
+            feesTotal += parseFloat(tx.transaction_fee); // Add gas fee for sent transactions
+          }
+          balance = receivedTotal - sentTotal - feesTotal;
+        });
+      }
+      const cryptoPrice = await fetchCryptoPrice(coinId);
       if (!cryptoPrice) return;
-      const balance = receivedTotal - sentTotal;
       const balanceUSD = cryptoPrice
         ? (balance * cryptoPrice).toFixed(2)
         : "N/A";
-      console.log(balanceUSD);
 
       // Update userData state
       setUserData({
