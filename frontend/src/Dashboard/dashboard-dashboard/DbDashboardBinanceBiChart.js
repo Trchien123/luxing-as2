@@ -29,10 +29,13 @@ const BinanceChart = () => {
         const updateChart = () => {
             const width = chartRef.current.offsetWidth;
             const height = chartRef.current.offsetHeight;
-            // Increase margins to prevent overlapping but keep the same number of ticks
             const margin = { top: 20, right: 30, bottom: 50, left: 50 };
             const innerWidth = width - margin.left - margin.right;
             const innerHeight = height - margin.top - margin.bottom;
+
+            // Calculate number of hover points based on width (e.g., 1 point per 50px)
+            const pointsPerWidth = 50; // Lowered to increase density
+            const numHoverPoints = Math.max(5, Math.floor(innerWidth / pointsPerWidth)); // Minimum of 5 points
 
             // Clear previous SVG
             d3.select(chartRef.current).select("svg").remove();
@@ -47,11 +50,11 @@ const BinanceChart = () => {
 
             // Create scales
             const xScale = d3.scaleTime()
-                .domain(d3.extent(chartData, (d) => d.x)) // Min/max dates
+                .domain(d3.extent(chartData, (d) => d.x))
                 .range([0, innerWidth]);
 
             const yScale = d3.scaleLinear()
-                .domain([d3.min(chartData, (d) => d.y) * 0.95, d3.max(chartData, (d) => d.y) * 1.05]) // Add padding
+                .domain([d3.min(chartData, (d) => d.y) * 0.95, d3.max(chartData, (d) => d.y) * 1.05])
                 .nice()
                 .range([innerHeight, 0]);
 
@@ -59,14 +62,14 @@ const BinanceChart = () => {
             const line = d3.line()
                 .x((d) => xScale(d.x))
                 .y((d) => yScale(d.y))
-                .curve(d3.curveMonotoneX); // Smooth line
+                .curve(d3.curveMonotoneX);
 
-            // Add the X Axis with 3 ticks (start, middle, end) but better positioning
+            // Add the X Axis
             const xDomain = xScale.domain();
             const xTicks = [
-                xDomain[0], // Start
-                new Date((xDomain[0].getTime() + xDomain[1].getTime()) / 2), // Middle
-                xDomain[1], // End
+                xDomain[0],
+                new Date((xDomain[0].getTime() + xDomain[1].getTime()) / 2),
+                xDomain[1],
             ];
 
             svg.append("g")
@@ -78,21 +81,20 @@ const BinanceChart = () => {
                         .tickSize(0)
                 )
                 .selectAll("text")
-                .attr("y", 15) // Move text down further
+                .attr("y", 15)
                 .style("text-anchor", "middle");
 
-            // Add the Y Axis with 2 ticks (bottom, top) but better positioning
+            // Add the Y Axis
             const yDomain = yScale.domain();
-
             svg.append("g")
                 .call(
                     d3.axisLeft(yScale)
-                        .tickValues([yDomain[0], yDomain[1]]) // Only bottom and top
+                        .tickValues([yDomain[0], yDomain[1]])
                         .tickFormat((d) => `$${d.toLocaleString(undefined, { maximumFractionDigits: 0 })}`)
                         .tickSize(0)
                 )
                 .selectAll("text")
-                .attr("x", -10) // Move text left
+                .attr("x", -10)
                 .style("text-anchor", "end");
 
             // Add the line path
@@ -103,22 +105,22 @@ const BinanceChart = () => {
                 .attr("stroke-width", 2)
                 .attr("d", line);
 
-            // Create 5 evenly spaced hover points along the data
-            const hoverPointsData = getEvenlySpacedPoints(chartData, 5);
+            // Create dynamically spaced hover points based on width
+            const hoverPointsData = getEvenlySpacedPoints(chartData, numHoverPoints);
 
             // Create a group for hover elements
             const hoverGroup = svg.append("g")
                 .attr("class", "hover-elements");
 
-            // Add hover points
+            // Add hover points (visible circles)
             hoverGroup.selectAll(".hover-point")
                 .data(hoverPointsData)
                 .enter()
                 .append("circle")
                 .attr("class", "hover-point")
                 .attr("r", 6)
-                .attr("cx", d => xScale(d.x))
-                .attr("cy", d => yScale(d.y))
+                .attr("cx", (d) => xScale(d.x))
+                .attr("cy", (d) => yScale(d.y))
                 .attr("fill", "#00C2FF")
                 .attr("stroke", "white")
                 .attr("stroke-width", 2)
@@ -128,50 +130,43 @@ const BinanceChart = () => {
                         .attr("opacity", 1)
                         .attr("r", 8);
 
-                    // Show tooltip
                     setHoverData({
                         date: d.x.toLocaleDateString(),
-                        price: d.y.toLocaleString('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
+                        price: d.y.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
                             minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
+                            maximumFractionDigits: 2,
                         }),
                         x: xScale(d.x) + margin.left,
-                        y: yScale(d.y) + margin.top - 10
+                        y: yScale(d.y) + margin.top - 10,
                     });
                 })
                 .on("mouseout", function () {
                     d3.select(this)
                         .attr("opacity", 0)
                         .attr("r", 6);
-
-                    // Hide tooltip
                     setHoverData(null);
                 });
 
-            // Create invisible overlay rectangles that span the chart for each hover point section
-            const rectWidth = innerWidth / hoverPointsData.length;
-
+            // Add smaller hover areas around each point (invisible circles)
+            const hoverRadius = 20; // Adjust this value to control hover sensitivity
             hoverGroup.selectAll(".hover-area")
                 .data(hoverPointsData)
                 .enter()
-                .append("rect")
+                .append("circle")
                 .attr("class", "hover-area")
-                .attr("x", (d, i) => i * rectWidth)
-                .attr("y", 0)
-                .attr("width", rectWidth)
-                .attr("height", innerHeight)
+                .attr("cx", (d) => xScale(d.x))
+                .attr("cy", (d) => yScale(d.y))
+                .attr("r", hoverRadius) // Smaller hover area
                 .attr("fill", "transparent")
                 .on("mouseover", function (event, d) {
-                    // Find the corresponding hover point and trigger its mouseover
                     const index = hoverPointsData.indexOf(d);
                     d3.selectAll(".hover-point")
                         .filter((_, i) => i === index)
                         .dispatch("mouseover");
                 })
                 .on("mouseout", function (event, d) {
-                    // Find the corresponding hover point and trigger its mouseout
                     const index = hoverPointsData.indexOf(d);
                     d3.selectAll(".hover-point")
                         .filter((_, i) => i === index)
@@ -179,7 +174,7 @@ const BinanceChart = () => {
                 });
         };
 
-        // Helper function to get 5 evenly spaced points from the dataset
+        // Helper function to get evenly spaced points from the dataset
         const getEvenlySpacedPoints = (data, count) => {
             const result = [];
             const step = Math.floor((data.length - 1) / (count - 1));
@@ -187,8 +182,6 @@ const BinanceChart = () => {
             for (let i = 0; i < count - 1; i++) {
                 result.push(data[i * step]);
             }
-
-            // Add the last point from the data
             result.push(data[data.length - 1]);
 
             return result;
@@ -209,7 +202,7 @@ const BinanceChart = () => {
             className="Bo-chart"
             style={{
                 position: "relative",
-                minHeight: "300px" // Add a minimum height
+                minHeight: "300px", // Add a minimum height
             }}
         >
             {/* Tooltip */}
