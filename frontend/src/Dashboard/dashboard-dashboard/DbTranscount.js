@@ -177,8 +177,8 @@ const StatChart = ({ title, transactions }) => {
         .html(`
           <div>
             <strong>${dateStr}</strong><br>
-            <span style="color: #ff4444;">Sent: ${d.outbound.toFixed(2)}</span><br>
-            <span style="color: #00cc00;">Received: ${d.inbound.toFixed(2)}</span>
+            <span style="color: #ff4444;">Sent: ${d.outbound.toFixed(4)}</span><br>
+            <span style="color: #00cc00;">Received: ${d.inbound.toFixed(4)}</span>
           </div>
         `)
         .style('left', (event.pageX + 10) + 'px')
