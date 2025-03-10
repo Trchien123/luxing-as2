@@ -45,10 +45,10 @@ const DbHome = () => {
       </section>
       <section className="DB-main-container-2">
         <div className="Db-main-2-items Db-main-2-items-4 ">
-          <StatChart title={"Activity"} />
+          <StatChart title={"Activity"} transactions={response.transactions} />
         </div>
         <div className="Db-main-2-items Db-main-2-items-5">
-          <ReportDis title={"Report"} />
+          <ReportDis title={"Report"} transactions={response.transactions} />
         </div>
       </section>
       <section className="DB-main-container-2">

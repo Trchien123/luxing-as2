@@ -1,127 +1,288 @@
-import React, { useState, useEffect, useRef } from "react";
-import * as d3 from "d3";
+import React, { useRef, useEffect, useState } from 'react';
+import * as d3 from 'd3';
 import '../../style/Transchart.css';
 
-const TransChart = () => {
-  const [chartWidth, setChartWidth] = useState(800);
-  const height = 450;
-  const containerRef = useRef(null);
-  const margin = { top: 20, right: 20, bottom: 80, left: 60 };
-  const [selectedMonth, setSelectedMonth] = useState("January");
-  const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, value: "" });
+const StatChart = ({ title, transactions }) => {
+  const svgRef = useRef();
+  const containerRef = useRef();
+  const tooltipRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 600, height: 300 });
 
+  // Responsive sizing
   useEffect(() => {
-    const handleResize = () => {
-      const newWidth = Math.min(window.innerWidth * 0.9, 800);
-      setChartWidth(newWidth);
+    const updateDimensions = () => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const screenWidth = window.innerWidth;
+      const containerWidth = container.getBoundingClientRect().width;
+
+      // Calculate width: 90% of the smaller of screen or container width
+      const calculatedWidth = Math.min(screenWidth, containerWidth) * 0.95;
+      const newWidth = Math.min(Math.max(300, calculatedWidth), 800); // Min 300px, Max 800px
+      
+      // Maintain aspect ratio (height = 50% of width, with min/max)
+      const newHeight = Math.min(Math.max(200, newWidth * 0.5), 400);
+
+      setDimensions({
+        width: newWidth,
+        height: newHeight,
+      });
     };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    updateDimensions(); // Initial call
+
+    const resizeObserver = new ResizeObserver(entries => {
+      updateDimensions();
+    });
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    window.addEventListener('resize', updateDimensions);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateDimensions);
+    };
   }, []);
 
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  // Create tooltip once on component mount
+  useEffect(() => {
+    // Create tooltip div if it doesn't exist yet
+    if (!tooltipRef.current) {
+      tooltipRef.current = d3.select('body')
+        .append('div')
+        .attr('class', 'chart-tooltip')
+        .style('position', 'absolute')
+        .style('background', 'rgba(255, 255, 255, 0.9)')
+        .style('border', '1px solid #ddd')
+        .style('border-radius', '4px')
+        .style('padding', '8px')
+        .style('font-size', '12px')
+        .style('pointer-events', 'none')
+        .style('display', 'none')
+        .style('z-index', '1000');
+    }
 
-  const dataForMonths = {
-    January: { Monday: { sent: 10, received: 15 }, Tuesday: { sent: 20, received: 25 }, Wednesday: { sent: 15, received: 10 }, Thursday: { sent: 30, received: 20 }, Friday: { sent: 25, received: 30 }, Saturday: { sent: 20, received: 15 }, Sunday: { sent: 10, received: 5 } },
-    February: { Monday: { sent: 12, received: 18 }, Tuesday: { sent: 22, received: 28 }, Wednesday: { sent: 18, received: 12 }, Thursday: { sent: 32, received: 22 }, Friday: { sent: 28, received: 35 }, Saturday: { sent: 25, received: 18 }, Sunday: { sent: 15, received: 8 } },
-    March: { Monday: { sent: 14, received: 20 }, Tuesday: { sent: 24, received: 30 }, Wednesday: { sent: 20, received: 15 }, Thursday: { sent: 34, received: 25 }, Friday: { sent: 30, received: 40 }, Saturday: { sent: 28, received: 20 }, Sunday: { sent: 18, received: 10 } },
-    April: { Monday: { sent: 16, received: 22 }, Tuesday: { sent: 26, received: 32 }, Wednesday: { sent: 22, received: 18 }, Thursday: { sent: 36, received: 28 }, Friday: { sent: 32, received: 38 }, Saturday: { sent: 30, received: 22 }, Sunday: { sent: 20, received: 12 } },
-    May: { Monday: { sent: 18, received: 24 }, Tuesday: { sent: 28, received: 34 }, Wednesday: { sent: 24, received: 20 }, Thursday: { sent: 38, received: 30 }, Friday: { sent: 34, received: 40 }, Saturday: { sent: 32, received: 24 }, Sunday: { sent: 22, received: 15 } }
-  };
+    // Cleanup tooltip on component unmount
+    return () => {
+      if (tooltipRef.current) {
+        tooltipRef.current.remove();
+        tooltipRef.current = null;
+      }
+    };
+  }, []);
 
-  const barWidth = (chartWidth - margin.left - margin.right) / (days.length * 3);
+  // Chart rendering
+  useEffect(() => {
+    console.log('useEffect triggered');
+    console.log('Transactions:', transactions);
 
-  const handleMouseMove = (e, value, isSent) => {
-    if (!containerRef.current) return;
-    const containerRect = containerRef.current.getBoundingClientRect();
-  setTooltip({
-    visible: true,
-    x: e.clientX - containerRect.left,
-    y: e.clientY - containerRect.top,
-    value: `${isSent ? 'Sent' : 'Received'}: ${value}`
-  });
-  };
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove();
+
+    const { width, height } = dimensions;
+    const margin = { top: 40, right: 85, bottom: 60, left: 50 };
+
+    if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
+      svg.attr('width', width)
+         .attr('height', height)
+         .append('text')
+         .attr('x', width / 2)
+         .attr('y', height / 2)
+         .attr('text-anchor', 'middle')
+         .attr('class', 'error-text')
+         .text('No transaction data available');
+      return;
+    }
+
+    const data = transactions.map(d => ({
+      ...d,
+      timestamp: new Date(d.block_timestamp),
+      value: +d.value || 0,
+    })).filter(d => !isNaN(d.timestamp));
+
+    if (data.length === 0) {
+      svg.attr('width', width)
+         .attr('height', height)
+         .append('text')
+         .attr('x', width / 2)
+         .attr('y', height / 2)
+         .attr('text-anchor', 'middle')
+         .attr('class', 'error-text')
+         .text('Invalid timestamp data');
+      return;
+    }
+
+    // Aggregate and sort by date, then take 12 most recent
+    const aggregatedData = d3.group(data, d => d3.timeDay(d.timestamp).toISOString().split('T')[0]);
+    const summary = Array.from(aggregatedData, ([date, txs]) => ({
+      date: new Date(date),
+      inbound: d3.sum(txs.filter(t => t.direction === 'inbound'), t => t.value),
+      outbound: d3.sum(txs.filter(t => t.direction === 'outbound'), t => t.value),
+    }))
+      .sort((a, b) => a.date - b.date)
+      .slice(-12);
+
+    svg.attr('width', width)
+       .attr('height', height);
+
+    const x0Scale = d3.scaleBand()
+      .domain(summary.map(d => d.date))
+      .range([margin.left, width - margin.right])
+      .padding(0.1);
+
+    const x1Scale = d3.scaleBand()
+      .domain(['inbound', 'outbound'])
+      .range([0, x0Scale.bandwidth()])
+      .padding(0.05);
+
+    const yScale = d3.scaleLinear()
+      .domain([0, d3.max(summary, d => Math.max(d.inbound, d.outbound)) || 1])
+      .range([height - margin.bottom, margin.top]);
+
+    // Axes
+    svg.append('g')
+      .attr('transform', `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x0Scale)
+        .tickFormat(d3.timeFormat("%Y-%m-%d")))
+      .attr('class', 'axis')
+      .selectAll('text')
+      .attr('transform', 'rotate(-45)')
+      .style('text-anchor', 'end');
+
+    svg.append('g')
+      .attr('transform', `translate(${margin.left},0)`)
+      .call(d3.axisLeft(yScale)
+        .ticks(4)
+        .tickFormat(d3.format(".2s")))
+      .attr('class', 'axis');
+
+    // Get tooltip ref
+    const tooltip = tooltipRef.current;
+
+    // Helper functions for tooltip
+    const showTooltip = (event, d) => {
+      const dateStr = d3.timeFormat("%Y-%m-%d")(d.date);
+      
+      // Log for debugging
+      console.log('Tooltip data:', {
+        date: dateStr,
+        inbound: d.inbound,
+        outbound: d.outbound
+      });
+      
+      tooltip
+        .style('display', 'block')
+        .html(`
+          <div>
+            <strong>${dateStr}</strong><br>
+            <span style="color: #ff4444;">Sent: ${d.outbound.toFixed(4)}</span><br>
+            <span style="color: #00cc00;">Received: ${d.inbound.toFixed(4)}</span>
+          </div>
+        `)
+        .style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY - 10) + 'px');
+    };
+
+    const moveTooltip = (event) => {
+      tooltip
+        .style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY - 10) + 'px');
+    };
+
+    const hideTooltip = () => {
+      tooltip.style('display', 'none');
+    };
+
+    // Bars
+    const barGroups = svg.selectAll('.bar-group')
+      .data(summary)
+      .enter()
+      .append('g')
+      .attr('class', 'bar-group')
+      .attr('transform', d => `translate(${x0Scale(d.date)},0)`);
+
+    // Create data for each bar in a more explicit way
+    barGroups.each(function(d) {
+      const group = d3.select(this);
+      const dateData = d;
+      
+      // Inbound bar (green)
+      group.append('rect')
+        .attr('class', 'bar inbound-bar')
+        .attr('x', x1Scale('inbound'))
+        .attr('y', yScale(dateData.inbound))
+        .attr('width', x1Scale.bandwidth())
+        .attr('height', height - margin.bottom - yScale(dateData.inbound))
+        .attr('fill', '#00cc00')
+        .on('mouseover', function(event) {
+          showTooltip(event, dateData);
+        })
+        .on('mousemove', moveTooltip)
+        .on('mouseout', hideTooltip);
+      
+      // Outbound bar (red)
+      group.append('rect')
+        .attr('class', 'bar outbound-bar')
+        .attr('x', x1Scale('outbound'))
+        .attr('y', yScale(dateData.outbound))
+        .attr('width', x1Scale.bandwidth())
+        .attr('height', height - margin.bottom - yScale(dateData.outbound))
+        .attr('fill', '#ff4444')
+        .on('mouseover', function(event) {
+          showTooltip(event, dateData);
+        })
+        .on('mousemove', moveTooltip)
+        .on('mouseout', hideTooltip);
+    });
+
+    // Legend
+    const legend = svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(${width - margin.right + 10},${margin.top - 20})`);
+
+    legend.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 10)
+      .attr('height', 10)
+      .attr('fill', '#00cc00');
+
+    legend.append('text')
+      .attr('x', 15)
+      .attr('y', 8)
+      .attr('class', 'legend-text')
+      .text('Received');
+
+    legend.append('rect')
+      .attr('x', 0)
+      .attr('y', 15)
+      .attr('width', 10)
+      .attr('height', 10)
+      .attr('fill', '#ff4444');
+
+    legend.append('text')
+      .attr('x', 15)
+      .attr('y', 23)
+      .attr('class', 'legend-text')
+      .text('Sent');
+
+    // Title
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.top / 2)
+      .attr('text-anchor', 'middle')
+      .attr('class', 'chart-title')
+      .text(title);
+
+  }, [transactions, title, dimensions]);
 
   return (
-    <div className="chart-container">
-      <svg width="100%" height="100%" viewBox={`0 0 ${chartWidth} ${height}`} preserveAspectRatio="xMidYMid meet">
-        <g transform={`translate(0, ${height - margin.bottom})`}>
-          <line x1={margin.left} x2={chartWidth - margin.right} stroke="white" />
-          {days.map((day, index) => (
-            <g key={day} transform={`translate(${margin.left + index * barWidth * 3 + barWidth * 2}, 0)`}>
-              <text y={15} dy="0.71em" textAnchor="middle" fill="white">{day}</text>
-            </g>
-          ))}
-        </g>
-
-        <g transform={`translate(${margin.left}, 0)`}>
-          <line y1={margin.top} y2={height - margin.bottom} stroke="white" />
-          {d3.range(0, 45, 5).map((tick) => (
-            <g key={tick} transform={`translate(0, ${height - margin.bottom - (tick * (height - margin.top - margin.bottom)) / 45})`}>
-              <line x2={-6} stroke="white" />
-              <text x={-10} dy="0.32em" textAnchor="end" fill="white">{tick}</text>
-            </g>
-          ))}
-        </g>
-
-        {days.map((day, index) => {
-          const dayData = dataForMonths[selectedMonth]?.[day];
-          if (!dayData) return null;
-          const xPosition = margin.left + index * barWidth * 3 + barWidth * 1;
-          const sentHeight = (dayData.sent * (height - margin.top - margin.bottom)) / 45;
-          const receivedHeight = (dayData.received * (height - margin.top - margin.bottom)) / 45;
-
-          return (
-            <g key={day} transform={`translate(${xPosition}, 0)`}>
-              <rect className="bar" x={0} width={barWidth} height={sentHeight} 
-                y={height - margin.bottom - sentHeight} fill="steelblue"
-                onMouseMove={(e) => {
-                  const event = e.nativeEvent; // Get the native mouse event
-                  handleMouseMove(event, dayData.sent, true);
-                }}
-                onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0, value: "" })}
-              />
-              <rect className="bar" x={barWidth + 5} width={barWidth} height={receivedHeight} 
-                y={height - margin.bottom - receivedHeight} fill="orange"
-                onMouseMove={(e) => {
-                  const event = e.nativeEvent;
-                  handleMouseMove(event, dayData.received, false);
-                }}
-                onMouseLeave={() => setTooltip({ visible: false, x: 0, y: 0, value: "" })}
-              />
-            </g>
-          );
-        })}
-
-
-
-        <g transform={`translate(${margin.left}, ${height - margin.bottom + 50})`}>
-          {["January", "February", "March", "April", "May"].map((month, index) => (
-            <g key={month} className="month-button" 
-              transform={`translate(${index * (chartWidth - margin.left - margin.right) / 5}, 0)`}
-              onClick={() => setSelectedMonth(month)}>
-              <rect width={(chartWidth - margin.left - margin.right) / 5 - 10} height={30} 
-                fill={selectedMonth === month ? "#845fff" : "#2d0e83"} />
-              <text x={((chartWidth - margin.left - margin.right) / 5 - 10) / 2} y={20} 
-                textAnchor="middle" fill="white">{month}</text>
-            </g>
-          ))}
-        </g>
-      </svg>
-      {tooltip.visible && (
-  <div 
-  className={`tooltip-html ${tooltip.visible ? 'visible' : ''}`}
-  style={{
-    left: `${tooltip.x}px`,
-    top: `${tooltip.y}px`
-  }}
-  >
-    {tooltip.value}
-  </div>
-        )}
+    <div ref={containerRef} className="stat-chart-container">
+      <svg ref={svgRef}></svg>
     </div>
   );
 };
 
-export default TransChart;
+export default StatChart;

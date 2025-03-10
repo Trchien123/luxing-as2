@@ -520,9 +520,7 @@
   transition: all 0.1s ease-in-out;
 }
 
-.Bo-chart svg rect:hover {
-  fill: lightgreen;
-}
+
 
 @keyframes popCell {
   from {
@@ -543,6 +541,16 @@
   transform: translate(-50%, -50%);
   padding: 3px 4px;
   border-radius: 6px;
+}
+
+.domain {
+  fill: white;
+  stroke: white;
+}
+
+.tick {
+  color: white;
+  fill: white;
 }
 
 /* dashboard that contains news css */
