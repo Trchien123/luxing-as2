@@ -4,6 +4,7 @@ import * as d3 from "d3";
 const BinanceChart = () => {
     const chartRef = useRef(null);
     const [chartData, setChartData] = useState(null);
+    const [hoverData, setHoverData] = useState(null);
 
     useEffect(() => {
         // Fetch 14-day Bitcoin price data from CoinGecko using Promises
@@ -101,6 +102,96 @@ const BinanceChart = () => {
                 .attr("stroke", "#00C2FF")
                 .attr("stroke-width", 2)
                 .attr("d", line);
+
+            // Create 5 evenly spaced hover points along the data
+            const hoverPointsData = getEvenlySpacedPoints(chartData, 5);
+
+            // Create a group for hover elements
+            const hoverGroup = svg.append("g")
+                .attr("class", "hover-elements");
+
+            // Add hover points
+            hoverGroup.selectAll(".hover-point")
+                .data(hoverPointsData)
+                .enter()
+                .append("circle")
+                .attr("class", "hover-point")
+                .attr("r", 6)
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("fill", "#00C2FF")
+                .attr("stroke", "white")
+                .attr("stroke-width", 2)
+                .attr("opacity", 0) // Initially hidden
+                .on("mouseover", function (event, d) {
+                    d3.select(this)
+                        .attr("opacity", 1)
+                        .attr("r", 8);
+
+                    // Show tooltip
+                    setHoverData({
+                        date: d.x.toLocaleDateString(),
+                        price: d.y.toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }),
+                        x: xScale(d.x) + margin.left,
+                        y: yScale(d.y) + margin.top - 10
+                    });
+                })
+                .on("mouseout", function () {
+                    d3.select(this)
+                        .attr("opacity", 0)
+                        .attr("r", 6);
+
+                    // Hide tooltip
+                    setHoverData(null);
+                });
+
+            // Create invisible overlay rectangles that span the chart for each hover point section
+            const rectWidth = innerWidth / hoverPointsData.length;
+
+            hoverGroup.selectAll(".hover-area")
+                .data(hoverPointsData)
+                .enter()
+                .append("rect")
+                .attr("class", "hover-area")
+                .attr("x", (d, i) => i * rectWidth)
+                .attr("y", 0)
+                .attr("width", rectWidth)
+                .attr("height", innerHeight)
+                .attr("fill", "transparent")
+                .on("mouseover", function (event, d) {
+                    // Find the corresponding hover point and trigger its mouseover
+                    const index = hoverPointsData.indexOf(d);
+                    d3.selectAll(".hover-point")
+                        .filter((_, i) => i === index)
+                        .dispatch("mouseover");
+                })
+                .on("mouseout", function (event, d) {
+                    // Find the corresponding hover point and trigger its mouseout
+                    const index = hoverPointsData.indexOf(d);
+                    d3.selectAll(".hover-point")
+                        .filter((_, i) => i === index)
+                        .dispatch("mouseout");
+                });
+        };
+
+        // Helper function to get 5 evenly spaced points from the dataset
+        const getEvenlySpacedPoints = (data, count) => {
+            const result = [];
+            const step = Math.floor((data.length - 1) / (count - 1));
+
+            for (let i = 0; i < count - 1; i++) {
+                result.push(data[i * step]);
+            }
+
+            // Add the last point from the data
+            result.push(data[data.length - 1]);
+
+            return result;
         };
 
         updateChart();
@@ -118,9 +209,31 @@ const BinanceChart = () => {
             className="Bo-chart"
             style={{
                 position: "relative",
-
+                minHeight: "300px" // Add a minimum height
             }}
-        ></div>
+        >
+            {/* Tooltip */}
+            {hoverData && (
+                <div
+                    style={{
+                        position: "absolute",
+                        left: `${hoverData.x}px`,
+                        top: `${hoverData.y}px`,
+                        transform: "translate(-50%, -100%)",
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        color: "white",
+                        padding: "8px 12px",
+                        borderRadius: "4px",
+                        fontSize: "14px",
+                        pointerEvents: "none",
+                        zIndex: 10,
+                    }}
+                >
+                    <div><strong>Date:</strong> {hoverData.date}</div>
+                    <div><strong>Price:</strong> {hoverData.price}</div>
+                </div>
+            )}
+        </div>
     );
 };
 
