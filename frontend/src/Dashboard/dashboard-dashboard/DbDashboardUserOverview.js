@@ -11,19 +11,20 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     received: 0,
     total: 0,
   });
-  const fetchCryptoPrice = async (coin) => {
-    coin = coin.toUpperCase();
+  const fetchCryptoPrice = async (coinName) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/crypto-price?coin=${coin}`
+        `http://localhost:5000/api/crypto-price/${coinName.toLowerCase()}`
       );
       const data = await response.json();
       console.log("Crypto Price:", data);
       return data.price;
     } catch (error) {
       console.error("Error fetching crypto price:", error);
+      return 0; // Prevent undefined issues
     }
   };
+
   const DataProcessing = async (transactions) => {
     //First and Last Active
     if (transactions.length > 0) {
@@ -57,7 +58,7 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
           balance = receivedTotal - sentTotal - feesTotal;
         });
       }
-      const cryptoPrice = await fetchCryptoPrice(coinId);
+      const cryptoPrice = await fetchCryptoPrice(coinName);
       if (!cryptoPrice) return;
       const balanceUSD = cryptoPrice
         ? (balance * cryptoPrice).toFixed(2)

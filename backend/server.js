@@ -12,33 +12,23 @@ const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
 
-app.get("/api/crypto-price", async (req, res) => {
-  const { coin } = req.query; // Example: BTC, ETH
-  if (!coin) return res.status(400).json({ error: "Coin symbol is required" });
+app.get("/api/crypto-price/:coinName", async (req, res) => {
+  const { coinName } = req.params; // Get coin ID from request URL
 
   try {
+    // Fetch current price in USD from CoinGecko
     const response = await axios.get(
-      "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest",
-      {
-        params: {
-          symbol: coin.toUpperCase(), // Example: BTC
-          convert: "USD",
-        },
-        headers: {
-          "X-CMC_PRO_API_KEY": COINMARKETCAP_API_KEY,
-          Accept: "application/json",
-        },
-      }
+      `https://api.coingecko.com/api/v3/simple/price?ids=${coinName}&vs_currencies=usd`
     );
 
-    const price = response.data.data[coin.toUpperCase()].quote.USD.price;
-    res.json({ coin, price });
+    if (response.data[coinName] && response.data[coinName].usd) {
+      res.json({ coin: coinName, price: response.data[coinName].usd });
+    } else {
+      res.status(404).json({ error: "Invalid coin name or no price found" });
+    }
   } catch (error) {
-    console.error(
-      "CoinMarketCap API Error:",
-      error.response?.data || error.message
-    );
-    res.status(500).json({ error: "Failed to fetch crypto price" });
+    console.error("Error fetching CoinGecko data:", error.message);
+    res.status(500).json({ error: "Failed to fetch cryptocurrency price" });
   }
 });
 
