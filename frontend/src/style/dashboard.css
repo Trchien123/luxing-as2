@@ -545,6 +545,16 @@
   border-radius: 6px;
 }
 
+.domain {
+  fill: white;
+  stroke: white;
+}
+
+.tick {
+  color: white;
+  fill: white;
+}
+
 /* dashboard that contains news css */
 .newsOverview-title {
   padding: 20px 10px;
