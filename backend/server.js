@@ -10,8 +10,40 @@ app.use(express.json());
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
-const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
+const BLOCKCYPHER_API_KEY = process.env.BLOCKCYPHER_API_KEY;
+app.get("/api/balance/:coin/:address", async (req, res) => {
+  const { coin, address } = req.params;
 
+  try {
+    if (coin.toLowerCase() === "bitcoin" || coin.toLowerCase() === "ethereum") {
+      // BlockCypher uses "btc/main" for Bitcoin and "eth/main" for Ethereum
+      const network =
+        coin.toLowerCase() === "bitcoin" ? "btc/main" : "eth/main";
+
+      const response = await axios.get(
+        `https://api.blockcypher.com/v1/${network}/addrs/${address}/balance${
+          BLOCKCYPHER_API_KEY ? `?token=${BLOCKCYPHER_API_KEY}` : ""
+        }`
+      );
+
+      return res.json({
+        coin,
+        address,
+        balance:
+          coin === "bitcoin"
+            ? response.data.balance / 1e8
+            : response.data.balance / 1e18, // Convert Wei (ETH) or Satoshis (BTC) to standard units
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Invalid coin type. Use 'bitcoin' or 'ethereum'." });
+    }
+  } catch (error) {
+    console.error(`Error fetching ${coin} balance:`, error.message);
+    return res.status(500).json({ error: `Failed to fetch ${coin} balance` });
+  }
+});
 app.get("/api/crypto-price/:coinName", async (req, res) => {
   const { coinName } = req.params; // Get coin ID from request URL
 
