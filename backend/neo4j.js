@@ -75,14 +75,14 @@ async function runNeo4jQuery(query, referenceAddress) {
           from_address: seg.start.properties.addressId, // Assuming 'addressId' is the key
           to_address: seg.end.properties.addressId,     // Assuming 'addressId' is the key
           value: seg.relationship.properties.value / 1e18, // Convert wei to ETH
-          block_height: seg.relationship.properties.block_number,
+          block_hash: seg.relationship.properties.block_hash,
+          block_number: seg.relationship.properties.block_number,
           block_timestamp: seg.relationship.properties.block_timestamp
             ? moment.unix(Number(seg.relationship.properties.block_timestamp)).utc().format('YYYY-MM-DD HH:mm:ss')
             : "unknown", // Fallback if timestamp is missing,
-
-          direction: referenceAddress === seg.start.properties.addressId ? "outbound" :
-            referenceAddress === seg.end.properties.addressId ? "inbound" : "unrelated", // Adjust logic if needed
-
+          gas_used: seg.relationship.properties.gas_used,
+          gas_price: seg.relationship.properties.gas_price,
+          transaction_fee: seg.relationship.properties.transaction_fee / 1e18,
           coin_name: "seelecoin"
         }
       }
