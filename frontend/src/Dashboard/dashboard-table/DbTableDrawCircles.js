@@ -19,6 +19,9 @@ function formatAddress(address, startLength = 4, endLength = 2) {
 function Normalization(amountsTransferred, numPoints = 20) {
     const positiveAmountsTransferred = amountsTransferred.map(value => Math.abs(value));
     const maxValue = Math.max(...positiveAmountsTransferred);
+    if (maxValue === 0) {
+        return Array(numPoints).fill({ normalized: 20 });
+    }
     const normalizedAmountsTransferred = [];
 
     for (let i = 0; i < Math.min(amountsTransferred.length, numPoints); i++) {
@@ -37,7 +40,7 @@ function Normalization(amountsTransferred, numPoints = 20) {
 function DrawCircle({ currentPage, transactions }) {
     const numPoints = 20;
     const circleCenter = { x: 350, y: 350 };
-    const circleRadius = 250;
+    const circleRadius = 300;
 
     const [selectedNode, setSelectedNode] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,10 +50,15 @@ function DrawCircle({ currentPage, transactions }) {
 
     useEffect(() => {
         if (!transactions || transactions.length === 0) return;
-        
+                
+        // Show only ETH Transfer and Contract Interaction transactions
+        const filteredTransactions = transactions.filter(tx => 
+            tx.transaction_type === "ETH Transfer" || tx.transaction_type === "Contract Interaction"
+        );
+            
         const start = currentPage * itemsPerPage;
         const end = start + itemsPerPage;
-        setPaginatedTransactions(transactions.slice(start, end));
+        setPaginatedTransactions(filteredTransactions.slice(start, end));
     }, [currentPage, transactions]);
 
     const sender = paginatedTransactions.map(tx => tx.from_address);
@@ -66,11 +74,17 @@ function DrawCircle({ currentPage, transactions }) {
     const blockHeight = paginatedTransactions.map(tx => tx.block_height);
     const direction = paginatedTransactions.map(tx => tx.direction);
     const coin_name = paginatedTransactions.map(tx => tx.coin_name);
+    const transaction_type = paginatedTransactions.map(tx => tx.transaction_type);
+    const token_name = paginatedTransactions.map(tx => tx.token_name);
+    const nft_name = paginatedTransactions.map(tx => tx.nft_name);
+    const nft_id = paginatedTransactions.map(tx => tx.nft_id);
 
     const normalizedValues = Normalization(value, numPoints);
     const points = calculateCirclePoints(circleCenter.x, circleCenter.y, circleRadius, numPoints);
 
     const handleNodeClick = (index) => {
+        const selectedTx = paginatedTransactions[index];
+
         setSelectedNode({
             sender: sender[index],  // Outbound: lookup is sender, Inbound: lookup is receiver
             receiver: receiver[index],
@@ -84,9 +98,24 @@ function DrawCircle({ currentPage, transactions }) {
             blockHash: blockHash[index],
             blockHeight: blockHeight[index],
             direction: direction[index],
-            coin_name: coin_name[index]
+            coin_name: coin_name[index],
+            tokenName: token_name[index],
+            transaction_type: transaction_type[index],
+            nftName: nft_name[index],
+            nftId: nft_id[index],
         });
-        setIsModalOpen(true);
+
+        if (selectedTx.transaction_type === "Contract Interaction") {
+            const swapTransactions = transactions.filter(tx => tx.transaction_type === "Token Transfer" && tx.hash === selectedTx.hash);
+            if (swapTransactions.length > 0)
+            {
+                setPaginatedTransactions(swapTransactions); // Update displayed transactions to Token Transfers 
+            } else {
+                setIsModalOpen(true);
+            }
+        } else {
+            setIsModalOpen(true);
+        }
     };
 
     const handleClose = () => {
@@ -115,14 +144,29 @@ function DrawCircle({ currentPage, transactions }) {
                         textY += textOffset * Math.sin(point.alpha);
                     }
 
-                    const textWidth = 70;
+                    const textWidth = 100;
                     const textHeight = 20;
 
+                    let displayValue;
                     // Format values for readability
-                    let displayValue = value[index] < 0.0001 ? value[index].toFixed(6) : value[index].toFixed(4);
+                    if (transaction_type[index] === "ETH Transfer" || transaction_type[index] === "Contract Interaction") {
+                        displayValue = value[index] === 0 
+                        ? "0" 
+                        : (value[index] < 0.0001 ? value[index].toFixed(6) + " ETH": value[index].toFixed(2) + " ETH");
+                    } else if (transaction_type[index] === "Token Transfer") {
+                        displayValue = value[index] + " " + token_name[index];
+                    } else {
+                        displayValue = 0;
+                    }
 
+                    let fillColor;
                     // Determine the fill color based on transaction direction
-                    const fillColor = direction[index]?.toLowerCase() === 'outbound' ? '#DC143C' : 'green';
+                    if (transaction_type[index].toLowerCase() === 'eth transfer') {
+                        fillColor = direction[index]?.toLowerCase() === 'outbound' ? '#DC143C' : 'green';
+                    }
+                    else {
+                        fillColor = direction[index]?.toLowerCase() === 'outbound' ? 'orange' : 'black';
+                    }
 
                     return (
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
@@ -163,27 +207,58 @@ function DrawCircle({ currentPage, transactions }) {
                             <h3>Transaction Details</h3>
                             <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}</p>
                             <p>📅 <strong>Timestamp:</strong> {selectedNode.timestamp}</p>
-                            {selectedNode.coin_name !== "bitcoin" ? (
+                            {selectedNode.coin_name !== "bitcoin" && (
                                 <>
                                     <p>🔗 <strong>Block Number:</strong> {selectedNode.blockNumber}</p>
-                                    <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}</p> 
                                 </>
-                            ) : (
-                                <p>🏦 <strong>Block Height:</strong> {selectedNode.blockHeight}</p> 
                             )}
 
-                            <h4>Sender & Receiver</h4>
-                            <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
-                            <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
-                            <p>🏦 <strong>Direction:</strong> {selectedNode.direction}</p>
+                            {selectedNode.coin_name === "bitcoin" && (
+                                <>
+                                    <p>🏦 <strong>Block Height:</strong> {selectedNode.blockHeight}</p>
 
-                            <h4>Amount & Fees</h4>
-                            <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value}</p>
-                            {selectedNode.coin_name !== "bitcoin" && (
-                            <>
-                                <p>⛽ <strong>Transaction Fee:</strong> {selectedNode.transactionFee}</p>
+                                    <h4>Sender & Receiver</h4>
+                                    <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
+                                    <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
+
+                                    <h4>Amount & Fees</h4>
+                                    <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value} BTC</p>
+                                </>
+                            )}
+
+                            {(selectedNode.transaction_type === "ETH Transfer" || selectedNode.transaction_type === "Contract Interaction") && (
+                            <>  
+                                <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}</p> 
+
+                                <h4>Sender & Receiver</h4>
+                                <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
+                                <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
+
+                                <h4>Amount & Fees</h4>
+                                <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value} ETH</p>
+                                <p>⛽ <strong>Transaction Fee:</strong> {selectedNode.transactionFee} ETH</p>
                                 <p>🔥 <strong>Gas Used:</strong> {selectedNode.gasUsed}</p>
                                 <p>💲 <strong>Gas Price:</strong> {selectedNode.gasPrice} Gwei</p>
+                            </>
+                            )}
+
+                            {selectedNode.transaction_type === "Token Transfer" && (
+                            <>
+                                <h4>Token Transfer</h4>
+                                <p>📤 <strong>Sender:</strong> {selectedNode.sender}</p>
+                                <p>📥 <strong>Receiver:</strong> {selectedNode.receiver}</p>
+                                <p>🏦 <strong>Token:</strong> {selectedNode.tokenName}</p>
+                                <p>💰 <strong>Amount:</strong> {selectedNode.value} {selectedNode.tokenName}</p>
+                            </>
+                            )}
+
+                            {selectedNode.transaction_type === "NFT Transfer" && (
+                            <>
+                                <h4>NFT Transfer</h4>
+                                <p>📤 <strong>Sender:</strong> {selectedNode.sender}</p>
+                                <p>📥 <strong>Receiver:</strong> {selectedNode.receiver}</p>
+                                <p>🎨 <strong>NFT:</strong> {selectedNode.nftName}</p>
+                                <p>🆔 <strong>NFT ID:</strong> {selectedNode.nftId}</p>
                             </>
                             )}
                         </div>

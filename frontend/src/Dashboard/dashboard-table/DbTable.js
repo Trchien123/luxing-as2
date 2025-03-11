@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "../../style/DbTableDrawCircles.css";
-import FetchTransactions from "./FetchTransactions.js";
 
 import DrawCircle from "./DbTableDrawCircles.js";
 import DashTableContent from "./DbTableContent.js";
@@ -15,7 +14,6 @@ const DashTable = () => {
   const onPageChangeGraph = (newPage) => {
     console.log("Graph page changed to:", newPage);
   };
-
 
   const [currentPage, setCurrentPage] = useState(0);
   const totalItems = transactions.length; // Total items for pagination
