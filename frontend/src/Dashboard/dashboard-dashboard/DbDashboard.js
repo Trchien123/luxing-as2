@@ -8,9 +8,8 @@ import StatChart from "./DbTranschart";
 import ReportDis from "./DbReportdisp";
 import { useOutletContext } from "react-router-dom";
 
-
 const DbHome = () => {
-  const { crypto, response } = useOutletContext()
+  const { crypto, response } = useOutletContext();
   const generateNumber = () => {
     const randomNumber = Math.random(); // Generates a number between 0 and 1
     if (randomNumber < 0.07) {
@@ -25,6 +24,8 @@ const DbHome = () => {
       <UserOverview
         address={crypto.address}
         transactions={response.transactions}
+        coinName={crypto.name}
+        coinId={crypto.id}
       />
       <section className="DB-main-container-2">
         <div
@@ -55,6 +56,7 @@ const DbHome = () => {
           <SendReceiveTable
             crypto={crypto}
             transactions={response.transactions}
+            address={crypto.address}
           />
         </div>
       </section>
