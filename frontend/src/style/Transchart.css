@@ -111,6 +111,12 @@
   fill: #ffffff;
 }
 
+.fetching-text {
+  font-size: 20px;
+  fill: #ffffff; /* White like other text elements */
+
+}
+
 .axis text {
   fill: #ffffff;
 }
