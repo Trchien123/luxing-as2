@@ -177,8 +177,8 @@ const StatChart = ({ title, transactions }) => {
         .html(`
           <div>
             <strong>${dateStr}</strong><br>
-            <span style="color: #ff4444;">Sent: ${d.outbound.toFixed(4)}</span><br>
-            <span style="color: #00cc00;">Received: ${d.inbound.toFixed(4)}</span>
+            <span style="color: #00CC00;">Sent: ${d.outbound.toFixed(4)}</span><br>
+            <span style="color: #Ff4444;">Received: ${d.inbound.toFixed(4)}</span>
           </div>
         `)
         .style('left', (event.pageX + 10) + 'px')
@@ -215,7 +215,7 @@ const StatChart = ({ title, transactions }) => {
         .attr('y', yScale(dateData.inbound))
         .attr('width', x1Scale.bandwidth())
         .attr('height', height - margin.bottom - yScale(dateData.inbound))
-        .attr('fill', '#00cc00')
+        .attr('fill', '#009BAA')
         .on('mouseover', function(event) {
           showTooltip(event, dateData);
         })
@@ -229,7 +229,7 @@ const StatChart = ({ title, transactions }) => {
         .attr('y', yScale(dateData.outbound))
         .attr('width', x1Scale.bandwidth())
         .attr('height', height - margin.bottom - yScale(dateData.outbound))
-        .attr('fill', '#ff4444')
+        .attr('fill', '#E55640')
         .on('mouseover', function(event) {
           showTooltip(event, dateData);
         })
@@ -247,7 +247,7 @@ const StatChart = ({ title, transactions }) => {
       .attr('y', 0)
       .attr('width', 10)
       .attr('height', 10)
-      .attr('fill', '#00cc00');
+      .attr('fill', '#009baa');
 
     legend.append('text')
       .attr('x', 15)
@@ -260,7 +260,7 @@ const StatChart = ({ title, transactions }) => {
       .attr('y', 15)
       .attr('width', 10)
       .attr('height', 10)
-      .attr('fill', '#ff4444');
+      .attr('fill', '#e55640');
 
     legend.append('text')
       .attr('x', 15)

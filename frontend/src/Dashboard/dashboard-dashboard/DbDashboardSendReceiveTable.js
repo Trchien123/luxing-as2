@@ -2,16 +2,12 @@ import React, { useEffect, useState } from "react";
 import "../../style/sendReceiveTable.css";
 import { Link } from "react-router-dom";
 
-const address = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
-
-const shortenAddress = () => {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-};
-
 const SendReceiveTable = ({ crypto, transactions }) => {
   const [senderData, setSenderData] = useState([]);
   const [receiverData, setReceiverData] = useState([]);
-
+  const shortenAddress = (addr) => {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
   const DataProcessing = (transactions) => {
     // Create a list of sending and receiving
     const senderMap = new Map();
