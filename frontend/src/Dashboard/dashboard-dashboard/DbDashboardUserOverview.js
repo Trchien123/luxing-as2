@@ -126,31 +126,31 @@ const DbItem1 = ({
   lastActiveAgo,
 }) => {
   return (
-    <div class="container">
+    <div className="container">
       <h1>Overview</h1>
-      <div class="info">
-        <i class="fas fa-wallet"></i>
+      <div className="info">
+        <i className="fas fa-wallet"></i>
         <span>Address</span>
       </div>
-      <div class="info">
+      <div className="info">
         <span id="user-addr">{address}</span>
       </div>
-      <div class="dates-container">
-        <div class="date">
-          <div class="info">
-            <i class="fas fa-calendar-alt"></i>
+      <div className="dates-container">
+        <div className="date">
+          <div className="info">
+            <i className="fas fa-calendar-alt"></i>
             <span>First active</span>
           </div>
           <span>{firstActive}</span>
-          <span class="time">{firstActiveAgo || "Loading..."}</span>
+          <span className="time">{firstActiveAgo || "Loading..."}</span>
         </div>
-        <div class="date">
-          <div class="info">
-            <i class="fas fa-calendar-check"></i>
+        <div className="date">
+          <div className="info">
+            <i className="fas fa-calendar-check"></i>
             <span>Last active</span>
           </div>
           <span>{lastActive}</span>
-          <span class="time">{lastActiveAgo || "Loading..."}</span>
+          <span className="time">{lastActiveAgo || "Loading..."}</span>
         </div>
       </div>
     </div>
@@ -158,13 +158,13 @@ const DbItem1 = ({
 };
 const DbItem2 = ({ balance, balanceUSD, coinId }) => {
   return (
-    <div class="container">
+    <div className="container">
       <h1>Balance</h1>
-      <div class="info">
-        <i class="fas fa-coins icon"></i>
+      <div className="info">
+        <i className="fas fa-coins icon"></i>
         <span>Balance</span>
       </div>
-      <div class="info-balance">
+      <div className="info-balance">
         <p>
           {balance} {coinId}
         </p>
@@ -175,30 +175,30 @@ const DbItem2 = ({ balance, balanceUSD, coinId }) => {
 };
 const DbItem3 = ({ sent, received, total }) => {
   return (
-    <div class="container">
+    <div className="container">
       <h1>Transactions Volume</h1>
-      <div className="info">
-        <i class="fa-solid fa-money-bill-transfer"></i>
+      <div classNameName="info">
+        <i className="fa-solid fa-money-bill-transfer"></i>
         <span>Transaction Details</span>
       </div>
-      <div class="sent-received-container">
-        <div class="amount">
-          <div class="info">
-            <i class="fa-solid fa-arrow-up"></i>
+      <div className="sent-received-container">
+        <div className="amount">
+          <div className="info">
+            <i className="fa-solid fa-arrow-up"></i>
             <span>Sent</span>
           </div>
           <span>{sent}</span>
         </div>
-        <div class="amount">
-          <div class="info">
-            <i class="fa-solid fa-arrow-down"></i>
+        <div className="amount">
+          <div className="info">
+            <i className="fa-solid fa-arrow-down"></i>
             <span>Received</span>
           </div>
           <span>{received}</span>
         </div>
-        <div class="amount">
-          <div class="info">
-            <i class="fa-solid fa-calculator"></i>
+        <div className="amount">
+          <div className="info">
+            <i className="fa-solid fa-calculator"></i>
             <span>Total</span>
           </div>
           <span>{total}</span>

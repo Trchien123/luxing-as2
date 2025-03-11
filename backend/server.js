@@ -257,94 +257,94 @@ app.get("/api/transactions/:address", async (req, res) => {
         (a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp)
       );
 
-        res.json({ transactions, general_info });
-      } catch (error) {
-        console.error(
-          "Error fetching Bitcoin transactions from Bitquery:",
-          error.response ? error.response.data : error.message
-        );
-        res
-          .status(500)
-          .json({ error: "Error fetching Bitcoin transactions from Bitquery" });
-      }
-    } else if (coin.toLowerCase() === "ethereum") {
-      try {
-        const ethResponse = await axios.get(API_URL_transactions);
-        const ethToken = await axios.get(API_URL_token);
-        const ethNft = await axios.get(API_URL_NFT);
+      res.json({ transactions, general_info });
+    } catch (error) {
+      console.error(
+        "Error fetching Bitcoin transactions from Bitquery:",
+        error.response ? error.response.data : error.message
+      );
+      res
+        .status(500)
+        .json({ error: "Error fetching Bitcoin transactions from Bitquery" });
+    }
+  } else if (coin.toLowerCase() === "ethereum") {
+    try {
+      const ethResponse = await axios.get(API_URL_transactions);
+      const ethToken = await axios.get(API_URL_token);
+      const ethNft = await axios.get(API_URL_NFT);
 
-        const ethTransactions = ethResponse.data.result.map((tx) => {
-          const isSender = tx.from.toLowerCase() === address.toLowerCase();
-          const isContractInteraction = tx.input !== "0x";
-          return {
-            from_address: tx.from,
-            to_address: tx.to,
-            hash: tx.hash,
-            value: (tx.value / 1e18).toFixed(6), // Convert Wei to ETH
-            input: tx.input,
-            transaction_index: tx.transactionIndex,
-            gas: tx.gas,
-            gas_used: tx.gasUsed,
-            gas_price: tx.gasPrice,
-            transaction_fee: ((tx.gasUsed * tx.gasPrice) / 1e18).toFixed(6),
-            block_number: tx.blockNumber,
-            block_hash: tx.blockHash,
-            block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
-            direction: isSender ? "outbound" : "inbound", // Correct direction logic
-            transaction_type: isContractInteraction ? "Contract Interaction" : "ETH Transfer",
-            coin_name: "ethereum"
-          };
-        });
+      const ethTransactions = ethResponse.data.result.map((tx) => {
+        const isSender = tx.from.toLowerCase() === address.toLowerCase();
+        const isContractInteraction = tx.input !== "0x";
+        return {
+          from_address: tx.from,
+          to_address: tx.to,
+          hash: tx.hash,
+          value: (tx.value / 1e18).toFixed(6), // Convert Wei to ETH
+          input: tx.input,
+          transaction_index: tx.transactionIndex,
+          gas: tx.gas,
+          gas_used: tx.gasUsed,
+          gas_price: tx.gasPrice,
+          transaction_fee: ((tx.gasUsed * tx.gasPrice) / 1e18).toFixed(6),
+          block_number: tx.blockNumber,
+          block_hash: tx.blockHash,
+          block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
+          direction: isSender ? "outbound" : "inbound", // Correct direction logic
+          transaction_type: isContractInteraction
+            ? "Contract Interaction"
+            : "ETH Transfer",
+          coin_name: "ethereum",
+        };
+      });
 
-        const tokenTransactions = ethToken.data.result.map((tx) => {
-          const isSender = tx.from.toLowerCase() === address.toLowerCase();
-          return {
-            from_address: tx.from,
-            to_address: tx.to,
-            hash: tx.hash,
-            token_name: tx.tokenName,
-            value: (tx.value / Math.pow(10, tx.tokenDecimal)).toFixed(0), // Convert token value
-            block_number: tx.blockNumber,
-            block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
-            direction: isSender ? "outbound" : "inbound",
-            transaction_type: "Token Transfer",
-            coin_name: "ethereum"
-          };
-        });
+      const tokenTransactions = ethToken.data.result.map((tx) => {
+        const isSender = tx.from.toLowerCase() === address.toLowerCase();
+        return {
+          from_address: tx.from,
+          to_address: tx.to,
+          hash: tx.hash,
+          token_name: tx.tokenName,
+          value: (tx.value / Math.pow(10, tx.tokenDecimal)).toFixed(0), // Convert token value
+          block_number: tx.blockNumber,
+          block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
+          direction: isSender ? "outbound" : "inbound",
+          transaction_type: "Token Transfer",
+          coin_name: "ethereum",
+        };
+      });
 
-        const nftTransactions = ethNft.data.result.map((tx) => {
-          const isSender = tx.from.toLowerCase() === address.toLowerCase();
-          return {
-            from_address: tx.from,
-            to_address: tx.to,
-            hash: tx.hash,
-            nft_name: tx.tokenName,
-            nft_id: tx.tokenID,
-            block_number: tx.blockNumber,
-            block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
-            direction: isSender ? "outbound" : "inbound",
-            transaction_type: "NFT Transfer",
-            coin_name: "ethereum"
-          };
-        });
+      const nftTransactions = ethNft.data.result.map((tx) => {
+        const isSender = tx.from.toLowerCase() === address.toLowerCase();
+        return {
+          from_address: tx.from,
+          to_address: tx.to,
+          hash: tx.hash,
+          nft_name: tx.tokenName,
+          nft_id: tx.tokenID,
+          block_number: tx.blockNumber,
+          block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
+          direction: isSender ? "outbound" : "inbound",
+          transaction_type: "NFT Transfer",
+          coin_name: "ethereum",
+        };
+      });
 
-        const transactions = [...ethTransactions, ...tokenTransactions, ...nftTransactions];
-        transactions.sort((a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp));
-        res.json(transactions);
-      } catch (error) {
-        console.error("Error fetching transactions from Etherscan:", error.message);
-        res
-          .status(500)
-          .json({ error: response.data.message || "Unknown error" });
-      }
+      const transactions = [
+        ...ethTransactions,
+        ...tokenTransactions,
+        ...nftTransactions,
+      ];
+      transactions.sort(
+        (a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp)
+      );
+      res.json(transactions);
     } catch (error) {
       console.error(
         "Error fetching transactions from Etherscan:",
         error.message
       );
-      res
-        .status(500)
-        .json({ error: "Error fetching transactions from Etherscan" });
+      res.status(500).json({ error: error.message || "Unknown error" });
     }
   } else {
     return res.status(400).json({ error: "Invalid coin type" });
