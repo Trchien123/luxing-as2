@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
-const BinanceChart = () => {
+const BinanceChart = ({ title }) => {
     const chartRef = useRef(null);
     const [chartData, setChartData] = useState(null);
     const [hoverData, setHoverData] = useState(null);
-
+    console.log(title)
     useEffect(() => {
         // Fetch 14-day Bitcoin price data from CoinGecko using Promises
-        fetch("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=14")
+        fetch(`https://api.coingecko.com/api/v3/coins/${title.toLowerCase()}/market_chart?vs_currency=usd&days=14`)
             .then((response) => response.json())
             .then((data) => {
                 // Process API data into { x: timestamp, y: price } format
@@ -29,7 +29,7 @@ const BinanceChart = () => {
         const updateChart = () => {
             const width = chartRef.current.offsetWidth;
             const height = chartRef.current.offsetHeight;
-            const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+            const margin = { top: 20, right: 30, bottom: 50, left: 60 };
             const innerWidth = width - margin.left - margin.right;
             const innerHeight = height - margin.top - margin.bottom;
 
