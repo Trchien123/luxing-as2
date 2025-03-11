@@ -177,7 +177,7 @@ const DbItem3 = ({ sent, received, total }) => {
   return (
     <div className="container">
       <h1>Transactions Volume</h1>
-      <div classNameName="info">
+      <div className="info">
         <i className="fa-solid fa-money-bill-transfer"></i>
         <span>Transaction Details</span>
       </div>
