@@ -305,15 +305,6 @@ app.get("/api/transactions/:address", async (req, res) => {
           .status(500)
           .json({ error: response.data.message || "Unknown error" });
       }
-    } catch (error) {
-      console.error(
-        "Error fetching transactions from Etherscan:",
-        error.message
-      );
-      res
-        .status(500)
-        .json({ error: "Error fetching transactions from Etherscan" });
-    }
   } else {
     return res.status(400).json({ error: "Invalid coin type" });
   }

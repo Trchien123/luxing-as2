@@ -221,6 +221,61 @@
     animation: spin 1s linear infinite;
 }
 
+.transaction-visualization-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.transaction-visualization {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.legend {
+    max-width: 400px;
+    background-color: black;
+    border-radius: 5px;
+    padding: 10px;
+    opacity: 0.7;
+}
+
+.sub-legend {
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.legend-item {
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.legend-circle {
+    width: 12px; /* Adjust size */
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.inbound-tx {
+    background-color: green; /* Adjust color */
+}
+
+.outbound-tx {
+    background-color: red;
+}
+
+.inbound-contract {
+    background-color: orange;
+}
+
+.outbound-contract {
+    background-color: blue;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -229,13 +284,21 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 800px) {
-    /* Container for the transaction details */
-    .transaction-details-container {
-        width: 90%;
-        max-width: 100%;
-        padding: 15px; /* Increased padding for better touch targets */
-        max-height: 70vh; /* Allow for better scaling */
-        overflow-y: auto; /* Ensure content is scrollable if too long */
+    .transaction-visualization {
+        flex-direction: column;
+    }
+    
+    .legend {
+        max-width: 350px;
+        margin-bottom: 20px;
+    }
+
+    .sub-legend {
+        flex-direction: row;
+    }
+
+    .legend-item {
+        font-size: 14px;
     }
 
     /* Transaction content */
@@ -295,6 +358,15 @@
 }
 
 @media (max-width: 450px) {
+    
+    .legend {
+        max-width: 250px;
+    }
+
+    .legend-item {
+        font-size: 10px;
+    }
+
     #visualization {
         min-width: 400px;
         min-height: 400px;
