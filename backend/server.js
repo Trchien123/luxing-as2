@@ -322,22 +322,15 @@ app.get("/api/transactions/:address", async (req, res) => {
         };
       });
 
-      const transactions = [
-        ...ethTransactions,
-        ...tokenTransactions,
-        ...nftTransactions,
-      ];
-      transactions.sort(
-        (a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp)
-      );
-      res.json(transactions);
-    } catch (error) {
-      console.error(
-        "Error fetching transactions from Etherscan:",
-        error.message
-      );
-      res.status(500).json({ error: error.message || "Unknown error" });
-    }
+        const transactions = [...ethTransactions, ...tokenTransactions, ...nftTransactions];
+        transactions.sort((a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp));
+        res.json(transactions);
+      } catch (error) {
+        console.error("Error fetching transactions from Etherscan:", error.message);
+        res
+          .status(500)
+          .json({ error: response.data.message || "Unknown error" });
+      }
   } else {
     return res.status(400).json({ error: "Invalid coin type" });
   }

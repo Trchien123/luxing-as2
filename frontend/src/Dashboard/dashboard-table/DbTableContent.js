@@ -86,7 +86,7 @@ function DashTableContent({ currentPage, transactions }) {
                             </button>
                             <h3>Transaction Details</h3>
                             <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedTransaction.hash}</p>
-                            <p>📅 <strong>Timestamp:</strong> {selectedTransaction.block_timestamp}</p>
+                            <p>📅 <strong>Timestamp:</strong> {selectedTransaction.block_timestamp} (UTC +7)</p>
                             {selectedTransaction.coin_name !== "bitcoin" && (
                                 <>
                                     <p>🔗 <strong>Block Number:</strong> {selectedTransaction.block_number}</p>
