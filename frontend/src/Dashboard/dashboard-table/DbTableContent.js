@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const entriesPerPage = 20;
 
 function formatAddress(address, screenWidth) {
-    if (!address) return "";
+    if (!address || address.length === 0) return "Unknown";
     if (screenWidth < 768) return `${address.slice(0, 2)}...${address.slice(-2)}`; // Mobile
     if (screenWidth < 1024) return `${address.slice(0, 4)}...${address.slice(-4)}`; // Tablet
     return `${address.slice(0, 7)}...${address.slice(-6)}`; // Desktop
@@ -25,7 +25,11 @@ function DashTableContent({ currentPage, transactions }) {
         
         const start = currentPage * entriesPerPage;
         const end = start + entriesPerPage;
-        setPaginatedTransactions(filteredTransactions.slice(start, end));
+        if (filteredTransactions.length !== 0) {
+            setPaginatedTransactions(filteredTransactions.slice(start, end));
+        } else {
+            setPaginatedTransactions(transactions.slice(start, end));
+        }
     }, [currentPage, transactions]);
 
     useEffect(() => {
@@ -87,8 +91,16 @@ function DashTableContent({ currentPage, transactions }) {
                                             <i className="fas fa-copy"></i>
                                         </button>
                                     </td>
-                                    <td>{tx.transaction_type}</td>
-                                    <td>{Math.abs(tx.value)} ETH</td>
+                                    {tx.coin_name !== "bitcoin" && tx.coin_name !== "seelecoin" && (
+                                        <td>{tx.transaction_type}</td>
+                                    )}
+                                    {tx.coin_name === "bitcoin" && (
+                                        <td>BTC Transfer</td>
+                                    )}
+                                    {tx.coin_name === "seelecoin" && (
+                                        <td>SLC Transfer</td>
+                                    )}
+                                    <td>{Math.abs(tx.value).toFixed(8)} ETH</td>
                                     <td>
                                         <button onClick={() => {
                                             setSelectedTransaction(tx); 

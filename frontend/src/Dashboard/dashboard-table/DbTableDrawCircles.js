@@ -59,7 +59,11 @@ function DrawCircle({ currentPage, transactions }) {
 
         const start = currentPage * itemsPerPage;
         const end = start + itemsPerPage;
-        setPaginatedTransactions(filteredTransactions.slice(start, end));
+        if (filteredTransactions.length !== 0) {
+            setPaginatedTransactions(filteredTransactions.slice(start, end));
+        } else {
+            setPaginatedTransactions(transactions.slice(start, end));
+        }
     }, [currentPage, transactions]);
 
     const sender = paginatedTransactions.map(tx => tx.from_address);
@@ -147,6 +151,8 @@ function DrawCircle({ currentPage, transactions }) {
         setIsModalOpen(false);
     };
 
+    const isSpecialCoin = coin_name[0] === "seelecoin" || coin_name[0] === "bitcoin";
+
     return (
         <div className="transaction-visualization-container">
             <div className="transaction-visualization">
@@ -180,25 +186,27 @@ function DrawCircle({ currentPage, transactions }) {
 
                     let displayValue;
                     // Format values for readability
-                    if (transaction_type[index] === "ETH Transfer" || transaction_type[index] === "Contract Interaction") {
+                    if (transaction_type[index] === "ETH Transfer" || transaction_type[index] === "Contract Interaction" || coin_name[index] === "seelecoin") {
                         displayValue = value[index] === 0
                             ? "0"
                             : (value[index] < 0.0001 ? value[index].toFixed(6) + " ETH" : value[index].toFixed(2) + " ETH");
                     } else if (transaction_type[index] === "Token Transfer") {
                         displayValue = value[index] + " " + token_name[index];
-                    } else {
+                    } else if (coin_name[index] === "bitcoin") {
+                        displayValue = value[index].toFixed(5) + " BTC";
+                    }else {
                         displayValue = 0;
                     }
 
                     let fillColor;
                     // Determine the fill color based on transaction direction
-                    if (transaction_type[index].toLowerCase() === 'eth transfer') {
-                        fillColor = direction[index]?.toLowerCase() === 'outbound' ? '#DC143C' : 'green';
+                    if (transaction_type[index]?.toLowerCase() === 'eth transfer' || coin_name[index] === "bitcoin" || coin_name[index] === "seelecoin") {
+                        const dir = direction[index]?.toLowerCase(); // Safely access direction
+                        fillColor = dir === 'outbound' ? '#DC143C' : 'green';
+                    } else {
+                        const dir = direction[index]?.toLowerCase(); // Safely access direction
+                        fillColor = dir === 'outbound' ? 'orange' : 'black';
                     }
-                    else {
-                        fillColor = direction[index]?.toLowerCase() === 'outbound' ? 'orange' : 'black';
-                    }
-
                     return (
                         <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
                             <circle cx={point.x} cy={point.y} r={normalizedValues[index].normalized} fill={fillColor} stroke="white" strokeWidth={5} />
@@ -236,17 +244,21 @@ function DrawCircle({ currentPage, transactions }) {
                             <label className="legend-item">
                                 <span className="legend-circle inbound-tx"></span> Inbound Transactions
                             </label>
-                            <label className="legend-item">
-                                <span className="legend-circle inbound-contract"></span> Inbound Contract Interactions
-                            </label>
+                            {!isSpecialCoin && 
+                                <label className="legend-item">
+                                    <span className="legend-circle inbound-contract"></span> Inbound Contract Interactions
+                                </label>
+                            }
                         </div>
                         <div className="sub-legend">
                             <label className="legend-item">
                                 <span className="legend-circle outbound-tx"></span> Outbound Transactions
                             </label>
-                            <label className="legend-item">
-                                <span className="legend-circle outbound-contract"></span> Outbound Contract Interactions
-                            </label>
+                            {!isSpecialCoin && 
+                                <label className="legend-item">
+                                    <span className="legend-circle outbound-contract"></span> Outbound Contract Interactions
+                                </label>
+                            }
                         </div>
                     </div>
                 </legend>
@@ -278,7 +290,7 @@ function DrawCircle({ currentPage, transactions }) {
                                 </>
                             )}
 
-                                {(selectedNode.transaction_type === "ETH Transfer" || selectedNode.transaction_type === "Contract Interaction") && (
+                                {(selectedNode.transaction_type === "ETH Transfer" || selectedNode.transaction_type === "Contract Interaction" || selectedNode.coin_name === "seelecoin") && (
                                 <>  
                                     <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}</p> 
 
