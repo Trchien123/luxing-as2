@@ -15,41 +15,6 @@ const DATA = [
     content: "ETH",
   },
   { image: require("../asset/temp.png"), title: "Seelecoin", content: "SEL" },
-  {
-    image: require("../asset/cryptos/pepe-pepe-logo.png"),
-    title: "Pepe",
-    content: "PEPE",
-  },
-  {
-    image: require("../asset/cryptos/litecoin-ltc-logo.png"),
-    title: "Litecoin",
-    content: "LTC",
-  },
-  {
-    image: require("../asset/cryptos/cardano-ada-logo.png"),
-    title: "Cardano",
-    content: "ADA",
-  },
-  {
-    image: require("../asset/cryptos/polkadot-new-dot-logo.png"),
-    title: "Polkadot",
-    content: "DOT",
-  },
-  {
-    image: require("../asset/cryptos/dogecoin-doge-logo.png"),
-    title: "Dogecoin",
-    content: "DOGE",
-  },
-  {
-    image: require("../asset/cryptos/chainlink-link-logo.png"),
-    title: "Chainlink",
-    content: "LINK",
-  },
-  {
-    image: require("../asset/cryptos/stellar-xlm-logo.png"),
-    title: "Stellar",
-    content: "XLM",
-  },
 ];
 
 const PopUp = ({ onClick, setBlock, show }) => {
