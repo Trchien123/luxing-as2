@@ -269,11 +269,11 @@
 }
 
 .inbound-contract {
-    background-color: orange;
+    background-color: blue;
 }
 
 .outbound-contract {
-    background-color: blue;
+    background-color: orange;
 }
 
 @keyframes spin {
