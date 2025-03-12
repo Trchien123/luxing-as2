@@ -84,8 +84,6 @@ app.get("/api/transactions/:address", async (req, res) => {
   const API_URL_transactions = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
   const API_URL_token = `https://api.etherscan.io/api?module=account&action=tokentx&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
   const API_URL_NFT = `https://api.etherscan.io/api?module=account&action=tokennfttx&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
-  const API_URL_ERC1155 = `https://api.etherscan.io/api?module=account&action=token1155tx&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
-  const API_URL_internal = `https://api.etherscan.io/api?module=account&action=txlistinternal&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
   const BITQUERY_API_URL = "https://graphql.bitquery.io";
   const { coin } = req.query;
 

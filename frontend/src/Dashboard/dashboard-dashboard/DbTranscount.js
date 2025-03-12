@@ -63,15 +63,14 @@ const StatChart = ({ title, transactions }) => {
     };
   }, []);
 
-  // Chart rendering with delay
+  // Chart rendering with cleanup
   useEffect(() => {
     const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
-
     const { width, height } = dimensions;
     const margin = { top: 40, right: 85, bottom: 60, left: 50 };
 
-    // Initial "fetching" state rendering
+    // Clear previous SVG content before rendering
+    svg.selectAll("*").remove();
     svg.attr('width', width).attr('height', height);
 
     const renderChart = async () => {
@@ -248,8 +247,10 @@ const StatChart = ({ title, transactions }) => {
         .text(title);
     };
 
-    // Render "fetching" message initially
+    // Render "fetching" message initially or clear SVG on re-render
     if (fetchState === "fetching") {
+      svg.selectAll("*").remove(); // Ensure clean slate for fetching state
+      svg.attr('width', width).attr('height', height);
       svg.append('text')
         .attr('x', width / 2)
         .attr('y', height / 2)
@@ -260,6 +261,11 @@ const StatChart = ({ title, transactions }) => {
 
     // Trigger chart rendering
     renderChart();
+
+    // Cleanup function to ensure SVG is cleared on unmount or re-render
+    return () => {
+      svg.selectAll("*").remove();
+    };
   }, [transactions, title, dimensions, fetchState]);
 
   return (
