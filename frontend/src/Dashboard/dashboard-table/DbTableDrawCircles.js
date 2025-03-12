@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 
 function calculateCirclePoints(a, b, R, numPoints = 20) {
     const points = [];
@@ -6,7 +6,7 @@ function calculateCirclePoints(a, b, R, numPoints = 20) {
         const alpha = (2 * Math.PI * i) / numPoints;
         const x = a + R * Math.cos(alpha);
         const y = b + R * Math.sin(alpha);
-        points.push({x, y, alpha});
+        points.push({ x, y, alpha });
     }
     return points;
 }
@@ -51,12 +51,12 @@ function DrawCircle({ currentPage, transactions }) {
 
     useEffect(() => {
         if (!transactions || transactions.length === 0) return;
-                
+
         // Show only ETH Transfer and Contract Interaction transactions
-        const filteredTransactions = transactions.filter(tx => 
+        const filteredTransactions = transactions.filter(tx =>
             tx.transaction_type === "ETH Transfer" || tx.transaction_type === "Contract Interaction"
         );
-            
+
         const start = currentPage * itemsPerPage;
         const end = start + itemsPerPage;
         setPaginatedTransactions(filteredTransactions.slice(start, end));
@@ -108,8 +108,7 @@ function DrawCircle({ currentPage, transactions }) {
 
         if (selectedTx.transaction_type === "Contract Interaction") {
             const swapTransactions = transactions.filter(tx => tx.transaction_type === "Token Transfer" && tx.hash === selectedTx.hash);
-            if (swapTransactions.length > 0)
-            {
+            if (swapTransactions.length > 0) {
                 setOriginalPage(paginatedTransactions);
                 setPaginatedTransactions(swapTransactions); // Update displayed transactions to Token Transfers 
             } else {
@@ -152,66 +151,61 @@ function DrawCircle({ currentPage, transactions }) {
         <div className="transaction-visualization-container">
             <div className="transaction-visualization">
                 <svg id="visualization" viewBox="0 0 700 700" width="50%" height="50%">
-                    <g className="go-back-button" onClick={handleBack} style={{ cursor: "pointer" }}>
-                        <text x="100" y="45" fontSize="40px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                            ←
-                        </text>
-                    </g>
                     {points.slice(0, value.length).map((point, index) => {
                         const adjustedX = point.x - normalizedValues[index].normalized * Math.cos(point.alpha);
                         const adjustedY = point.y - normalizedValues[index].normalized * Math.sin(point.alpha);
 
-                        let textOffset = 40; // Default offset
-                        let textX = (circleCenter.x + adjustedX) / 2;
-                        let textY = (circleCenter.y + adjustedY) / 2;
+                    let textOffset = 40; // Default offset
+                    let textX = (circleCenter.x + adjustedX) / 2;
+                    let textY = (circleCenter.y + adjustedY) / 2;
 
-                        // Adjust text positioning based on angle
-                        if (Math.abs(point.alpha - Math.PI / 2) < 0.3) { 
-                            textY += (textOffset + 10); // Move text up at 12h
-                        } else if (Math.abs(point.alpha - (3 * Math.PI) / 2) < 0.3) { 
-                            textY -= (textOffset + 10); // Move text down at 6h
-                        } else {
-                            textX += textOffset * Math.cos(point.alpha);
-                            textY += textOffset * Math.sin(point.alpha);
-                        }
+                    // Adjust text positioning based on angle
+                    if (Math.abs(point.alpha - Math.PI / 2) < 0.3) {
+                        textY += (textOffset + 10); // Move text up at 12h
+                    } else if (Math.abs(point.alpha - (3 * Math.PI) / 2) < 0.3) {
+                        textY -= (textOffset + 10); // Move text down at 6h
+                    } else {
+                        textX += textOffset * Math.cos(point.alpha);
+                        textY += textOffset * Math.sin(point.alpha);
+                    }
 
-                        const textWidth = 100;
-                        const textHeight = 20;
+                    const textWidth = 100;
+                    const textHeight = 20;
 
-                        let displayValue;
-                        // Format values for readability
-                        if (transaction_type[index] === "ETH Transfer" || transaction_type[index] === "Contract Interaction") {
-                            displayValue = value[index] === 0 
-                            ? "0" 
-                            : (value[index] < 0.0001 ? value[index].toFixed(6) + " ETH": value[index].toFixed(2) + " ETH");
-                        } else if (transaction_type[index] === "Token Transfer") {
-                            displayValue = value[index] + " " + token_name[index];
-                        } else {
-                            displayValue = 0;
-                        }
+                    let displayValue;
+                    // Format values for readability
+                    if (transaction_type[index] === "ETH Transfer" || transaction_type[index] === "Contract Interaction") {
+                        displayValue = value[index] === 0
+                            ? "0"
+                            : (value[index] < 0.0001 ? value[index].toFixed(6) + " ETH" : value[index].toFixed(2) + " ETH");
+                    } else if (transaction_type[index] === "Token Transfer") {
+                        displayValue = value[index] + " " + token_name[index];
+                    } else {
+                        displayValue = 0;
+                    }
 
-                        let fillColor;
-                        // Determine the fill color based on transaction direction
-                        if (transaction_type[index].toLowerCase() === 'eth transfer') {
-                            fillColor = direction[index]?.toLowerCase() === 'outbound' ? '#DC143C' : 'green';
-                        }
-                        else {
-                            fillColor = direction[index]?.toLowerCase() === 'outbound' ? 'orange' : 'blue';
-                        }
+                    let fillColor;
+                    // Determine the fill color based on transaction direction
+                    if (transaction_type[index].toLowerCase() === 'eth transfer') {
+                        fillColor = direction[index]?.toLowerCase() === 'outbound' ? '#DC143C' : 'green';
+                    }
+                    else {
+                        fillColor = direction[index]?.toLowerCase() === 'outbound' ? 'orange' : 'black';
+                    }
 
-                        return (
-                            <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
-                                <circle cx={point.x} cy={point.y} r={normalizedValues[index].normalized} fill={fillColor} stroke="white" strokeWidth={5} />
-                                <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={5} />
+                    return (
+                        <g className="child-nodes" key={index} onClick={() => handleNodeClick(index)}>
+                            <circle cx={point.x} cy={point.y} r={normalizedValues[index].normalized} fill={fillColor} stroke="white" strokeWidth={5} />
+                            <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={5} />
 
-                                {/* Background rectangle for text */}
-                                <rect x={textX - textWidth / 2} y={textY - textHeight / 2} width={textWidth} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />    
+                            {/* Background rectangle for text */}
+                            <rect x={textX - textWidth / 2} y={textY - textHeight / 2} width={textWidth} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />
 
-                                {/* Adjusted text positioning */}
-                                <text x={textX} y={textY} fontSize="14px" fill="white" textAnchor="middle" alignmentBaseline="middle"
-                                    style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.6)" }}>
-                                    {displayValue}
-                                </text>
+                            {/* Adjusted text positioning */}
+                            <text x={textX} y={textY} fontSize="14px" fill="white" textAnchor="middle" alignmentBaseline="middle"
+                                style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.6)" }}>
+                                {displayValue}
+                            </text>
 
                                 {/* Background rectangle for receiver address */}
                                 <rect x={point.x - textWidth / 2} y={point.y - 35} width={textWidth} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />
@@ -252,16 +246,12 @@ function DrawCircle({ currentPage, transactions }) {
                 </legend>
                 
                 {isModalOpen && (
-                    <div className="transaction-backdrop visible">
+                    <div className="transaction-backdrop visible" onClick={handleClose}>
                         <div className="transaction-details-container visible">
                             <div className="transaction-details-content">
                                 <button className="close-button" onClick={handleClose}>&times;</button>
                                 <h3>Transaction Details</h3>
-                                <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}
-                                    <button className="copy-button" onClick={(e) => handleCopy(selectedNode.transactionHash, e.target)}>
-                                        <i className="fas fa-copy"></i>
-                                    </button>
-                                </p>
+                                <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}</p>
                                 <p>📅 <strong>Timestamp:</strong> {selectedNode.timestamp} (UTC +7)</p>
                                 {selectedNode.coin_name !== "bitcoin" && (
                                     <>
@@ -269,34 +259,22 @@ function DrawCircle({ currentPage, transactions }) {
                                     </>
                                 )}
 
-                                {selectedNode.coin_name === "bitcoin" && (
-                                    <>
-                                        <p>🏦 <strong>Block Height:</strong> {selectedNode.blockHeight}</p>
+                            {selectedNode.coin_name === "bitcoin" && (
+                                <>
+                                    <p>🏦 <strong>Block Height:</strong> {selectedNode.blockHeight}</p>
 
                                         <h4>Sender & Receiver</h4>
-                                        <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}
-                                            <button className="copy-button" onClick={(e) => handleCopy(selectedNode.sender, e.target)}>
-                                                <i className="fas fa-copy"></i>
-                                            </button>
-                                        </p>
-                                        <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}
-                                            <button className="copy-button" onClick={(e) => handleCopy(selectedNode.receiver, e.target)}>
-                                                <i className="fas fa-copy"></i>
-                                            </button>
-                                        </p>
+                                        <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
+                                        <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
 
-                                        <h4>Amount & Fees</h4>
-                                        <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value} BTC</p>
-                                    </>
-                                )}
+                                    <h4>Amount & Fees</h4>
+                                    <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value} BTC</p>
+                                </>
+                            )}
 
                                 {(selectedNode.transaction_type === "ETH Transfer" || selectedNode.transaction_type === "Contract Interaction") && (
                                 <>  
-                                    <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}
-                                        <button className="copy-button" onClick={(e) => handleCopy(selectedNode.blockHash, e.target)}>
-                                            <i className="fas fa-copy"></i>
-                                        </button>
-                                    </p> 
+                                    <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}</p> 
 
                                     <h4>Sender & Receiver</h4>
                                     <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}
@@ -316,9 +294,9 @@ function DrawCircle({ currentPage, transactions }) {
                                     <p>🔥 <strong>Gas Used:</strong> {selectedNode.gasUsed}</p>
                                     <p>💲 <strong>Gas Price:</strong> {selectedNode.gasPrice} Gwei</p>
                                 </>
-                                )}
+                            )}
 
-                                {selectedNode.transaction_type === "Token Transfer" && (
+                            {selectedNode.transaction_type === "Token Transfer" && (
                                 <>
                                     <h4>Token Transfer</h4>
                                     <p>📤 <strong>Sender:</strong> {selectedNode.sender}
@@ -334,9 +312,9 @@ function DrawCircle({ currentPage, transactions }) {
                                     <p>🏦 <strong>Token:</strong> {selectedNode.tokenName}</p>
                                     <p>💰 <strong>Amount:</strong> {selectedNode.value} {selectedNode.tokenName}</p>
                                 </>
-                                )}
+                            )}
 
-                                {selectedNode.transaction_type === "NFT Transfer" && (
+                            {selectedNode.transaction_type === "NFT Transfer" && (
                                 <>
                                     <h4>NFT Transfer</h4>
                                     <p>📤 <strong>Sender:</strong> {selectedNode.sender}
@@ -352,12 +330,11 @@ function DrawCircle({ currentPage, transactions }) {
                                     <p>🎨 <strong>NFT:</strong> {selectedNode.nftName}</p>
                                     <p>🆔 <strong>NFT ID:</strong> {selectedNode.nftId}</p>
                                 </>
-                                )}
-                            </div>
+                            )}
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }

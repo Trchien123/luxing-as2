@@ -12,6 +12,7 @@ const Dashboard = () => {
     const location = useLocation();
 
     const crypto = location.state
+
     const response = FetchTransactions(crypto.address, crypto.name);
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef(null);
@@ -37,9 +38,10 @@ const Dashboard = () => {
     }, []);
 
 
-
+    console.log(response)
     return (
-        <section className="DB-section">
+
+        <section section className="DB-section" >
             {
                 showBar && <DbNavbar setShowBar={setShowBar} crypto={crypto} />
             }
@@ -56,7 +58,7 @@ const Dashboard = () => {
             </div>
 
 
-        </section>
+        </section >
     )
 }
 

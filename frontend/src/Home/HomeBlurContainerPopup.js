@@ -14,7 +14,7 @@ const DATA = [
     title: "Ethereum",
     content: "ETH",
   },
-  { image: require("../asset/temp.png"), title: "Seele", content: "SEL" },
+  { image: require("../asset/temp.png"), title: "Seelecoin", content: "SEL" },
   {
     image: require("../asset/cryptos/pepe-pepe-logo.png"),
     title: "Pepe",
