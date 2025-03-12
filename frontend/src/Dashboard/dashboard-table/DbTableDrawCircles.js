@@ -151,6 +151,12 @@ function DrawCircle({ currentPage, transactions }) {
         <div className="transaction-visualization-container">
             <div className="transaction-visualization">
                 <svg id="visualization" viewBox="0 0 700 700" width="50%" height="50%">
+                    <g className="go-back-button" onClick={handleBack} style={{ cursor: "pointer" }}>
+                        <text x="100" y="45" fontSize="40px" fill="white" textAnchor="middle" alignmentBaseline="middle">
+                            ←
+                        </text>
+                    </g>
+
                     {points.slice(0, value.length).map((point, index) => {
                         const adjustedX = point.x - normalizedValues[index].normalized * Math.cos(point.alpha);
                         const adjustedY = point.y - normalizedValues[index].normalized * Math.sin(point.alpha);
@@ -169,7 +175,7 @@ function DrawCircle({ currentPage, transactions }) {
                         textY += textOffset * Math.sin(point.alpha);
                     }
 
-                    const textWidth = 100;
+                    const textWidth = 50;
                     const textHeight = 20;
 
                     let displayValue;
@@ -199,7 +205,7 @@ function DrawCircle({ currentPage, transactions }) {
                             <line x1={circleCenter.x} y1={circleCenter.y} x2={adjustedX} y2={adjustedY} stroke="white" strokeWidth={5} />
 
                             {/* Background rectangle for text */}
-                            <rect x={textX - textWidth / 2} y={textY - textHeight / 2} width={textWidth} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />
+                            <rect x={textX - textWidth} y={textY - textHeight/2} width={textWidth + 40} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />
 
                             {/* Adjusted text positioning */}
                             <text x={textX} y={textY} fontSize="14px" fill="white" textAnchor="middle" alignmentBaseline="middle"
@@ -207,22 +213,22 @@ function DrawCircle({ currentPage, transactions }) {
                                 {displayValue}
                             </text>
 
-                                {/* Background rectangle for receiver address */}
-                                <rect x={point.x - textWidth / 2} y={point.y - 35} width={textWidth} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />
+                            {/* Background rectangle for receiver address */}
+                            <rect x={point.x - textWidth / 2} y={point.y - 35} width={textWidth + 30} height={textHeight} fill="#442597" rx={5} ry={5} opacity={0.7} />
                                 
-                                {/* Receiver address positioned away from value */}
-                                <text x={point.x} y={point.y - 25} fontSize="14px" fill="white" textAnchor="middle" alignmentBaseline="middle"
-                                    style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.6)" }}>
-                                    {formatAddress(direction[index] === "outbound" ? receiver[index] : sender[index])}
-                                </text>
-                            </g>
-                        );
-                    })}
-                    <circle id="main-circle" cx={350} cy={350} r={45} fill="white" />
-                    <text id="chien-name" x={350} y={350} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
-                        {formatAddress(direction[0] === "outbound" ? sender[0] : receiver[0])}
-                    </text>
-                </svg>
+                            {/* Receiver address positioned away from value */}
+                            <text x={point.x} y={point.y - 25} fontSize="14px" fill="white" textAnchor="middle" alignmentBaseline="middle"
+                                style={{ textShadow: "1px 1px 3px rgba(0,0,0,0.6)" }}>
+                                {formatAddress(direction[index] === "outbound" ? receiver[index] : sender[index])}
+                            </text>
+                        </g>
+                    );
+                })}
+                <circle id="main-circle" cx={350} cy={350} r={45} fill="white" />
+                <text id="chien-name" x={350} y={350} fontSize="15px" fill="white" textAnchor="middle" alignmentBaseline="middle">
+                    {formatAddress(direction[0] === "outbound" ? sender[0] : receiver[0])}
+                </text>
+            </svg>
 
                 <legend className="legend-container">
                     <div className="legend">
@@ -246,7 +252,7 @@ function DrawCircle({ currentPage, transactions }) {
                 </legend>
                 
                 {isModalOpen && (
-                    <div className="transaction-backdrop visible" onClick={handleClose}>
+                    <div className="transaction-backdrop visible">
                         <div className="transaction-details-container visible">
                             <div className="transaction-details-content">
                                 <button className="close-button" onClick={handleClose}>&times;</button>
@@ -335,6 +341,7 @@ function DrawCircle({ currentPage, transactions }) {
                     </div>
                 </div>
             )}
+            </div>
         </div>
     );
 }
