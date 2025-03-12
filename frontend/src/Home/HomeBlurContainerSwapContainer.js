@@ -18,41 +18,39 @@ const seeleAddressList = [
   "0x1fd95a4699e5415387ca8df18973b1a8c0a8300e",
   "0xc5c25a97514f9cbdc04eaf69e4c51f0a3b6e05b2",
 ];
+
 const SwapContainer = ({ handleOnClick, id, image, name }) => {
   const [input, setInput] = useState("");
+  const [error, setError] = useState(""); // Store error message
 
-  // Ethereum Address Validation (Starts with "0x" & 42 chars long)
   const isValidEthereumAddress = (address) =>
     /^0x[a-fA-F0-9]{40}$/.test(address);
-
   const isValidSeeleAddress = (address) =>
     seeleAddressList.includes(address.toLowerCase());
-
-  // Bitcoin Address Validation (Starts with "1", "3", or "bc1")
   const isValidBitcoinAddress = (address) =>
     /^(1|3|bc1)[a-zA-HJ-NP-Z0-9]{25,39}$/.test(address);
 
-  // Validate Address Before Navigating
   const validateInput = () => {
     if (!input.trim()) {
-      alert("⚠ Address cannot be empty!");
+      setError("⚠ Address cannot be empty!");
       return false;
     }
 
     if (id === "ETH" && !isValidEthereumAddress(input)) {
-      alert("❌ Invalid Ethereum Address! Please enter a valid one.");
+      setError("❌ Invalid Ethereum Address! Please enter a valid one.");
       return false;
     }
     if (id === "SEL" && !isValidSeeleAddress(input)) {
-      alert("❌ Invalid Seele Address! Please enter a valid one.");
+      setError("❌ Invalid Seele Address! Please enter a valid one.");
       return false;
     }
     if (id === "BTC" && !isValidBitcoinAddress(input)) {
-      alert("❌ Invalid Bitcoin Address! Please enter a valid one.");
+      setError("❌ Invalid Bitcoin Address! Please enter a valid one.");
       return false;
     }
 
-    return true; // Valid input
+    setError(""); // Clear error if input is valid
+    return true;
   };
 
   return (
@@ -65,15 +63,11 @@ const SwapContainer = ({ handleOnClick, id, image, name }) => {
           title={id}
           image={image}
         />
-
+        {error && <p className="error-message">{error}</p>}{" "}
+        {/* Show error message */}
         <Link
           to="/Dashboard"
-          state={{
-            address: input,
-            id,
-            image,
-            name,
-          }}
+          state={{ address: input, id, image, name }}
           onClick={(e) => {
             if (!validateInput()) {
               e.preventDefault(); // Stop navigation if invalid
