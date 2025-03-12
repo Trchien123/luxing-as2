@@ -10,8 +10,40 @@ app.use(express.json());
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
-const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY;
+const BLOCKCYPHER_API_KEY = process.env.BLOCKCYPHER_API_KEY;
+app.get("/api/balance/:coin/:address", async (req, res) => {
+  const { coin, address } = req.params;
 
+  try {
+    if (coin.toLowerCase() === "bitcoin" || coin.toLowerCase() === "ethereum") {
+      // BlockCypher uses "btc/main" for Bitcoin and "eth/main" for Ethereum
+      const network =
+        coin.toLowerCase() === "bitcoin" ? "btc/main" : "eth/main";
+
+      const response = await axios.get(
+        `https://api.blockcypher.com/v1/${network}/addrs/${address}/balance${
+          BLOCKCYPHER_API_KEY ? `?token=${BLOCKCYPHER_API_KEY}` : ""
+        }`
+      );
+
+      return res.json({
+        coin,
+        address,
+        balance:
+          coin === "bitcoin"
+            ? response.data.balance / 1e8
+            : response.data.balance / 1e18, // Convert Wei (ETH) or Satoshis (BTC) to standard units
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Invalid coin type. Use 'bitcoin' or 'ethereum'." });
+    }
+  } catch (error) {
+    console.error(`Error fetching ${coin} balance:`, error.message);
+    return res.status(500).json({ error: `Failed to fetch ${coin} balance` });
+  }
+});
 app.get("/api/crypto-price/:coinName", async (req, res) => {
   const { coinName } = req.params; // Get coin ID from request URL
 
@@ -225,76 +257,78 @@ app.get("/api/transactions/:address", async (req, res) => {
         (a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp)
       );
 
-        res.json({ transactions, general_info });
-      } catch (error) {
-        console.error(
-          "Error fetching Bitcoin transactions from Bitquery:",
-          error.response ? error.response.data : error.message
-        );
-        res
-          .status(500)
-          .json({ error: "Error fetching Bitcoin transactions from Bitquery" });
-      }
-    } else if (coin.toLowerCase() === "ethereum") {
-      try {
-        const ethResponse = await axios.get(API_URL_transactions);
-        const ethToken = await axios.get(API_URL_token);
-        const ethNft = await axios.get(API_URL_NFT);
+      res.json({ transactions, general_info });
+    } catch (error) {
+      console.error(
+        "Error fetching Bitcoin transactions from Bitquery:",
+        error.response ? error.response.data : error.message
+      );
+      res
+        .status(500)
+        .json({ error: "Error fetching Bitcoin transactions from Bitquery" });
+    }
+  } else if (coin.toLowerCase() === "ethereum") {
+    try {
+      const ethResponse = await axios.get(API_URL_transactions);
+      const ethToken = await axios.get(API_URL_token);
+      const ethNft = await axios.get(API_URL_NFT);
 
-        const ethTransactions = ethResponse.data.result.map((tx) => {
-          const isSender = tx.from.toLowerCase() === address.toLowerCase();
-          const isContractInteraction = tx.input !== "0x";
-          return {
-            from_address: tx.from,
-            to_address: tx.to,
-            hash: tx.hash,
-            value: (tx.value / 1e18).toFixed(6), // Convert Wei to ETH
-            input: tx.input,
-            transaction_index: tx.transactionIndex,
-            gas: tx.gas,
-            gas_used: tx.gasUsed,
-            gas_price: tx.gasPrice,
-            transaction_fee: ((tx.gasUsed * tx.gasPrice) / 1e18).toFixed(6),
-            block_number: tx.blockNumber,
-            block_hash: tx.blockHash,
-            block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
-            direction: isSender ? "outbound" : "inbound", // Correct direction logic
-            transaction_type: isContractInteraction ? "Contract Interaction" : "ETH Transfer",
-            coin_name: "ethereum"
-          };
-        });
+      const ethTransactions = ethResponse.data.result.map((tx) => {
+        const isSender = tx.from.toLowerCase() === address.toLowerCase();
+        const isContractInteraction = tx.input !== "0x";
+        return {
+          from_address: tx.from,
+          to_address: tx.to,
+          hash: tx.hash,
+          value: (tx.value / 1e18).toFixed(6), // Convert Wei to ETH
+          input: tx.input,
+          transaction_index: tx.transactionIndex,
+          gas: tx.gas,
+          gas_used: tx.gasUsed,
+          gas_price: tx.gasPrice,
+          transaction_fee: ((tx.gasUsed * tx.gasPrice) / 1e18).toFixed(6),
+          block_number: tx.blockNumber,
+          block_hash: tx.blockHash,
+          block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
+          direction: isSender ? "outbound" : "inbound", // Correct direction logic
+          transaction_type: isContractInteraction
+            ? "Contract Interaction"
+            : "ETH Transfer",
+          coin_name: "ethereum",
+        };
+      });
 
-        const tokenTransactions = ethToken.data.result.map((tx) => {
-          const isSender = tx.from.toLowerCase() === address.toLowerCase();
-          return {
-            from_address: tx.from,
-            to_address: tx.to,
-            hash: tx.hash,
-            token_name: tx.tokenName,
-            value: (tx.value / Math.pow(10, tx.tokenDecimal)).toFixed(0), // Convert token value
-            block_number: tx.blockNumber,
-            block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
-            direction: isSender ? "outbound" : "inbound",
-            transaction_type: "Token Transfer",
-            coin_name: "ethereum"
-          };
-        });
+      const tokenTransactions = ethToken.data.result.map((tx) => {
+        const isSender = tx.from.toLowerCase() === address.toLowerCase();
+        return {
+          from_address: tx.from,
+          to_address: tx.to,
+          hash: tx.hash,
+          token_name: tx.tokenName,
+          value: (tx.value / Math.pow(10, tx.tokenDecimal)).toFixed(0), // Convert token value
+          block_number: tx.blockNumber,
+          block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
+          direction: isSender ? "outbound" : "inbound",
+          transaction_type: "Token Transfer",
+          coin_name: "ethereum",
+        };
+      });
 
-        const nftTransactions = ethNft.data.result.map((tx) => {
-          const isSender = tx.from.toLowerCase() === address.toLowerCase();
-          return {
-            from_address: tx.from,
-            to_address: tx.to,
-            hash: tx.hash,
-            nft_name: tx.tokenName,
-            nft_id: tx.tokenID,
-            block_number: tx.blockNumber,
-            block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
-            direction: isSender ? "outbound" : "inbound",
-            transaction_type: "NFT Transfer",
-            coin_name: "ethereum"
-          };
-        });
+      const nftTransactions = ethNft.data.result.map((tx) => {
+        const isSender = tx.from.toLowerCase() === address.toLowerCase();
+        return {
+          from_address: tx.from,
+          to_address: tx.to,
+          hash: tx.hash,
+          nft_name: tx.tokenName,
+          nft_id: tx.tokenID,
+          block_number: tx.blockNumber,
+          block_timestamp: new Date(tx.timeStamp * 1000).toLocaleString(),
+          direction: isSender ? "outbound" : "inbound",
+          transaction_type: "NFT Transfer",
+          coin_name: "ethereum",
+        };
+      });
 
         const transactions = [...ethTransactions, ...tokenTransactions, ...nftTransactions];
         transactions.sort((a, b) => new Date(b.block_timestamp) - new Date(a.block_timestamp));
