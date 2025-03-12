@@ -113,17 +113,17 @@ async function runNeo4jQuery2(query, referenceAddress) {
       const direction = path.properties.from_address === referenceAddress ? "outbound" : "inbound";
       return {
 
-        from_address: path.properties.from_address,
-        to_address: path.properties.to_address,
-        hash: path.properties.hash,
+        from_address: path.properties.from_address.toString(),
+        to_address: path.properties.to_address.toString(),
+        hash: path.properties.hash.toString(),
         value: (path.properties.value / 1e18).toString(), // Convert wei to ETH
-        input: path.properties.input,
-        transaction_index: path.properties.transaction_index,
-        gas: path.properties.gas,
-        gas_used: path.properties.gas_used,
-        gas_price: path.properties.gas_price,
-        block_hash: path.properties.block_hash,
-        block_number: path.properties.block_number,
+        input: path.properties.input.toString(),
+        transaction_index: path.properties.transaction_index.toString(),
+        gas: path.properties.gas.toString(),
+        gas_used: path.properties.gas_used.toString(),
+        gas_price: path.properties.gas_price.toString(),
+        block_hash: path.properties.block_hash.toString(),
+        block_number: path.properties.block_number.toString(),
         block_timestamp: path.properties.block_timestamp ? moment.unix(Number(path.properties.block_timestamp)).utc().format('YYYY-MM-DD, HH:mm:ss') : "Unknown",
         transaction_fee: (path.properties.transaction_fee / 1e18).toString(),
         direction: direction,

@@ -11,6 +11,7 @@ const DashTable = () => {
 
   const address = crypto.address;
   const { transactions, loading, error } = response
+  console.log(crypto)
   console.log(transactions)
 
   const onPageChangeGraph = (newPage) => {

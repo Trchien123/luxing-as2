@@ -18,7 +18,7 @@ const Dashboard = () => {
     const containerRef = useRef(null);
     const [showBar, setShowBar] = useState(true)
     const [showNoti, setShowNoti] = useState(false)
-    console.log(response)
+
     useEffect(() => {
         const handleScroll = () => {
             const container = containerRef.current;
@@ -38,9 +38,10 @@ const Dashboard = () => {
     }, []);
 
 
-
+    console.log(response)
     return (
-        <section className="DB-section">
+
+        <section section className="DB-section" >
             {
                 showBar && <DbNavbar setShowBar={setShowBar} crypto={crypto} />
             }
@@ -57,7 +58,7 @@ const Dashboard = () => {
             </div>
 
 
-        </section>
+        </section >
     )
 }
 
