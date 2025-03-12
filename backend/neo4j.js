@@ -112,7 +112,6 @@ async function runNeo4jQuery2(query, referenceAddress) {
       const path = record.get("n");
       const direction = path.properties.from_address === referenceAddress ? "outbound" : "inbound";
       return {
-
         from_address: path.properties.from_address.toString(),
         to_address: path.properties.to_address.toString(),
         hash: path.properties.hash.toString(),
