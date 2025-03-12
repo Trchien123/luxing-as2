@@ -8,9 +8,11 @@ import { useOutletContext } from "react-router-dom";
 
 const DashTable = () => {
   const { crypto, response } = useOutletContext();
-  console.log(crypto);
+
   const address = crypto.address;
   const { transactions, loading, error } = response
+  console.log(transactions)
+
   const onPageChangeGraph = (newPage) => {
     console.log("Graph page changed to:", newPage);
   };

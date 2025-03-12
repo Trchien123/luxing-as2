@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const { runNeo4jQuery } = require("./neo4j");
+const { runNeo4jQuery, runNeo4jQuery2 } = require("./neo4j");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -21,8 +21,7 @@ app.get("/api/balance/:coin/:address", async (req, res) => {
         coin.toLowerCase() === "bitcoin" ? "btc/main" : "eth/main";
 
       const response = await axios.get(
-        `https://api.blockcypher.com/v1/${network}/addrs/${address}/balance${
-          BLOCKCYPHER_API_KEY ? `?token=${BLOCKCYPHER_API_KEY}` : ""
+        `https://api.blockcypher.com/v1/${network}/addrs/${address}/balance${BLOCKCYPHER_API_KEY ? `?token=${BLOCKCYPHER_API_KEY}` : ""
         }`
       );
 
@@ -66,17 +65,13 @@ app.get("/api/crypto-price/:coinName", async (req, res) => {
 
 app.get("/api/sel/:address", async (req, res) => {
   const { address } = req.params;
+  const query2 = `MATCH (n:Transactions) where n.from_address = "${address}" or n.to_address ="${address}" return n;`;
 
-  const query =
-    req.query.q ||
-    `MATCH p=(n)-[:TRANSACTION]->() 
-    WHERE n.addressId = "${address}"  
-    RETURN p`;
   try {
-    const records = await runNeo4jQuery(query);
+    const records = await runNeo4jQuery2(query2, address);
     res.json({
-      success: true,
-      data: records,
+
+      transactions: records,
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -101,15 +96,12 @@ app.get("/api/transactions/:address", async (req, res) => {
     const { address } = req.params;
 
     const query =
-      req.query.q ||
-      `MATCH p=(n)-[:TRANSACTION]->(m) 
-    WHERE n.addressId = "${address}"  
-    RETURN p`;
+      `MATCH (n:Transactions) where n.from_address = "${address}" or n.to_address ="${address}" return n;`;
     try {
-      const records = await runNeo4jQuery(query, address);
-      res.json({
-        transactions: records,
-      });
+      const records = await runNeo4jQuery2(query, address);
+      res.json(
+        records
+      );
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });
     }

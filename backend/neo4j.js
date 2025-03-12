@@ -101,7 +101,47 @@ async function runNeo4jQuery(query, referenceAddress) {
     await driver.close();
   }
 }
+async function runNeo4jQuery2(query, referenceAddress) {
+  const driver = neo4j.driver(URI, neo4j.auth.basic(USER, PASSWORD));
+  const session = driver.session({ database: "neo4j" }); // Default to "neo4j" if DATABASE is unset
 
+  try {
+    const result = await session.run(query);
+
+    const transformedRecords = result.records.map((record) => {
+      const path = record.get("n");
+      const direction = path.properties.from_address === referenceAddress ? "outbound" : "inbound";
+      return {
+
+        from_address: path.properties.from_address,
+        to_address: path.properties.to_address,
+        hash: path.properties.hash,
+        value: (path.properties.value / 1e18).toString(), // Convert wei to ETH
+        input: path.properties.input,
+        transaction_index: path.properties.transaction_index,
+        gas: path.properties.gas,
+        gas_used: path.properties.gas_used,
+        gas_price: path.properties.gas_price,
+        block_hash: path.properties.block_hash,
+        block_number: path.properties.block_number,
+        block_timestamp: path.properties.block_timestamp ? moment.unix(Number(path.properties.block_timestamp)).utc().format('YYYY-MM-DD, HH:mm:ss') : "Unknown",
+        transaction_fee: (path.properties.transaction_fee / 1e18).toString(),
+        direction: direction,
+        coin_name: "seelecoin"
+      }
+    });
+    console.log(transformedRecords)
+    return transformedRecords
+
+  } catch (err) {
+    console.error(`Connection error: ${err.message}`);
+    throw err;
+  } finally {
+    await session.close();
+    await driver.close();
+  }
+}
 // Run the query
 
-module.exports = { runNeo4jQuery }
+
+module.exports = { runNeo4jQuery, runNeo4jQuery2 }
