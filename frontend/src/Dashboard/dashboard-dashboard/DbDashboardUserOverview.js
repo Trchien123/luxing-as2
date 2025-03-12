@@ -1,6 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { formatDistanceToNow } from "date-fns";
 
+const formatLargeNumber = (num) => {
+  if (num >= 1e12) return (num / 1e12).toFixed(2) + "T";
+  if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
+  if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+  if (num >= 1e3) return (num / 1e3).toFixed(2) + "K";
+  if (num < 1e3) return num.toFixed(2);
+  return num.toFixed(2);
+};
 const UserOverview = ({ transactions, address, coinName, coinId }) => {
   const [userData, setUserData] = useState({
     balance: 0,
@@ -46,9 +54,13 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     };
 
     const fetchCryptoPrice = async () => {
+      const queryCoinName =
+        coinName.toLowerCase() === "seele"
+          ? "ethereum"
+          : coinName.toLowerCase();
       try {
         const response = await fetch(
-          `http://localhost:5000/api/crypto-price/${coinName.toLowerCase()}`
+          `http://localhost:5000/api/crypto-price/${queryCoinName.toLowerCase()}`
         );
         const data = await response.json();
         return data.price;
@@ -63,10 +75,10 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
       fetchCryptoPrice(coinName),
     ]);
 
-    const balanceUSD = cryptoPrice ? (balance * cryptoPrice).toFixed(2) : "N/A";
+    const balanceUSD = cryptoPrice ? (balance * cryptoPrice).toFixed(2) : 0;
 
     setUserData({
-      balance: balance.toFixed(5),
+      balance: balance,
       balanceUSD,
       firstActive: firstActiveDate.toLocaleDateString("en-US", {
         month: "short",
@@ -84,9 +96,9 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
       lastActiveAgo: formatDistanceToNow(lastActiveDate, {
         addSuffix: true,
       }),
-      sent: sentTotal.toFixed(2),
-      received: receivedTotal.toFixed(2),
-      total: (sentTotal + receivedTotal).toFixed(5),
+      sent: sentTotal,
+      received: receivedTotal,
+      total: sentTotal + receivedTotal,
     });
   }, [transactions, coinName, address]);
 
@@ -166,9 +178,9 @@ const DbItem2 = ({ balance, balanceUSD, coinId }) => {
       </div>
       <div className="info-balance">
         <p>
-          {balance} {coinId}
+          {formatLargeNumber(balance)} {coinId}
         </p>
-        <span>~ {balanceUSD} USD</span>
+        <span>~ {formatLargeNumber(balanceUSD)} USD</span>
       </div>
     </div>
   );
@@ -187,21 +199,21 @@ const DbItem3 = ({ sent, received, total }) => {
             <i className="fa-solid fa-arrow-up"></i>
             <span>Sent</span>
           </div>
-          <span>{sent}</span>
+          <span>{formatLargeNumber(sent)}</span>
         </div>
         <div className="amount">
           <div className="info">
             <i className="fa-solid fa-arrow-down"></i>
             <span>Received</span>
           </div>
-          <span>{received}</span>
+          <span>{formatLargeNumber(received)}</span>
         </div>
         <div className="amount">
           <div className="info">
             <i className="fa-solid fa-calculator"></i>
             <span>Total</span>
           </div>
-          <span>{total}</span>
+          <span>{formatLargeNumber(total)}</span>
         </div>
       </div>
     </div>
