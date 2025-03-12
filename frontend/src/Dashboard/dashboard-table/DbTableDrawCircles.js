@@ -40,11 +40,12 @@ function Normalization(amountsTransferred, numPoints = 20) {
 function DrawCircle({ currentPage, transactions }) {
     const numPoints = 20;
     const circleCenter = { x: 350, y: 350 };
-    const circleRadius = 300;
+    const circleRadius = 250;
 
     const [selectedNode, setSelectedNode] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [paginatedTransactions, setPaginatedTransactions] = useState([]);
+    const [originalPage, setOriginalPage] = useState([]);
 
     const itemsPerPage = 20;
 
@@ -109,6 +110,7 @@ function DrawCircle({ currentPage, transactions }) {
             const swapTransactions = transactions.filter(tx => tx.transaction_type === "Token Transfer" && tx.hash === selectedTx.hash);
             if (swapTransactions.length > 0)
             {
+                setOriginalPage(paginatedTransactions);
                 setPaginatedTransactions(swapTransactions); // Update displayed transactions to Token Transfers 
             } else {
                 setIsModalOpen(true);
@@ -116,6 +118,29 @@ function DrawCircle({ currentPage, transactions }) {
         } else {
             setIsModalOpen(true);
         }
+    };
+
+    const handleBack = () => {
+        if (originalPage.length !== 0) {
+            setPaginatedTransactions(originalPage);
+        }
+    }
+
+    const handleCopy = (text, button) => {
+        // Copy the text to clipboard
+        navigator.clipboard.writeText(text).then(() => {
+            console.log("Text copied!");
+        }).catch(err => {
+            console.error("Error copying text: ", err);
+        });
+    
+        // Add the "clicked" class to the clicked button to trigger animation
+        button.classList.add("clicked");    
+    
+        // Remove the "clicked" class after animation ends (0.5s)
+        setTimeout(() => {
+            button.classList.remove("clicked");
+        }, 500);  // Duration of the animation in ms
     };
 
     const handleClose = () => {
@@ -127,6 +152,11 @@ function DrawCircle({ currentPage, transactions }) {
         <div className="transaction-visualization-container">
             <div className="transaction-visualization">
                 <svg id="visualization" viewBox="0 0 700 700" width="50%" height="50%">
+                    <g className="go-back-button" onClick={handleBack} style={{ cursor: "pointer" }}>
+                        <text x="100" y="45" fontSize="40px" fill="white" textAnchor="middle" alignmentBaseline="middle">
+                            ←
+                        </text>
+                    </g>
                     {points.slice(0, value.length).map((point, index) => {
                         const adjustedX = point.x - normalizedValues[index].normalized * Math.cos(point.alpha);
                         const adjustedY = point.y - normalizedValues[index].normalized * Math.sin(point.alpha);
@@ -222,12 +252,16 @@ function DrawCircle({ currentPage, transactions }) {
                 </legend>
                 
                 {isModalOpen && (
-                    <div className="transaction-backdrop visible" onClick={handleClose}>
+                    <div className="transaction-backdrop visible">
                         <div className="transaction-details-container visible">
                             <div className="transaction-details-content">
                                 <button className="close-button" onClick={handleClose}>&times;</button>
                                 <h3>Transaction Details</h3>
-                                <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}</p>
+                                <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedNode.transactionHash}
+                                    <button className="copy-button" onClick={(e) => handleCopy(selectedNode.transactionHash, e.target)}>
+                                        <i className="fas fa-copy"></i>
+                                    </button>
+                                </p>
                                 <p>📅 <strong>Timestamp:</strong> {selectedNode.timestamp} (UTC +7)</p>
                                 {selectedNode.coin_name !== "bitcoin" && (
                                     <>
@@ -240,8 +274,16 @@ function DrawCircle({ currentPage, transactions }) {
                                         <p>🏦 <strong>Block Height:</strong> {selectedNode.blockHeight}</p>
 
                                         <h4>Sender & Receiver</h4>
-                                        <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
-                                        <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
+                                        <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}
+                                            <button className="copy-button" onClick={(e) => handleCopy(selectedNode.sender, e.target)}>
+                                                <i className="fas fa-copy"></i>
+                                            </button>
+                                        </p>
+                                        <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}
+                                            <button className="copy-button" onClick={(e) => handleCopy(selectedNode.receiver, e.target)}>
+                                                <i className="fas fa-copy"></i>
+                                            </button>
+                                        </p>
 
                                         <h4>Amount & Fees</h4>
                                         <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value} BTC</p>
@@ -250,11 +292,23 @@ function DrawCircle({ currentPage, transactions }) {
 
                                 {(selectedNode.transaction_type === "ETH Transfer" || selectedNode.transaction_type === "Contract Interaction") && (
                                 <>  
-                                    <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}</p> 
+                                    <p>🏦 <strong>Block Hash:</strong> {selectedNode.blockHash}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedNode.blockHash, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p> 
 
                                     <h4>Sender & Receiver</h4>
-                                    <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}</p>
-                                    <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}</p>
+                                    <p>📤 <strong>Sender Address:</strong> {selectedNode.sender}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedNode.receiver, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p>
+                                    <p>📥 <strong>Receiver Address:</strong> {selectedNode.receiver}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedNode.sender, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p>
 
                                     <h4>Amount & Fees</h4>
                                     <p>💰 <strong>Amount Transferred:</strong> {selectedNode.value} ETH</p>
@@ -267,8 +321,16 @@ function DrawCircle({ currentPage, transactions }) {
                                 {selectedNode.transaction_type === "Token Transfer" && (
                                 <>
                                     <h4>Token Transfer</h4>
-                                    <p>📤 <strong>Sender:</strong> {selectedNode.sender}</p>
-                                    <p>📥 <strong>Receiver:</strong> {selectedNode.receiver}</p>
+                                    <p>📤 <strong>Sender:</strong> {selectedNode.sender}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedNode.sender, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p>
+                                    <p>📥 <strong>Receiver:</strong> {selectedNode.receiver}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedNode.receiver, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p>
                                     <p>🏦 <strong>Token:</strong> {selectedNode.tokenName}</p>
                                     <p>💰 <strong>Amount:</strong> {selectedNode.value} {selectedNode.tokenName}</p>
                                 </>
@@ -277,8 +339,16 @@ function DrawCircle({ currentPage, transactions }) {
                                 {selectedNode.transaction_type === "NFT Transfer" && (
                                 <>
                                     <h4>NFT Transfer</h4>
-                                    <p>📤 <strong>Sender:</strong> {selectedNode.sender}</p>
-                                    <p>📥 <strong>Receiver:</strong> {selectedNode.receiver}</p>
+                                    <p>📤 <strong>Sender:</strong> {selectedNode.sender}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedNode.sender, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p>
+                                    <p>📥 <strong>Receiver:</strong> {selectedNode.receiver}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedNode.receiver, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p>
                                     <p>🎨 <strong>NFT:</strong> {selectedNode.nftName}</p>
                                     <p>🆔 <strong>NFT ID:</strong> {selectedNode.nftId}</p>
                                 </>

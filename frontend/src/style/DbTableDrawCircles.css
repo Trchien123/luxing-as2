@@ -276,6 +276,60 @@
     background-color: orange;
 }
 
+.go-back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.go-back-button svg {
+    color: white; /* Set arrow color */
+    width: 30px;
+    height: 30px;
+}
+
+.go-back-button:hover {
+    opacity: 0.8;
+}
+
+.copy-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    margin-left: 8px;
+    padding: 2px;
+    transition: color 0.3s ease;
+    position: relative;  /* Ensure button is clickable */
+}
+
+/* Hover effect */
+.copy-button:hover {
+    color:rgb(85, 85, 145);
+}
+
+/* Keyframe animation for bounce effect */
+@keyframes bounce {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.2); }
+    50% { transform: scale(0.9); }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Apply bounce effect when clicked */
+.copy-button.clicked {
+    animation: bounce 0.5s;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

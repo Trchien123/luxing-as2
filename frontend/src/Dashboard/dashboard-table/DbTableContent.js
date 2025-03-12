@@ -34,6 +34,23 @@ function DashTableContent({ currentPage, transactions }) {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const handleCopy = (text, button) => {
+        // Copy the text to clipboard
+        navigator.clipboard.writeText(text).then(() => {
+            console.log("Text copied!");
+        }).catch(err => {
+            console.error("Error copying text: ", err);
+        });
+    
+        // Add the "clicked" class to the clicked button to trigger animation
+        button.classList.add("clicked");
+    
+        // Remove the "clicked" class after animation ends (0.5s)
+        setTimeout(() => {
+            button.classList.remove("clicked");
+        }, 500);  // Duration of the animation in ms
+    };
+
     const handleClose = () => {
         setSelectedTransaction(null);
         setIsModalOpen(false);
@@ -60,8 +77,16 @@ function DashTableContent({ currentPage, transactions }) {
                         <tbody>
                             {paginatedTransactions.map((tx, index) =>(
                                 <tr key={index}>
-                                    <td>{formatAddress(tx.from_address, screenWidth)}</td>
-                                    <td>{formatAddress(tx.to_address, screenWidth)}</td>
+                                    <td>{formatAddress(tx.from_address, screenWidth)}
+                                        <button className="copy-button" onClick={(e) => handleCopy(tx.from_address, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </td>
+                                    <td>{formatAddress(tx.to_address, screenWidth)}
+                                        <button className="copy-button" onClick={(e) => handleCopy(tx.to_address, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </td>
                                     <td>{tx.transaction_type}</td>
                                     <td>{Math.abs(tx.value)} ETH</td>
                                     <td>
@@ -78,14 +103,18 @@ function DashTableContent({ currentPage, transactions }) {
             </div>
 
             {isModalOpen && selectedTransaction && (
-                <div className="transaction-backdrop visible" onClick={handleClose}>
+                <div className="transaction-backdrop visible">
                     <div className="transaction-details-container visible">
                         <div className="transaction-details-content">
                             <button className="close-button" onClick={handleClose}>
                                 &times;
                             </button>
                             <h3>Transaction Details</h3>
-                            <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedTransaction.hash}</p>
+                            <p>📌 <strong>Transaction Hash (TxID):</strong> {selectedTransaction.hash}
+                                <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.hash, e.target)}>
+                                    <i className="fas fa-copy"></i>
+                                </button>
+                            </p>
                             <p>📅 <strong>Timestamp:</strong> {selectedTransaction.block_timestamp} (UTC +7)</p>
                             {selectedTransaction.coin_name !== "bitcoin" && (
                                 <>
@@ -98,8 +127,16 @@ function DashTableContent({ currentPage, transactions }) {
                                     <p>🏦 <strong>Block Height:</strong> {selectedTransaction.block_height}</p>
 
                                     <h4>Sender & Receiver</h4>
-                                    <p>📤 <strong>Sender Address:</strong> {selectedTransaction.from_address}</p>
-                                    <p>📥 <strong>Receiver Address:</strong> {selectedTransaction.to_address}</p>
+                                    <p>📤 <strong>Sender Address:</strong> {selectedTransaction.from_address}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.sender, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p>
+                                    <p>📥 <strong>Receiver Address:</strong> {selectedTransaction.to_address}
+                                        <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.receiver, e.target)}>
+                                            <i className="fas fa-copy"></i>
+                                        </button>
+                                    </p>
 
                                     <h4>Amount & Fees</h4>
                                     <p>💰 <strong>Amount Transferred:</strong> {selectedTransaction.value} BTC</p>
@@ -108,11 +145,23 @@ function DashTableContent({ currentPage, transactions }) {
 
                             {(selectedTransaction.transaction_type === "ETH Transfer" || selectedTransaction.transaction_type === "Contract Interaction") && (
                             <>  
-                                <p>🏦 <strong>Block Hash:</strong> {selectedTransaction.block_hash}</p> 
+                                <p>🏦 <strong>Block Hash:</strong> {selectedTransaction.block_hash}
+                                    <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.block_hash, e.target)}>
+                                        <i className="fas fa-copy"></i>
+                                    </button>
+                                </p> 
 
                                 <h4>Sender & Receiver</h4>
-                                <p>📤 <strong>Sender Address:</strong> {selectedTransaction.from_address}</p>
-                                <p>📥 <strong>Receiver Address:</strong> {selectedTransaction.to_address}</p>
+                                <p>📤 <strong>Sender Address:</strong> {selectedTransaction.from_address}
+                                    <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.sender, e.target)}>
+                                        <i className="fas fa-copy"></i>
+                                    </button>
+                                </p>
+                                <p>📥 <strong>Receiver Address:</strong> {selectedTransaction.to_address}
+                                    <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.receiver, e.target)}>
+                                        <i className="fas fa-copy"></i>
+                                    </button>
+                                </p>
 
                                 <h4>Amount & Fees</h4>
                                 <p>💰 <strong>Amount Transferred:</strong> {selectedTransaction.value} ETH</p>
@@ -125,8 +174,16 @@ function DashTableContent({ currentPage, transactions }) {
                             {selectedTransaction.transaction_type === "Token Transfer" && (
                             <>
                                 <h4>Token Transfer</h4>
-                                <p>📤 <strong>Sender:</strong> {selectedTransaction.from_address}</p>
-                                <p>📥 <strong>Receiver:</strong> {selectedTransaction.to_address}</p>
+                                <p>📤 <strong>Sender:</strong> {selectedTransaction.from_address}
+                                    <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.sender, e.target)}>
+                                        <i className="fas fa-copy"></i>
+                                    </button>
+                                </p>
+                                <p>📥 <strong>Receiver:</strong> {selectedTransaction.to_address}
+                                    <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.receiver, e.target)}>
+                                        <i className="fas fa-copy"></i>
+                                    </button>
+                                </p>
                                 <p>🏦 <strong>Token:</strong> {selectedTransaction.token_name}</p>
                                 <p>💰 <strong>Amount:</strong> {selectedTransaction.value} {selectedTransaction.token_name}</p>
                             </>
@@ -135,8 +192,16 @@ function DashTableContent({ currentPage, transactions }) {
                             {selectedTransaction.transaction_type === "NFT Transfer" && (
                             <>
                                 <h4>NFT Transfer</h4>
-                                <p>📤 <strong>Sender:</strong> {selectedTransaction.sender}</p>
-                                <p>📥 <strong>Receiver:</strong> {selectedTransaction.receiver}</p>
+                                <p>📤 <strong>Sender:</strong> {selectedTransaction.sender}
+                                    <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.sender, e.target)}>
+                                        <i className="fas fa-copy"></i>
+                                    </button>
+                                </p>
+                                <p>📥 <strong>Receiver:</strong> {selectedTransaction.receiver}
+                                    <button className="copy-button" onClick={(e) => handleCopy(selectedTransaction.receiver, e.target)}>
+                                        <i className="fas fa-copy"></i>
+                                    </button>
+                                </p>
                                 <p>🎨 <strong>NFT:</strong> {selectedTransaction.nftName}</p>
                                 <p>🆔 <strong>NFT ID:</strong> {selectedTransaction.nftId}</p>
                             </>
