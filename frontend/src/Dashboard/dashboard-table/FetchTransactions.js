@@ -17,16 +17,16 @@ const FetchTransactions = (address, coin) => {
         const fetchTransactions = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/api/transactions/${address}?coin=${coin}`);
-                if (isMounted && coin === "Bitcoin") {
+                if (isMounted && coin === "bitcoin") {
                     const transactionsData = response.data.transactions || []; // Get only transactions
                     setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
                     setError(null);
                 }
-                if (isMounted && coin === "Ethereum") {
+                if (isMounted && coin === "ethereum".toLowerCase()) {
                     setTransactions(Array.isArray(response.data) ? response.data : []);
                     setError(null);
                 }
-                if (isMounted && coin === "Seelecoin") {
+                if (isMounted && coin === "seelecoin") {
                     setTransactions(Array.isArray(response.data) ? response.data : []);
                     setError(null);
                 }
