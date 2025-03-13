@@ -16,36 +16,31 @@ const DbReport = ({ transactions }) => {
 
   const fetchEtherScamDB = async () => {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
-      const response = await fetch("http://localhost:5001/api/scams", { signal: controller.signal });
-      clearTimeout(timeoutId);
+      const response = await fetch("/scams.json");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       return data.map((scam) => scam.addresses.map((addr) => addr.toLowerCase())).flat();
     } catch (error) {
-      console.error("Failed to fetch EtherScamDB:", error.message);
-      return [];
+      console.error("Failed to fetch local EtherScamDB:", error.message);
+      // Fallback to hardcoded known scam addresses
+      return [
+        "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
+        "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
+        "0x4e6fec28f5316c2829d41bc2187202c70ec75bc7",
+        "0xd90e2f925da726b50c4ed8d0fb90ad053324f31b",
+      ].map(addr => addr.toLowerCase());
     }
   };
-
-  const knownScamAddresses = [
-    "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
-    "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
-    "0x4e6fec28f5316c2829d41bc2187202c70ec75bc7",
-    "0xd90e2f925da726b50c4ed8d0fb90ad053324f31b",
-  ].map(addr => addr.toLowerCase());
 
   const checkCryptoScamDB = useCallback(async (wallet) => {
     try {
       const etherScamList = await fetchEtherScamDB();
-      const combinedScamList = [...etherScamList, ...knownScamAddresses];
-      return combinedScamList.includes(wallet.toLowerCase());
+      return etherScamList.includes(wallet.toLowerCase());
     } catch (error) {
       console.error(`Local scam check failed for ${wallet}:`, error);
-      return knownScamAddresses.includes(wallet.toLowerCase()); // Fallback to local list
+      return false; // Fallback to no detection if fetch fails
     }
   }, []);
 
