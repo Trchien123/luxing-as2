@@ -33,10 +33,10 @@ export const validateInput = (input, id) => {
     }
 
     if (id === "ETH") {
-        if (!isValidEthereumAddress(input) || !isValidSeeleAddress(input)) {
+        if (!isValidEthereumAddress(input) && !isValidSeeleAddress(input)) {
             return {
                 isValid: false,
-                error: "❌ Invalid Ethereum Address! Please enter a valid one.",
+                error: "❌ Invalid Ethereum or Seelecoin Address ! Please enter a valid one.",
             };
         }
     }
