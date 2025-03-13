@@ -75,7 +75,7 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
       fetchCryptoPrice(coinName),
     ]);
 
-    const balanceUSD = cryptoPrice ? (balance * cryptoPrice).toFixed(2) : 0;
+    const balanceUSD = cryptoPrice ? balance * cryptoPrice : 0;
 
     setUserData({
       balance: balance,
