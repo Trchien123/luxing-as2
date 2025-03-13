@@ -32,18 +32,34 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     let sentTotal = 0;
     let receivedTotal = 0;
 
-    transactions.forEach((tx) => {
-      if (tx.direction === "inbound") {
-        receivedTotal += parseFloat(tx.value);
-      } else if (tx.direction === "outbound") {
-        sentTotal += parseFloat(tx.value);
-      }
-    });
+    if (coinName === "Ethereum") {
+      transactions.forEach((tx) => {
+        if (tx.input === "0x") {
+          if (tx.direction === "inbound") {
+            receivedTotal += parseFloat(tx.value);
+          } else if (tx.direction === "outbound") {
+            sentTotal += parseFloat(tx.value);
+          }
+        }
+      });
+    } else {
+      transactions.forEach((tx) => {
+        if (tx.direction === "inbound") {
+          receivedTotal += parseFloat(tx.value);
+        } else if (tx.direction === "outbound") {
+          sentTotal += parseFloat(tx.value);
+        }
+      });
+    }
     // Define fetch functions inside DataProcessing to prevent ESLint warnings
     const fetchCryptoBalance = async () => {
+      const queryCoinName =
+        coinName.toLowerCase() === "seele"
+          ? "ethereum"
+          : coinName.toLowerCase();
       try {
         const response = await fetch(
-          `http://localhost:5000/api/balance/${coinName.toLowerCase()}/${address}`
+          `http://localhost:5000/api/balance/${queryCoinName.toLowerCase()}/${address}`
         );
         const data = await response.json();
         return data.balance || 0;
