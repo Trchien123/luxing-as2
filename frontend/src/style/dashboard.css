@@ -763,6 +763,28 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.Dn-sticky-url {
+  all: unset;
+  color: white;
+  cursor: pointer;
+  padding-bottom: 10px;
+  width: max-content;
+}
+
+.Dn-sticky-url:hover {
+  animation: rotate-text 0.5s ease-in-out;
+}
+
+@keyframes rotate-text {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media screen and (max-width: 570px) {
   .DN-sticky-scroll {
     height: max-content;
@@ -799,11 +821,15 @@
 
 .Dn-sticky-container-content {
   min-width: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   flex: 1;
 }
 
 .Dn-sticky-container-content h1 {
-  font-size: 2rem;
+  font-size: 1.3rem;
 }
 
 .Dn-sticky-container-content p {
@@ -832,6 +858,7 @@
 
 .DN-section3-container-btn {
   all: unset;
+  width: max-content;
   font-weight: 500;
   font-size: 1.2rem;
   margin-top: 30px;
