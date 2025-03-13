@@ -32,7 +32,7 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     let sentTotal = 0;
     let receivedTotal = 0;
 
-    if (coinName === "Ethereum") {
+    if (coinName.toLowerCase() === "ethereum") {
       transactions.forEach((tx) => {
         if (tx.input === "0x") {
           if (tx.direction === "inbound") {
@@ -53,13 +53,9 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     }
     // Define fetch functions inside DataProcessing to prevent ESLint warnings
     const fetchCryptoBalance = async () => {
-      const queryCoinName =
-        coinName.toLowerCase() === "seele"
-          ? "ethereum"
-          : coinName.toLowerCase();
       try {
         const response = await fetch(
-          `http://localhost:5000/api/balance/${queryCoinName.toLowerCase()}/${address}`
+          `http://localhost:5000/api/balance/${coinName.toLowerCase()}/${address}`
         );
         const data = await response.json();
         return data.balance || 0;
