@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "../../style/ReportTable.css";
 
-const ReportTable = ({ transactions }) => {
+const DbReport = ({ transactions }) => {
   const [checkState, setCheckState] = useState("checking");
   const [expandedErrorId, setExpandedErrorId] = useState(null);
   const [errorLogs, setErrorLogs] = useState([]);
@@ -16,31 +16,43 @@ const ReportTable = ({ transactions }) => {
 
   const fetchEtherScamDB = async () => {
     try {
-      const response = await fetch("https://raw.githubusercontent.com/MrLuit/EtherScamDB/master/_data/scams.json");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+      const response = await fetch("http://localhost:5001/api/scams", { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       return data.map((scam) => scam.addresses.map((addr) => addr.toLowerCase())).flat();
     } catch (error) {
-      console.error("Failed to fetch EtherScamDB:", error);
+      console.error("Failed to fetch EtherScamDB:", error.message);
       return [];
     }
   };
 
+  const knownScamAddresses = [
+    "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
+    "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
+    "0x4e6fec28f5316c2829d41bc2187202c70ec75bc7",
+    "0xd90e2f925da726b50c4ed8d0fb90ad053324f31b",
+  ].map(addr => addr.toLowerCase());
+
   const checkCryptoScamDB = useCallback(async (wallet) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/check-scam/${wallet}`);
-      const data = await response.json();
-      return data.isScam;
+      const etherScamList = await fetchEtherScamDB();
+      const combinedScamList = [...etherScamList, ...knownScamAddresses];
+      return combinedScamList.includes(wallet.toLowerCase());
     } catch (error) {
-      console.error(`CryptoScamDB check failed for ${wallet}:`, error);
-      return false;
+      console.error(`Local scam check failed for ${wallet}:`, error);
+      return knownScamAddresses.includes(wallet.toLowerCase()); // Fallback to local list
     }
   }, []);
 
   const checkEtherscanSuspicious = useCallback(async (wallet) => {
-    // Skip the zero address and known legitimate contracts
     const knownSafeContracts = [
-      "0x253553366da8546fc250f225fe3d25d0c782303b", // ETH Registrar Controller
-      "0x0000000000000000000000000000000000000000", // Zero address
+      "0x253553366da8546fc250f225fe3d25d0c782303b",
+      "0x0000000000000000000000000000000000000000",
     ];
     if (knownSafeContracts.includes(wallet.toLowerCase())) {
       return false;
@@ -53,15 +65,11 @@ const ReportTable = ({ transactions }) => {
       const data = await response.json();
       if (data.status === "1" && data.result.length > 0) {
         const recentTxs = data.result.slice(0, 10);
-        // Check for small transactions (< 0.01 ETH)
         const smallTxCount = recentTxs.filter((tx) => parseFloat(tx.value) / 1e18 < 0.01).length;
-        // Check for zero-value transactions (common in phishing)
         const zeroValueTxCount = recentTxs.filter((tx) => parseFloat(tx.value) === 0).length;
-        // Frequency check: 10 transactions within 30 minutes
         const timestamps = recentTxs.map((tx) => parseInt(tx.timeStamp) * 1000);
         const timeSpan = (timestamps[0] - timestamps[timestamps.length - 1]) / (1000 * 60);
         const highFrequency = timestamps.length >= 10 && timeSpan < 30;
-        // Flag if either: >7 small transactions with high frequency, OR >5 zero-value transactions
         return (smallTxCount > 7 && highFrequency) || zeroValueTxCount > 5;
       }
       return false;
@@ -438,4 +446,4 @@ const ReportTable = ({ transactions }) => {
   );
 };
 
-export default ReportTable;
+export default DbReport;
