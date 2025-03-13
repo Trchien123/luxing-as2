@@ -5,10 +5,9 @@ const BinanceChart = ({ title }) => {
     const chartRef = useRef(null);
     const [chartData, setChartData] = useState(null);
     const [hoverData, setHoverData] = useState(null);
-    console.log(title)
     useEffect(() => {
         // Fetch 14-day Bitcoin price data from CoinGecko using Promises
-        fetch(`https://api.coingecko.com/api/v3/coins/${title.toLowerCase()}/market_chart?vs_currency=usd&days=14`)
+        fetch(`https://api.coingecko.com/api/v3/coins/${title.toLowerCase() === "seelecoin" ? "ethereum" : title}/market_chart?vs_currency=usd&days=14`)
             .then((response) => response.json())
             .then((data) => {
                 // Process API data into { x: timestamp, y: price } format

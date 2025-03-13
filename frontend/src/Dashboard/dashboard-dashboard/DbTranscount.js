@@ -2,12 +2,25 @@ import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 import "../../style/Transchart.css";
 
-const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop is included
-  const svgRef = useRef();
+const StatChart = ({ title, transactions, onChartRendered }) => {
+  const chartSvgRef = useRef();
+  const legendSvgRef = useRef();
   const containerRef = useRef();
   const tooltipRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 600, height: 300 });
+  const chartDataRef = useRef(null);
   const [fetchState, setFetchState] = useState("fetching");
+  const [isRendered, setIsRendered] = useState(false);
+  const [dimensions, setDimensions] = useState({
+    width: 600,
+    height: 300,
+    legendWidth: 150,
+    legendHeight: 60,
+    isNarrow: false,
+  });
+
+  const BREAKPOINT_WIDTH = 600;
+  const LEGEND_WIDTH = 150;
+  const LEGEND_HEIGHT = 60;
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -16,25 +29,26 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
 
       const screenWidth = window.innerWidth;
       const containerWidth = container.getBoundingClientRect().width;
-
       const calculatedWidth = Math.min(screenWidth, containerWidth) * 0.95;
-      const newWidth = Math.min(Math.max(300, calculatedWidth), 800);
-      const newHeight = Math.min(Math.max(200, newWidth * 0.5), 400);
+      const width = Math.min(Math.max(300, calculatedWidth), 800);
+      const height = Math.min(Math.max(200, width * 0.5), 400);
+      const isNarrow = width < BREAKPOINT_WIDTH;
 
-      setDimensions({ width: newWidth, height: newHeight });
+      // Adjust width for wide screens to account for legend
+      const adjustedWidth = isNarrow ? width : width - LEGEND_WIDTH - 20;
+
+      setDimensions({
+        width: adjustedWidth,
+        height,
+        legendWidth: LEGEND_WIDTH,
+        legendHeight: LEGEND_HEIGHT,
+        isNarrow,
+      });
     };
 
     updateDimensions();
-    const resizeObserver = new ResizeObserver(updateDimensions);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
     window.addEventListener("resize", updateDimensions);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", updateDimensions);
-    };
+    return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
   useEffect(() => {
@@ -63,26 +77,24 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
   }, []);
 
   useEffect(() => {
-    const svg = d3.select(svgRef.current);
-    const { width, height } = dimensions;
-    const margin = { top: 40, right: 85, bottom: 60, left: 50 };
+    const processData = async () => {
+      if (fetchState === "fetching" && !isRendered) {
+        const svg = d3.select(chartSvgRef.current);
+        svg
+          .append("text")
+          .attr("x", (dimensions.width + LEGEND_WIDTH / 2) / 2) // Shift right to account for legend space
+          .attr("y", dimensions.height / 2)
+          .attr("text-anchor", "middle")
+          .attr("class", "fetching-text")
+          .text("Fetching transactions...");
+      }
 
-    svg.selectAll("*").remove();
-    svg.attr("width", width).attr("height", height);
-
-    const renderChart = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 10000)); // 10s delay
+      await new Promise((resolve) => setTimeout(resolve, 10000));
 
       if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
         setFetchState("error");
-        svg
-          .append("text")
-          .attr("x", width / 2)
-          .attr("y", height / 2)
-          .attr("text-anchor", "middle")
-          .attr("class", "error-text")
-          .text("No transaction data available");
-        if (onChartRendered) onChartRendered("error"); // Call prop if defined
+        if (onChartRendered) onChartRendered("error");
+        setIsRendered(true);
         return;
       }
 
@@ -96,14 +108,8 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
 
       if (data.length === 0) {
         setFetchState("error");
-        svg
-          .append("text")
-          .attr("x", width / 2)
-          .attr("y", height / 2)
-          .attr("text-anchor", "middle")
-          .attr("class", "error-text")
-          .text("Invalid timestamp data");
-        if (onChartRendered) onChartRendered("error"); // Call prop if defined
+        if (onChartRendered) onChartRendered("error");
+        setIsRendered(true);
         return;
       }
 
@@ -116,10 +122,55 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
         .sort((a, b) => a.date - b.date)
         .slice(-12);
 
+      chartDataRef.current = summary;
       setFetchState("ready");
-      if (onChartRendered) onChartRendered("ready"); // Call prop if defined
+      if (onChartRendered) onChartRendered("ready");
+      setIsRendered(true);
+    };
 
-      // Rest of the chart rendering logic (unchanged)
+    if (!isRendered && !chartDataRef.current) {
+      processData();
+    }
+  }, [transactions, fetchState, isRendered, onChartRendered, dimensions.width, dimensions.height]);
+
+  useEffect(() => {
+    const renderChart = () => {
+      const chartSvg = d3.select(chartSvgRef.current);
+      const { width, height, isNarrow } = dimensions;
+      const margin = {
+        top: 40,
+        right: isNarrow ? 20 : 20,
+        bottom: 60,
+        left: 50,
+      };
+
+      chartSvg.selectAll("*").remove();
+      chartSvg.attr("width", width).attr("height", height);
+
+      if (fetchState === "error") {
+        chartSvg
+          .append("text")
+          .attr("x", width / 2)
+          .attr("y", height / 2)
+          .attr("text-anchor", "middle")
+          .attr("class", "error-text")
+          .text("No transaction data available");
+        return;
+      }
+
+      if (fetchState === "fetching" || !chartDataRef.current) {
+        chartSvg
+          .append("text")
+          .attr("x", (width + LEGEND_WIDTH / 0.8) / 2) // Shift right to account for legend space
+          .attr("y", height / 2)
+          .attr("text-anchor", "middle")
+          .attr("class", "fetching-text")
+          .text("Fetching transactions...");
+        return;
+      }
+
+      const summary = chartDataRef.current;
+
       const x0Scale = d3
         .scaleBand()
         .domain(summary.map((d) => d.date))
@@ -137,7 +188,7 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
         .domain([0, d3.max(summary, (d) => Math.max(d.inbound, d.outbound)) || 1])
         .range([height - margin.bottom, margin.top]);
 
-      svg
+      chartSvg
         .append("g")
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x0Scale).tickFormat(d3.timeFormat("%Y-%m-%d")))
@@ -146,7 +197,7 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
         .attr("transform", "rotate(-45)")
         .style("text-anchor", "end");
 
-      svg
+      chartSvg
         .append("g")
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(yScale).ticks(4).tickFormat(d3.format(".2s")))
@@ -177,7 +228,7 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
         tooltip.style("display", "none");
       };
 
-      const barGroups = svg
+      const barGroups = chartSvg
         .selectAll(".bar-group")
         .data(summary)
         .enter()
@@ -214,42 +265,7 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
           .on("mouseout", hideTooltip);
       });
 
-      const legend = svg
-        .append("g")
-        .attr("class", "legend")
-        .attr("transform", `translate(${width - margin.right + 10},${margin.top - 20})`);
-
-      legend
-        .append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", 10)
-        .attr("height", 10)
-        .attr("fill", "#009baa");
-
-      legend
-        .append("text")
-        .attr("x", 15)
-        .attr("y", 8)
-        .attr("class", "legend-text")
-        .text("Received");
-
-      legend
-        .append("rect")
-        .attr("x", 0)
-        .attr("y", 15)
-        .attr("width", 10)
-        .attr("height", 10)
-        .attr("fill", "#e55640");
-
-      legend
-        .append("text")
-        .attr("x", 15)
-        .attr("y", 23)
-        .attr("class", "legend-text")
-        .text("Sent");
-
-      svg
+      chartSvg
         .append("text")
         .attr("x", width / 2)
         .attr("y", margin.top / 2)
@@ -258,28 +274,66 @@ const StatChart = ({ title, transactions, onChartRendered }) => { // Ensure prop
         .text(title);
     };
 
-    if (fetchState === "fetching") {
-      svg.selectAll("*").remove();
-      svg.attr("width", width).attr("height", height);
-      svg
+    const renderLegend = () => {
+      const legendSvg = d3.select(legendSvgRef.current);
+      const { legendWidth, legendHeight } = dimensions;
+
+      legendSvg.selectAll("*").remove();
+      legendSvg.attr("width", legendWidth).attr("height", legendHeight);
+
+      const legend = legendSvg.append("g").attr("class", "legend");
+
+      legend
+        .append("rect")
+        .attr("x", 10)
+        .attr("y", 15)
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("fill", "#009baa");
+
+      legend
         .append("text")
-        .attr("x", width / 2)
-        .attr("y", height / 2)
-        .attr("text-anchor", "middle")
-        .attr("class", "fetching-text")
-        .text("Fetching transactions...");
+        .attr("x", 25)
+        .attr("y", 23)
+        .attr("class", "legend-text")
+        .text("Received");
+
+      legend
+        .append("rect")
+        .attr("x", 10)
+        .attr("y", 35)
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("fill", "#e55640");
+
+      legend
+        .append("text")
+        .attr("x", 25)
+        .attr("y", 43)
+        .attr("class", "legend-text")
+        .text("Sent");
+    };
+
+    if (chartSvgRef.current) {
+      renderChart();
     }
 
-    renderChart();
-
-    return () => {
-      svg.selectAll("*").remove();
-    };
-  }, [transactions, title, dimensions, fetchState, onChartRendered]);
+    // Only render legend after chart is loaded (fetchState is "ready" or "error")
+    if (legendSvgRef.current && fetchState !== "fetching") {
+      renderLegend();
+    }
+  }, [dimensions, fetchState, title]);
 
   return (
     <div ref={containerRef} className="stat-chart-container">
-      <svg ref={svgRef}></svg>
+      <div className={`chart-wrapper ${dimensions.isNarrow ? "narrow" : "wide"}`}>
+        <div className="chart-svg-container">
+          <svg ref={chartSvgRef}></svg>
+        </div>
+        <div className="legend-svg-container">
+          <svg ref={legendSvgRef}></svg>
+        </div>
+      </div>
     </div>
   );
 };

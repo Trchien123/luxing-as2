@@ -1,16 +1,17 @@
 .bar {
-    transition: all 1s ease;
-    opacity: 0.9;
-  }
-  
+  transition: all 1s ease;
+  opacity: 0.9;
+}
+
 .month-button {
-    transition: all 0.2s ease;
-    cursor: pointer;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
-  
+
 .month-button:hover {
-    filter: brightness(1.1);
+  filter: brightness(1.1);
 }
+
 .month-button text {
   font-size: 12px;
   cursor: pointer;
@@ -26,7 +27,7 @@
 .month-button:hover rect {
   filter: brightness(1.1);
 }
-  
+
 .tooltip {
   position: absolute;
   background: rgba(0, 0, 0, 0.8);
@@ -38,7 +39,9 @@
   pointer-events: none;
   white-space: nowrap;
 }
-.axis line, .axis path {
+
+.axis line,
+.axis path {
   stroke: white;
 }
 
@@ -47,7 +50,7 @@
 }
 
 .tooltip rect {
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .tooltip text {
@@ -61,9 +64,10 @@
   transform: translateY(-1px);
   transition: 0.5s;
 }
+
 .chart-container {
   position: relative;
-  padding: 20px;
+  padding: 0;
   border-radius: 8px;
 }
 
@@ -72,7 +76,7 @@
   background: white;
   padding: 8px 12px;
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   pointer-events: none;
   font-size: 14px;
   color: #1f2937;
@@ -87,60 +91,84 @@
   opacity: 1;
 }
 
-
-
-
 .stat-chart-container {
-  background: transparent;
-  border-radius: 8px;
-  padding: 10px;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
   box-sizing: border-box;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.chart-title {
-  font-size: 14px;
-  font-weight: bold;
-  fill: #ffffff;
+.chart-wrapper {
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
-.error-text {
-  font-size: 14px;
-  fill: #ffffff;
-}
-
+/* Make fetching text white */
 .fetching-text {
-  font-size: 20px;
-  fill: #ffffff; /* White like other text elements */
-
+  fill: white;
 }
 
+/* Legend styles */
+.legend text {
+  fill: white;
+}
+
+/* Legend in wide screens (pushed to the far right) */
+.chart-wrapper.wide {
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 20px;
+}
+
+.chart-wrapper.wide .chart-svg-container {
+  flex: 0 1 auto;
+}
+
+.chart-wrapper.wide .legend-svg-container {
+  flex: 0 0 auto;
+}
+
+/* Legend at bottom for narrow screens */
+.chart-wrapper.narrow {
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-wrapper.narrow .chart-svg-container {
+  width: 100%;
+}
+
+.chart-wrapper.narrow .legend-svg-container {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  padding: 5px 0;
+  background: transparent;
+}
+
+/* General SVG styles */
+.chart-svg-container svg,
+.legend-svg-container svg {
+  display: block;
+}
+
+/* Responsive axis labels */
 .axis text {
-  fill: #ffffff;
+  font-size: 10px;
 }
 
-.axis path,
-.axis line {
-  stroke: #ffffff;
-}
-
-.legend-text {
-  font-size: 12px;
-  fill: #ffffff;
-}
-
-.tooltip {
-  background: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  font-size: 12px;
-  color: #333;
-}
-
-.tooltip-content {
-  line-height: 1.4;
+@media (max-width: 500px) {
+  .axis text {
+    font-size: 8px;
+  }
 }
