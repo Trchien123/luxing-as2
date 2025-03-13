@@ -168,6 +168,13 @@
   justify-content: space-between;
 }
 
+.DB--items-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
 .DB--items .search-bar {
   width: 10rem;
   outline: none;
@@ -192,6 +199,8 @@
   justify-content: center;
   align-items: center;
   color: white;
+  stroke: white;
+  fill: white;
   background-color: transparent;
   outline: none;
   text-decoration: none;

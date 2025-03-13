@@ -31,8 +31,8 @@ const DashNews = () => {
 
                     // Set featured news for DN-section3 (using the first item as an example)
                     const featured = {
-                        title: result.Data[0].title,
-                        link: result.Data[0].url,
+                        title: result.Data[4].title,
+                        link: result.Data[4].url,
                     };
 
                     setNewsData(formattedNews);
@@ -114,7 +114,7 @@ const DNStickyContent = ({ data, index }) => {
             </div>
             <div className="Dn-sticky-container-content">
                 <h1>{data.title}</h1>
-                <a href={data.link} target="_blank" rel="noopener noreferrer">
+                <a href={data.link} target="_blank" rel="noopener noreferrer" className="Dn-sticky-url">
                     More Details
                 </a>
             </div>
