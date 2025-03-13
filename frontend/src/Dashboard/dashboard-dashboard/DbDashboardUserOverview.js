@@ -32,19 +32,6 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     let sentTotal = 0;
     let receivedTotal = 0;
 
-    // if (coinName.toLowerCase() === "ethereum" && coinId.toLowerCase()) {
-    //   transactions.forEach((tx) => {
-    //     if (tx.input === "0x") {
-    //       if (tx.direction === "inbound") {
-    //         receivedTotal += parseFloat(tx.value);
-    //       } else if (tx.direction === "outbound") {
-    //         sentTotal += parseFloat(tx.value);
-    //       }
-    //     }
-    //   });
-    // } else {
-
-    // }
     transactions.forEach((tx) => {
       if (
         (coinName.toLowerCase() === "ethereum" && tx.input === "0x") ||
@@ -60,9 +47,13 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     });
     // Define fetch functions inside DataProcessing to prevent ESLint warnings
     const fetchCryptoBalance = async () => {
+      const queryCoinName =
+        coinName.toLowerCase() === "seelecoin"
+          ? "ethereum"
+          : coinName.toLowerCase();
       try {
         const response = await fetch(
-          `http://localhost:5000/api/balance/${coinName.toLowerCase()}/${address}`
+          `http://localhost:5000/api/balance/${queryCoinName.toLowerCase()}/${address}`
         );
         const data = await response.json();
         return data.balance || 0;
@@ -73,9 +64,13 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     };
 
     const fetchCryptoPrice = async () => {
+      const queryCoinName =
+        coinName.toLowerCase() === "seelecoin"
+          ? "ethereum"
+          : coinName.toLowerCase();
       try {
         const response = await fetch(
-          `http://localhost:5000/api/crypto-price/${coinName.toLowerCase()}`
+          `http://localhost:5000/api/crypto-price/${queryCoinName.toLowerCase()}`
         );
         const data = await response.json();
         return data.price;
