@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "../../style/ReportTable.css";
 
-const ReportTable = ({ transactions }) => { // Removed isChartReady prop
-  const [checkState, setCheckState] = useState("checking"); // Start with "checking" instead of "waiting"
+const ReportTable = ({ transactions }) => {
+  const [checkState, setCheckState] = useState("checking");
   const [expandedErrorId, setExpandedErrorId] = useState(null);
   const [errorLogs, setErrorLogs] = useState([]);
   const [apiKeys, setApiKeys] = useState({
@@ -37,6 +37,15 @@ const ReportTable = ({ transactions }) => { // Removed isChartReady prop
   }, []);
 
   const checkEtherscanSuspicious = useCallback(async (wallet) => {
+    // Skip the zero address and known legitimate contracts
+    const knownSafeContracts = [
+      "0x253553366da8546fc250f225fe3d25d0c782303b", // ETH Registrar Controller
+      "0x0000000000000000000000000000000000000000", // Zero address
+    ];
+    if (knownSafeContracts.includes(wallet.toLowerCase())) {
+      return false;
+    }
+
     try {
       const response = await fetch(
         `https://api.etherscan.io/api?module=account&action=txlist&address=${wallet}&startblock=0&endblock=99999999&sort=desc&apikey=${apiKeys.ETHERSCAN_API_KEY}`
@@ -44,8 +53,16 @@ const ReportTable = ({ transactions }) => { // Removed isChartReady prop
       const data = await response.json();
       if (data.status === "1" && data.result.length > 0) {
         const recentTxs = data.result.slice(0, 10);
+        // Check for small transactions (< 0.01 ETH)
         const smallTxCount = recentTxs.filter((tx) => parseFloat(tx.value) / 1e18 < 0.01).length;
-        return smallTxCount > 5;
+        // Check for zero-value transactions (common in phishing)
+        const zeroValueTxCount = recentTxs.filter((tx) => parseFloat(tx.value) === 0).length;
+        // Frequency check: 10 transactions within 30 minutes
+        const timestamps = recentTxs.map((tx) => parseInt(tx.timeStamp) * 1000);
+        const timeSpan = (timestamps[0] - timestamps[timestamps.length - 1]) / (1000 * 60);
+        const highFrequency = timestamps.length >= 10 && timeSpan < 30;
+        // Flag if either: >7 small transactions with high frequency, OR >5 zero-value transactions
+        return (smallTxCount > 7 && highFrequency) || zeroValueTxCount > 5;
       }
       return false;
     } catch (error) {
@@ -153,10 +170,11 @@ const ReportTable = ({ transactions }) => { // Removed isChartReady prop
     if (!apiKeys.ETHERSCAN_API_KEY || !apiKeys.BITQUERY_API_KEY) return;
 
     const checkSuspiciousActivity = async () => {
-      // Removed artificial delay since no chart dependency
+      console.time("checkSuspiciousActivity");
       const newErrorLogs = [];
       let errorFound = false;
 
+      const walletErrors = new Map();
       console.log("Transactions received:", transactions);
 
       const scamAddresses = await fetchEtherScamDB();
@@ -169,107 +187,143 @@ const ReportTable = ({ transactions }) => { // Removed isChartReady prop
         });
         errorFound = true;
       } else {
-        for (const tx of transactions) {
+        const checkPromises = transactions.map(async (tx) => {
           const wallet = tx.from_address?.toLowerCase();
 
           if (!wallet || typeof wallet !== "string") {
-            console.log("Problematic transaction:", tx);
-            newErrorLogs.push({
+            return {
               id: tx.id || "unknown",
               message: `Error in Transaction #${tx.id || "unknown"}: Missing or invalid wallet address`,
               details: `Transaction lacks a valid from_address. Received: ${JSON.stringify(tx)}`,
-            });
-            errorFound = true;
-            continue;
+              errorType: "invalid_address",
+            };
           }
+
+          if (!walletErrors.has(wallet)) {
+            walletErrors.set(wallet, new Set());
+          }
+          const loggedErrors = walletErrors.get(wallet);
+
+          const errorsForTx = [];
 
           const usdValue = tx.usd;
           if (usdValue && usdValue > 50000) {
-            newErrorLogs.push({
-              id: tx.id || "unknown",
-              message: `Suspicious Transaction #${tx.id || "unknown"}: High USD value detected ($${usdValue})`,
-              details: `Transaction from ${wallet} has an unusually high value of $${usdValue}.`,
-            });
-            errorFound = true;
-            continue;
+            const errorType = "high_usd_value";
+            if (!loggedErrors.has(errorType)) {
+              errorsForTx.push({
+                id: tx.id || "unknown",
+                message: `Suspicious Transaction #${tx.id || "unknown"}: High USD value detected ($${usdValue})`,
+                details: `Transaction from ${wallet} has an unusually high value of $${usdValue}.`,
+                errorType,
+              });
+              loggedErrors.add(errorType);
+            }
           }
 
           if (scamAddresses.includes(wallet)) {
-            newErrorLogs.push({
-              id: tx.id || "unknown",
-              message: `Suspicious Transaction #${tx.id || "unknown"}: Known scam Ethereum address`,
-              details: `The wallet ${wallet} is listed in EtherScamDB as a known scam or phishing address.`,
-            });
-            errorFound = true;
-            continue;
+            const errorType = "etherscamdb";
+            if (!loggedErrors.has(errorType)) {
+              errorsForTx.push({
+                id: tx.id || "unknown",
+                message: `Suspicious Transaction #${tx.id || "unknown"}: Known scam Ethereum address`,
+                details: `The wallet ${wallet} is listed in EtherScamDB as a known scam or phishing address.`,
+                errorType,
+              });
+              loggedErrors.add(errorType);
+            }
           }
 
           if (await checkCryptoScamDB(wallet)) {
-            newErrorLogs.push({
-              id: tx.id || "unknown",
-              message: `Suspicious Transaction #${tx.id || "unknown"}: Community-reported scam`,
-              details: `The wallet ${wallet} is flagged as suspicious by CryptoScamDB community reports.`,
-            });
-            errorFound = true;
-            continue;
+            const errorType = "cryptoscamdb";
+            if (!loggedErrors.has(errorType)) {
+              errorsForTx.push({
+                id: tx.id || "unknown",
+                message: `Suspicious Transaction #${tx.id || "unknown"}: Community-reported scam`,
+                details: `The wallet ${wallet} is flagged as suspicious by CryptoScamDB community reports.`,
+                errorType,
+              });
+              loggedErrors.add(errorType);
+            }
           }
 
           if (await checkEtherscanSuspicious(wallet)) {
-            newErrorLogs.push({
-              id: tx.id || "unknown",
-              message: `Suspicious Transaction #${tx.id || "unknown"}: Flagged by Etherscan`,
-              details: `The wallet ${wallet} shows suspicious activity patterns on Etherscan.`,
-            });
-            errorFound = true;
-            continue;
+            const errorType = "etherscan_suspicious";
+            if (!loggedErrors.has(errorType)) {
+              errorsForTx.push({
+                id: tx.id || "unknown",
+                message: `Suspicious Transaction #${tx.id || "unknown"}: Flagged by Etherscan`,
+                details: `The wallet ${wallet} shows suspicious activity patterns on Etherscan.`,
+                errorType,
+              });
+              loggedErrors.add(errorType);
+            }
           }
 
           if (tx.tokenAmount?.includes("BTC")) {
             if (!isBitcoinAddress(wallet)) {
-              newErrorLogs.push({
-                id: tx.id || "unknown",
-                message: `Error in Transaction #${tx.id || "unknown"}: Invalid Bitcoin address format`,
-                details: `The wallet address ${wallet} does not match the expected Bitcoin address format.`,
-              });
-              errorFound = true;
-              continue;
-            }
-
-            try {
-              const response = await fetch(`https://blockchain.info/rawaddr/${wallet}`, { mode: "cors" });
-              if (!response.ok) {
-                newErrorLogs.push({
+              const errorType = "invalid_btc_address";
+              if (!loggedErrors.has(errorType)) {
+                errorsForTx.push({
                   id: tx.id || "unknown",
-                  message: `Error in Transaction #${tx.id || "unknown"}: Invalid Bitcoin address`,
-                  details: `The wallet address ${wallet} returned an error: ${response.status} - ${response.statusText}`,
+                  message: `Error in Transaction #${tx.id || "unknown"}: Invalid Bitcoin address format`,
+                  details: `The wallet address ${wallet} does not match the expected Bitcoin address format.`,
+                  errorType,
                 });
-                errorFound = true;
-              } else {
-                const data = await response.json();
-                if (data.total_received === 0 && data.total_sent === 0) {
-                  newErrorLogs.push({
-                    id: tx.id || "unknown",
-                    message: `Warning in Transaction #${tx.id || "unknown"}: Inactive Bitcoin address`,
-                    details: `The Bitcoin address ${wallet} has no recorded transactions.`,
-                  });
-                  errorFound = true;
+                loggedErrors.add(errorType);
+              }
+            } else {
+              try {
+                const response = await fetch(`https://blockchain.info/rawaddr/${wallet}`, { mode: "cors" });
+                if (!response.ok) {
+                  const errorType = "invalid_btc_api";
+                  if (!loggedErrors.has(errorType)) {
+                    errorsForTx.push({
+                      id: tx.id || "unknown",
+                      message: `Error in Transaction #${tx.id || "unknown"}: Invalid Bitcoin address`,
+                      details: `The wallet address ${wallet} returned an error: ${response.status} - ${response.statusText}`,
+                      errorType,
+                    });
+                    loggedErrors.add(errorType);
+                  }
+                } else {
+                  const data = await response.json();
+                  if (data.total_received === 0 && data.total_sent === 0) {
+                    const errorType = "inactive_btc_address";
+                    if (!loggedErrors.has(errorType)) {
+                      errorsForTx.push({
+                        id: tx.id || "unknown",
+                        message: `Warning in Transaction #${tx.id || "unknown"}: Inactive Bitcoin address`,
+                        details: `The Bitcoin address ${wallet} has no recorded transactions.`,
+                        errorType,
+                      });
+                      loggedErrors.add(errorType);
+                    }
+                  }
+                  if (await checkSuspiciousBtc(wallet)) {
+                    const errorType = "suspicious_btc_activity";
+                    if (!loggedErrors.has(errorType)) {
+                      errorsForTx.push({
+                        id: tx.id || "unknown",
+                        message: `Suspicious Transaction #${tx.id || "unknown"}: Unusual Bitcoin activity`,
+                        details: `The wallet ${wallet} shows high Bitcoin transfer volume in the last 30 days.`,
+                        errorType,
+                      });
+                      loggedErrors.add(errorType);
+                    }
+                  }
                 }
-                if (await checkSuspiciousBtc(wallet)) {
-                  newErrorLogs.push({
+              } catch (error) {
+                const errorType = "btc_api_failure";
+                if (!loggedErrors.has(errorType)) {
+                  errorsForTx.push({
                     id: tx.id || "unknown",
-                    message: `Suspicious Transaction #${tx.id || "unknown"}: Unusual Bitcoin activity`,
-                    details: `The wallet ${wallet} shows high Bitcoin transfer volume in the last 30 days.`,
+                    message: `Error in Transaction #${tx.id || "unknown"}: Bitcoin API failure`,
+                    details: `Failed to verify Bitcoin address ${wallet}: ${error.message}`,
+                    errorType,
                   });
-                  errorFound = true;
+                  loggedErrors.add(errorType);
                 }
               }
-            } catch (error) {
-              newErrorLogs.push({
-                id: tx.id || "unknown",
-                message: `Error in Transaction #${tx.id || "unknown"}: Bitcoin API failure`,
-                details: `Failed to verify Bitcoin address ${wallet}: ${error.message}`,
-              });
-              errorFound = true;
             }
           }
 
@@ -280,32 +334,58 @@ const ReportTable = ({ transactions }) => { // Removed isChartReady prop
               );
               const data = await response.json();
               if (data.status !== "1") {
-                newErrorLogs.push({
-                  id: tx.id || "unknown",
-                  message: `Error in Transaction #${tx.id || "unknown"}: Invalid Ethereum address`,
-                  details: `The wallet address ${wallet} is not valid: ${data.message}`,
-                });
-                errorFound = true;
+                const errorType = "invalid_eth_address";
+                if (!loggedErrors.has(errorType)) {
+                  errorsForTx.push({
+                    id: tx.id || "unknown",
+                    message: `Error in Transaction #${tx.id || "unknown"}: Invalid Ethereum address`,
+                    details: `The wallet address ${wallet} is not valid: ${data.message}`,
+                    errorType,
+                  });
+                  loggedErrors.add(errorType);
+                }
               } else if (await checkSuspiciousEth(wallet)) {
-                newErrorLogs.push({
-                  id: tx.id || "unknown",
-                  message: `Suspicious Transaction #${tx.id || "unknown"}: Unusual Ethereum activity`,
-                  details: `The wallet ${wallet} shows high Ethereum transfer volume in the last 30 days.`,
-                });
-                errorFound = true;
+                const errorType = "suspicious_eth_activity";
+                if (!loggedErrors.has(errorType)) {
+                  errorsForTx.push({
+                    id: tx.id || "unknown",
+                    message: `Suspicious Transaction #${tx.id || "unknown"}: Unusual Ethereum activity`,
+                    details: `The wallet ${wallet} shows high Ethereum transfer volume in the last 30 days.`,
+                    errorType,
+                  });
+                  loggedErrors.add(errorType);
+                }
               }
             } catch (error) {
-              newErrorLogs.push({
-                id: tx.id || "unknown",
-                message: `Error in Transaction #${tx.id || "unknown"}: Ethereum API failure`,
-                details: `Failed to verify Ethereum address ${wallet}: ${error.message}`,
-              });
-              errorFound = true;
+              const errorType = "eth_api_failure";
+              if (!loggedErrors.has(errorType)) {
+                errorsForTx.push({
+                  id: tx.id || "unknown",
+                  message: `Error in Transaction #${tx.id || "unknown"}: Ethereum API failure`,
+                  details: `Failed to verify Ethereum address ${wallet}: ${error.message}`,
+                  errorType,
+                });
+                loggedErrors.add(errorType);
+              }
             }
           }
-        }
+
+          return { txId: tx.id || "unknown", errors: errorsForTx };
+        });
+
+        const results = await Promise.all(checkPromises);
+
+        results.forEach(({ txId, errors }) => {
+          errors.forEach((error) => {
+            if (!newErrorLogs.some((log) => log.id === error.id && log.message === error.message)) {
+              newErrorLogs.push(error);
+              errorFound = true;
+            }
+          });
+        });
       }
 
+      console.timeEnd("checkSuspiciousActivity");
       setErrorLogs(newErrorLogs);
       setCheckState(errorFound ? "error" : "verified");
     };
@@ -318,7 +398,7 @@ const ReportTable = ({ transactions }) => { // Removed isChartReady prop
     checkSuspiciousBtc,
     checkSuspiciousEth,
     checkCryptoScamDB,
-  ]); // Removed isChartReady from dependencies
+  ]);
 
   const toggleSeeMore = (id) => {
     setExpandedErrorId((prevId) => (prevId === id ? null : id));

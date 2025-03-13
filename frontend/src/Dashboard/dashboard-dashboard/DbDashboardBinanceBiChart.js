@@ -5,22 +5,24 @@ const BinanceChart = ({ title }) => {
     const chartRef = useRef(null);
     const [chartData, setChartData] = useState(null);
     const [hoverData, setHoverData] = useState(null);
+
     useEffect(() => {
-        // Fetch 14-day Bitcoin price data from CoinGecko using Promises
-        fetch(`https://api.coingecko.com/api/v3/coins/${title.toLowerCase() === "seelecoin" ? "ethereum" : title}/market_chart?vs_currency=usd&days=14`)
+        // Fetch 14-day price data from Coinpaprika
+        const coinId = title.toLowerCase() === "seelecoin" ? "eth-ethereum" : "btc-bitcoin"; // Adjust coin ID based on title
+        fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}/historical?start=${new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}&interval=1d`)
             .then((response) => response.json())
             .then((data) => {
                 // Process API data into { x: timestamp, y: price } format
-                const dataPoints = data.prices.map((entry) => ({
-                    x: new Date(entry[0]), // Convert timestamp (ms) to Date object
-                    y: entry[1],           // Price in USD
+                const dataPoints = data.map((entry) => ({
+                    x: new Date(entry.timestamp), // Convert ISO timestamp to Date object
+                    y: entry.price,               // Price in USD
                 }));
                 setChartData(dataPoints); // Store in state
             })
             .catch((error) => {
-                console.error("Error fetching CoinGecko data:", error);
+                console.error("Error fetching Coinpaprika data:", error);
             });
-    }, []); // Fetch once on mount
+    }, [title]); // Fetch when title changes
 
     useEffect(() => {
         if (!chartData) return; // Wait for data to load
@@ -32,14 +34,11 @@ const BinanceChart = ({ title }) => {
             const innerWidth = width - margin.left - margin.right;
             const innerHeight = height - margin.top - margin.bottom;
 
-            // Calculate number of hover points based on width (e.g., 1 point per 50px)
-            const pointsPerWidth = 50; // Lowered to increase density
-            const numHoverPoints = Math.max(5, Math.floor(innerWidth / pointsPerWidth)); // Minimum of 5 points
+            const pointsPerWidth = 50;
+            const numHoverPoints = Math.max(5, Math.floor(innerWidth / pointsPerWidth));
 
-            // Clear previous SVG
             d3.select(chartRef.current).select("svg").remove();
 
-            // Create SVG
             const svg = d3.select(chartRef.current)
                 .append("svg")
                 .attr("width", width)
@@ -47,7 +46,6 @@ const BinanceChart = ({ title }) => {
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
-            // Create scales
             const xScale = d3.scaleTime()
                 .domain(d3.extent(chartData, (d) => d.x))
                 .range([0, innerWidth]);
@@ -57,13 +55,11 @@ const BinanceChart = ({ title }) => {
                 .nice()
                 .range([innerHeight, 0]);
 
-            // Create line generator
             const line = d3.line()
                 .x((d) => xScale(d.x))
                 .y((d) => yScale(d.y))
                 .curve(d3.curveMonotoneX);
 
-            // Add the X Axis
             const xDomain = xScale.domain();
             const xTicks = [
                 xDomain[0],
@@ -83,7 +79,6 @@ const BinanceChart = ({ title }) => {
                 .attr("y", 15)
                 .style("text-anchor", "middle");
 
-            // Add the Y Axis
             const yDomain = yScale.domain();
             svg.append("g")
                 .call(
@@ -96,7 +91,6 @@ const BinanceChart = ({ title }) => {
                 .attr("x", -10)
                 .style("text-anchor", "end");
 
-            // Add the line path
             svg.append("path")
                 .datum(chartData)
                 .attr("fill", "none")
@@ -104,14 +98,10 @@ const BinanceChart = ({ title }) => {
                 .attr("stroke-width", 2)
                 .attr("d", line);
 
-            // Create dynamically spaced hover points based on width
             const hoverPointsData = getEvenlySpacedPoints(chartData, numHoverPoints);
 
-            // Create a group for hover elements
-            const hoverGroup = svg.append("g")
-                .attr("class", "hover-elements");
+            const hoverGroup = svg.append("g").attr("class", "hover-elements");
 
-            // Add hover points (visible circles)
             hoverGroup.selectAll(".hover-point")
                 .data(hoverPointsData)
                 .enter()
@@ -123,12 +113,9 @@ const BinanceChart = ({ title }) => {
                 .attr("fill", "#00C2FF")
                 .attr("stroke", "white")
                 .attr("stroke-width", 2)
-                .attr("opacity", 0) // Initially hidden
+                .attr("opacity", 0)
                 .on("mouseover", function (event, d) {
-                    d3.select(this)
-                        .attr("opacity", 1)
-                        .attr("r", 8);
-
+                    d3.select(this).attr("opacity", 1).attr("r", 8);
                     setHoverData({
                         date: d.x.toLocaleDateString(),
                         price: d.y.toLocaleString("en-US", {
@@ -142,14 +129,11 @@ const BinanceChart = ({ title }) => {
                     });
                 })
                 .on("mouseout", function () {
-                    d3.select(this)
-                        .attr("opacity", 0)
-                        .attr("r", 6);
+                    d3.select(this).attr("opacity", 0).attr("r", 6);
                     setHoverData(null);
                 });
 
-            // Add smaller hover areas around each point (invisible circles)
-            const hoverRadius = 20; // Adjust this value to control hover sensitivity
+            const hoverRadius = 20;
             hoverGroup.selectAll(".hover-area")
                 .data(hoverPointsData)
                 .enter()
@@ -157,7 +141,7 @@ const BinanceChart = ({ title }) => {
                 .attr("class", "hover-area")
                 .attr("cx", (d) => xScale(d.x))
                 .attr("cy", (d) => yScale(d.y))
-                .attr("r", hoverRadius) // Smaller hover area
+                .attr("r", hoverRadius)
                 .attr("fill", "transparent")
                 .on("mouseover", function (event, d) {
                     const index = hoverPointsData.indexOf(d);
@@ -173,16 +157,13 @@ const BinanceChart = ({ title }) => {
                 });
         };
 
-        // Helper function to get evenly spaced points from the dataset
         const getEvenlySpacedPoints = (data, count) => {
             const result = [];
             const step = Math.floor((data.length - 1) / (count - 1));
-
             for (let i = 0; i < count - 1; i++) {
                 result.push(data[i * step]);
             }
             result.push(data[data.length - 1]);
-
             return result;
         };
 
@@ -192,7 +173,7 @@ const BinanceChart = ({ title }) => {
         return () => {
             window.removeEventListener("resize", updateChart);
         };
-    }, [chartData]); // Re-run when chartData changes
+    }, [chartData]);
 
     return (
         <div
@@ -201,10 +182,9 @@ const BinanceChart = ({ title }) => {
             className="Bo-chart"
             style={{
                 position: "relative",
-                minHeight: "300px", // Add a minimum height
+                minHeight: "300px",
             }}
         >
-            {/* Tooltip */}
             {hoverData && (
                 <div
                     style={{
