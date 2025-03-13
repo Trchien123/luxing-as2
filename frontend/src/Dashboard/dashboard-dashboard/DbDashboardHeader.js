@@ -7,11 +7,12 @@ const DbHeader = ({ scrolled, setShowBar, showBar, crypto }) => {
     const [showNoti, setShowNoti] = useState(false)
 
     const [input, setInput] = useState("")
-
+    console.log(crypto)
     const handleValidation = () => {
+        console.log(crypto.id === "BTC")
         const { isValid, error: validationError } = validateInput(input, crypto.id);
 
-        if (validationError) {
+        if (!isValid) {
             alert(validationError)
         }
         return isValid;

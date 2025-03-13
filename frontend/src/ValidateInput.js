@@ -24,6 +24,7 @@ export const isValidSeeleAddress = (address) =>
     seeleAddressList.includes(address.toLowerCase());
 
 export const isValidBitcoinAddress = (address) =>
+
     /^(1|3|bc1)[a-zA-HJ-NP-Z0-9]{25,39}$/.test(address);
 
 // Main validation function
@@ -49,6 +50,7 @@ export const validateInput = (input, id) => {
     }
 
     if (id === "BTC" && !isValidBitcoinAddress(input)) {
+
         return {
             isValid: false,
             error: "❌ Invalid Bitcoin Address! Please enter a valid one.",
