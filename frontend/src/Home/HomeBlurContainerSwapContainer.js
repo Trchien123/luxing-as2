@@ -36,12 +36,13 @@ const SwapContainer = ({ handleOnClick, id, image, name }) => {
       return false;
     }
 
-    if (
-      (id === "ETH" && !isValidEthereumAddress(input)) ||
-      (id === "ETH" && !isValidSeeleAddress(input))
-    ) {
-      setError("❌ Invalid Ethereum Address! Please enter a valid one.");
-      return false;
+    if (id === "ETH") {
+      if (!isValidEthereumAddress(input) && !isValidSeeleAddress(input)) {
+        setError(
+          "❌ Invalid Ethereum or Seele Address! Please enter a valid one."
+        );
+        return false;
+      }
     }
     if (id === "SEL" && !isValidSeeleAddress(input)) {
       setError("❌ Invalid Seele Address! Please enter a valid one.");
