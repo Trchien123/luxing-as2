@@ -8,9 +8,9 @@ const SwapContainer = ({ handleOnClick, id, image, name }) => {
   const [error, setError] = useState(""); // Store error message
 
   const handleValidation = () => {
-    const { isValid, error: validationError } = validateInput(input, crypto.id);
+    const { isValid, error: validationError } = validateInput(input, id);
 
-    setError(validationError)
+    setError(validationError);
     return isValid;
   };
   return (

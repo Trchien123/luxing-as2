@@ -32,25 +32,32 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     let sentTotal = 0;
     let receivedTotal = 0;
 
-    if (coinName.toLowerCase() === "ethereum") {
-      transactions.forEach((tx) => {
-        if (tx.input === "0x") {
-          if (tx.direction === "inbound") {
-            receivedTotal += parseFloat(tx.value);
-          } else if (tx.direction === "outbound") {
-            sentTotal += parseFloat(tx.value);
-          }
-        }
-      });
-    } else {
-      transactions.forEach((tx) => {
+    // if (coinName.toLowerCase() === "ethereum" && coinId.toLowerCase()) {
+    //   transactions.forEach((tx) => {
+    //     if (tx.input === "0x") {
+    //       if (tx.direction === "inbound") {
+    //         receivedTotal += parseFloat(tx.value);
+    //       } else if (tx.direction === "outbound") {
+    //         sentTotal += parseFloat(tx.value);
+    //       }
+    //     }
+    //   });
+    // } else {
+
+    // }
+    transactions.forEach((tx) => {
+      if (
+        (coinName.toLowerCase() === "ethereum" && tx.input === "0x") ||
+        coinName.toLowerCase() === "seelecoin" ||
+        coinName.toLowerCase() === "bitcoin" // Bitcoin không có input như Ethereum
+      ) {
         if (tx.direction === "inbound") {
           receivedTotal += parseFloat(tx.value);
         } else if (tx.direction === "outbound") {
           sentTotal += parseFloat(tx.value);
         }
-      });
-    }
+      }
+    });
     // Define fetch functions inside DataProcessing to prevent ESLint warnings
     const fetchCryptoBalance = async () => {
       try {
@@ -66,13 +73,9 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
     };
 
     const fetchCryptoPrice = async () => {
-      const queryCoinName =
-        coinName.toLowerCase() === "seele"
-          ? "ethereum"
-          : coinName.toLowerCase();
       try {
         const response = await fetch(
-          `http://localhost:5000/api/crypto-price/${queryCoinName.toLowerCase()}`
+          `http://localhost:5000/api/crypto-price/${coinName.toLowerCase()}`
         );
         const data = await response.json();
         return data.price;
