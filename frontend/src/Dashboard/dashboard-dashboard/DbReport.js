@@ -14,24 +14,32 @@ const DbReport = ({ transactions }) => {
     return /^(1|3|bc1)[A-Za-z0-9]{25,34}$/.test(address) || /^bc1[A-Za-z0-9]{39,59}$/.test(address);
   };
 
-  const fetchEtherScamDB = async () => {
-    try {
-      const response = await fetch("/scams.json");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.map((scam) => scam.addresses.map((addr) => addr.toLowerCase())).flat();
-    } catch (error) {
-      console.error("Failed to fetch local EtherScamDB:", error.message);
-      // Fallback to hardcoded known scam addresses
-      return [
-        "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
-        "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
-        "0x4e6fec28f5316c2829d41bc2187202c70ec75bc7",
-        "0xd90e2f925da726b50c4ed8d0fb90ad053324f31b",
-      ].map(addr => addr.toLowerCase());
-    }
+  const fetchEtherScamDB = () => {
+    return fetch("/scams.json")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data)) {
+          throw new Error("scams.json does not contain a valid array");
+        }
+        return data
+          .filter(scam => Array.isArray(scam.addresses))
+          .map(scam => scam.addresses.map(addr => addr.toLowerCase()))
+          .flat();
+      })
+      .catch(error => {
+        console.error("Failed to load local EtherScamDB:", error.message);
+        return [
+          "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
+          "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
+          "0x4e6fec28f5316c2829d41bc2187202c70ec75bc7",
+          "0xd90e2f925da726b50c4ed8d0fb90ad053324f31b",
+        ].map(addr => addr.toLowerCase());
+      });
   };
 
   const checkCryptoScamDB = useCallback(async (wallet) => {
@@ -40,7 +48,7 @@ const DbReport = ({ transactions }) => {
       return etherScamList.includes(wallet.toLowerCase());
     } catch (error) {
       console.error(`Local scam check failed for ${wallet}:`, error);
-      return false; // Fallback to no detection if fetch fails
+      return false;
     }
   }, []);
 
@@ -190,13 +198,13 @@ const DbReport = ({ transactions }) => {
         });
         errorFound = true;
       } else {
-        const checkPromises = transactions.map(async (tx) => {
+        const checkPromises = transactions.map(async (tx, index) => {
           const wallet = tx.from_address?.toLowerCase();
 
           if (!wallet || typeof wallet !== "string") {
             return {
-              id: tx.id || "unknown",
-              message: `Error in Transaction #${tx.id || "unknown"}: Missing or invalid wallet address`,
+              id: tx.id || `unknown-${index}`,
+              message: `Error in Transaction #${tx.id || `unknown-${index}`}: Missing or invalid wallet address`,
               details: `Transaction lacks a valid from_address. Received: ${JSON.stringify(tx)}`,
               errorType: "invalid_address",
             };
@@ -214,8 +222,8 @@ const DbReport = ({ transactions }) => {
             const errorType = "high_usd_value";
             if (!loggedErrors.has(errorType)) {
               errorsForTx.push({
-                id: tx.id || "unknown",
-                message: `Suspicious Transaction #${tx.id || "unknown"}: High USD value detected ($${usdValue})`,
+                id: tx.id || `unknown-${index}`,
+                message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: High USD value detected ($${usdValue})`,
                 details: `Transaction from ${wallet} has an unusually high value of $${usdValue}.`,
                 errorType,
               });
@@ -227,8 +235,8 @@ const DbReport = ({ transactions }) => {
             const errorType = "etherscamdb";
             if (!loggedErrors.has(errorType)) {
               errorsForTx.push({
-                id: tx.id || "unknown",
-                message: `Suspicious Transaction #${tx.id || "unknown"}: Known scam Ethereum address`,
+                id: tx.id || `unknown-${index}`,
+                message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Known scam Ethereum address`,
                 details: `The wallet ${wallet} is listed in EtherScamDB as a known scam or phishing address.`,
                 errorType,
               });
@@ -240,8 +248,8 @@ const DbReport = ({ transactions }) => {
             const errorType = "cryptoscamdb";
             if (!loggedErrors.has(errorType)) {
               errorsForTx.push({
-                id: tx.id || "unknown",
-                message: `Suspicious Transaction #${tx.id || "unknown"}: Community-reported scam`,
+                id: tx.id || `unknown-${index}`,
+                message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Community-reported scam`,
                 details: `The wallet ${wallet} is flagged as suspicious by CryptoScamDB community reports.`,
                 errorType,
               });
@@ -253,8 +261,8 @@ const DbReport = ({ transactions }) => {
             const errorType = "etherscan_suspicious";
             if (!loggedErrors.has(errorType)) {
               errorsForTx.push({
-                id: tx.id || "unknown",
-                message: `Suspicious Transaction #${tx.id || "unknown"}: Flagged by Etherscan`,
+                id: tx.id || `unknown-${index}`,
+                message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Flagged by Etherscan`,
                 details: `The wallet ${wallet} shows suspicious activity patterns on Etherscan.`,
                 errorType,
               });
@@ -267,8 +275,8 @@ const DbReport = ({ transactions }) => {
               const errorType = "invalid_btc_address";
               if (!loggedErrors.has(errorType)) {
                 errorsForTx.push({
-                  id: tx.id || "unknown",
-                  message: `Error in Transaction #${tx.id || "unknown"}: Invalid Bitcoin address format`,
+                  id: tx.id || `unknown-${index}`,
+                  message: `Error in Transaction #${tx.id || `unknown-${index}`}: Invalid Bitcoin address format`,
                   details: `The wallet address ${wallet} does not match the expected Bitcoin address format.`,
                   errorType,
                 });
@@ -281,8 +289,8 @@ const DbReport = ({ transactions }) => {
                   const errorType = "invalid_btc_api";
                   if (!loggedErrors.has(errorType)) {
                     errorsForTx.push({
-                      id: tx.id || "unknown",
-                      message: `Error in Transaction #${tx.id || "unknown"}: Invalid Bitcoin address`,
+                      id: tx.id || `unknown-${index}`,
+                      message: `Error in Transaction #${tx.id || `unknown-${index}`}: Invalid Bitcoin address`,
                       details: `The wallet address ${wallet} returned an error: ${response.status} - ${response.statusText}`,
                       errorType,
                     });
@@ -294,8 +302,8 @@ const DbReport = ({ transactions }) => {
                     const errorType = "inactive_btc_address";
                     if (!loggedErrors.has(errorType)) {
                       errorsForTx.push({
-                        id: tx.id || "unknown",
-                        message: `Warning in Transaction #${tx.id || "unknown"}: Inactive Bitcoin address`,
+                        id: tx.id || `unknown-${index}`,
+                        message: `Warning in Transaction #${tx.id || `unknown-${index}`}: Inactive Bitcoin address`,
                         details: `The Bitcoin address ${wallet} has no recorded transactions.`,
                         errorType,
                       });
@@ -306,8 +314,8 @@ const DbReport = ({ transactions }) => {
                     const errorType = "suspicious_btc_activity";
                     if (!loggedErrors.has(errorType)) {
                       errorsForTx.push({
-                        id: tx.id || "unknown",
-                        message: `Suspicious Transaction #${tx.id || "unknown"}: Unusual Bitcoin activity`,
+                        id: tx.id || `unknown-${index}`,
+                        message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Unusual Bitcoin activity`,
                         details: `The wallet ${wallet} shows high Bitcoin transfer volume in the last 30 days.`,
                         errorType,
                       });
@@ -319,8 +327,8 @@ const DbReport = ({ transactions }) => {
                 const errorType = "btc_api_failure";
                 if (!loggedErrors.has(errorType)) {
                   errorsForTx.push({
-                    id: tx.id || "unknown",
-                    message: `Error in Transaction #${tx.id || "unknown"}: Bitcoin API failure`,
+                    id: tx.id || `unknown-${index}`,
+                    message: `Error in Transaction #${tx.id || `unknown-${index}`}: Bitcoin API failure`,
                     details: `Failed to verify Bitcoin address ${wallet}: ${error.message}`,
                     errorType,
                   });
@@ -340,8 +348,8 @@ const DbReport = ({ transactions }) => {
                 const errorType = "invalid_eth_address";
                 if (!loggedErrors.has(errorType)) {
                   errorsForTx.push({
-                    id: tx.id || "unknown",
-                    message: `Error in Transaction #${tx.id || "unknown"}: Invalid Ethereum address`,
+                    id: tx.id || `unknown-${index}`,
+                    message: `Error in Transaction #${tx.id || `unknown-${index}`}: Invalid Ethereum address`,
                     details: `The wallet address ${wallet} is not valid: ${data.message}`,
                     errorType,
                   });
@@ -351,8 +359,8 @@ const DbReport = ({ transactions }) => {
                 const errorType = "suspicious_eth_activity";
                 if (!loggedErrors.has(errorType)) {
                   errorsForTx.push({
-                    id: tx.id || "unknown",
-                    message: `Suspicious Transaction #${tx.id || "unknown"}: Unusual Ethereum activity`,
+                    id: tx.id || `unknown-${index}`,
+                    message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Unusual Ethereum activity`,
                     details: `The wallet ${wallet} shows high Ethereum transfer volume in the last 30 days.`,
                     errorType,
                   });
@@ -363,8 +371,8 @@ const DbReport = ({ transactions }) => {
               const errorType = "eth_api_failure";
               if (!loggedErrors.has(errorType)) {
                 errorsForTx.push({
-                  id: tx.id || "unknown",
-                  message: `Error in Transaction #${tx.id || "unknown"}: Ethereum API failure`,
+                  id: tx.id || `unknown-${index}`,
+                  message: `Error in Transaction #${tx.id || `unknown-${index}`}: Ethereum API failure`,
                   details: `Failed to verify Ethereum address ${wallet}: ${error.message}`,
                   errorType,
                 });
@@ -373,7 +381,7 @@ const DbReport = ({ transactions }) => {
             }
           }
 
-          return { txId: tx.id || "unknown", errors: errorsForTx };
+          return { txId: tx.id || `unknown-${index}`, errors: errorsForTx };
         });
 
         const results = await Promise.all(checkPromises);
