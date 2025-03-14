@@ -58,7 +58,7 @@ const DbHome = () => {
           <StatChart title={"Activity"} transactions={transactions} />
         </div>
         <div className="Db-main-2-items Db-main-2-items-5">
-          <ReportDis title={"Report"} transactions={transactions} />
+          <ReportDis title={"Report"} address={crypto.address} />
         </div>
       </section>
       <section className="DB-main-container-2">
