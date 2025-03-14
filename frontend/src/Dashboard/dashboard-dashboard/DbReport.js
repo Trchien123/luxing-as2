@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios"; // Import axios
 import "../../style/ReportTable.css";
 
 const DbReport = ({ transactions }) => {
@@ -15,7 +16,7 @@ const DbReport = ({ transactions }) => {
 
   // Hardcoded suspicious accounts
   const SUSPICIOUS_ACCOUNTS = [
-    "0x7db57c738b27c5f9b898248385306d30053f54fd", // Lowercase for consistency
+    "0x7db57c738b27c5f9b898248385306d30053f54fd",
     "0x6598a3f7c9583f4aa830e26589d41c05f7008b28",
   ];
 
@@ -23,32 +24,26 @@ const DbReport = ({ transactions }) => {
     return /^(1|3|bc1)[A-Za-z0-9]{25,34}$/.test(address) || /^bc1[A-Za-z0-9]{39,59}$/.test(address);
   };
 
-  const fetchEtherScamDB = () => {
-    return fetch("/scams.json")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data)) {
-          throw new Error("scams.json does not contain a valid array");
-        }
-        return data
-          .filter((scam) => Array.isArray(scam.addresses))
-          .map((scam) => scam.addresses.map((addr) => addr.toLowerCase()))
-          .flat();
-      })
-      .catch((error) => {
-        console.error("Failed to load local EtherScamDB:", error.message);
-        return [
-          "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
-          "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
-          "0x4e6fec28f5316c2829d41bc2187202c70ec75bc7",
-          "0xd90e2f925da726b50c4ed8d0fb90ad053324f31b",
-        ].map((addr) => addr.toLowerCase());
-      });
+  const fetchEtherScamDB = async () => {
+    try {
+      const response = await axios.get("/scams.json");
+      const data = response.data;
+      if (!Array.isArray(data)) {
+        throw new Error("scams.json does not contain a valid array");
+      }
+      return data
+        .filter((scam) => Array.isArray(scam.addresses))
+        .map((scam) => scam.addresses.map((addr) => addr.toLowerCase()))
+        .flat();
+    } catch (error) {
+      console.error("Failed to load local EtherScamDB:", error.message);
+      return [
+        "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
+        "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
+        "0x4e6fec28f5316c2829d41bc2187202c70ec75bc7",
+        "0xd90e2f925da726b50c4ed8d0fb90ad053324f31b",
+      ].map((addr) => addr.toLowerCase());
+    }
   };
 
   const checkCryptoScamDB = useCallback(async (wallet) => {
@@ -64,20 +59,16 @@ const DbReport = ({ transactions }) => {
   const checkChainalysis = useCallback(async (wallet) => {
     try {
       console.log(`Fetching Chainalysis for ${wallet} with key: ${apiKeys.CHAINALYSIS_API_KEY.slice(0, 4)}...`);
-      const response = await fetch(`https://api.chainalysis.com/api/kyt/v1/addresses/${wallet}`, {
-        method: "GET",
-        headers: {
-          "Token": apiKeys.CHAINALYSIS_API_KEY,
-          "Accept": "application/json",
-        },
-        params:{
-          address: wallet
-        }
+      const response = await axios.get(`http://localhost:5000/api/chainalysis/${wallet}`, {
+        // headers: {
+        //   "Token": apiKeys.CHAINALYSIS_API_KEY,
+        //   "Accept": "application/json",
+        // },
+        // params: {
+        //   address: wallet
+        // }
       });
-      if (!response.ok) {
-        throw new Error(`Chainalysis API error! status: ${response.status}, statusText: ${response.statusText}`);
-      }
-      const data = await response.json();
+      const data = response.data;
       console.log(`Chainalysis response for ${wallet}:`, data);
       const isSuspicious = data?.riskScore > 50 || data?.isFlagged || false;
       console.log(`Chainalysis result for ${wallet}: riskScore=${data?.riskScore}, isFlagged=${data?.isFlagged}, suspicious=${isSuspicious}`);
@@ -108,15 +99,13 @@ const DbReport = ({ transactions }) => {
       `,
       };
       try {
-        const response = await fetch("https://graphql.bitquery.io/", {
-          method: "POST",
+        const response = await axios.post("https://graphql.bitquery.io/", query, {
           headers: {
             "Content-Type": "application/json",
             "X-API-KEY": apiKeys.BITQUERY_API_KEY,
           },
-          body: JSON.stringify(query),
         });
-        const { data } = await response.json();
+        const { data } = response.data;
         const transfers = data?.bitcoin?.outbound || [];
         const recentTransfers = transfers.filter((t) => {
           const txTime = new Date(t.block.timestamp.time);
@@ -125,7 +114,7 @@ const DbReport = ({ transactions }) => {
         });
         return recentTransfers.length > 5;
       } catch (error) {
-        console.error(`BitQuery BTC check failed for ${wallet}:`, error);
+        console.error(`BitQuery BTC check failed for ${wallet}:`, error.message);
         return false;
       }
     },
@@ -150,15 +139,13 @@ const DbReport = ({ transactions }) => {
       `,
       };
       try {
-        const response = await fetch("https://graphql.bitquery.io/", {
-          method: "POST",
+        const response = await axios.post("https://graphql.bitquery.io/", query, {
           headers: {
             "Content-Type": "application/json",
             "X-API-KEY": apiKeys.BITQUERY_API_KEY,
           },
-          body: JSON.stringify(query),
         });
-        const { data } = await response.json();
+        const { data } = response.data;
         const transfers = data?.ethereum?.transfers || [];
         const recentTransfers = transfers.filter((t) => {
           const txTime = new Date(t.block.time);
@@ -167,7 +154,7 @@ const DbReport = ({ transactions }) => {
         });
         return recentTransfers.length > 10;
       } catch (error) {
-        console.error(`BitQuery ETH check failed for ${wallet}:`, error);
+        console.error(`BitQuery ETH check failed for ${wallet}:`, error.message);
         return false;
       }
     },
@@ -185,10 +172,10 @@ const DbReport = ({ transactions }) => {
       }
 
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `https://api.etherscan.io/api?module=account&action=txlist&address=${wallet}&startblock=0&endblock=99999999&sort=desc&apikey=${apiKeys.ETHERSCAN_API_KEY}`
         );
-        const data = await response.json();
+        const data = response.data;
         if (data.status === "1" && data.result.length > 0) {
           const recentTxs = data.result.slice(0, 10);
           const smallTxCount = recentTxs.filter((tx) => parseFloat(tx.value) / 1e18 < 0.01).length;
@@ -200,7 +187,7 @@ const DbReport = ({ transactions }) => {
         }
         return false;
       } catch (error) {
-        console.error(`Etherscan check failed for ${wallet}:`, error);
+        console.error(`Etherscan check failed for ${wallet}:`, error.message);
         return false;
       }
     },
@@ -211,13 +198,11 @@ const DbReport = ({ transactions }) => {
     const fetchApiKeys = async () => {
       try {
         console.log("Fetching API keys from: http://localhost:5000/api/keys");
-        const response = await fetch("http://localhost:5000/api/keys");
-        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-        const keys = await response.json();
-        console.log("API keys fetched:", keys);
-        setApiKeys(keys);
+        const response = await axios.get("http://localhost:5000/api/keys");
+        console.log("API keys fetched:", response.data);
+        setApiKeys(response.data);
       } catch (error) {
-        console.error("Failed to fetch API keys:", error);
+        console.error("Failed to fetch API keys:", error.message);
         setCheckState("error");
         setErrorLogs([{ id: 0, message: "Failed to load API keys", details: error.message }]);
       }
@@ -272,7 +257,6 @@ const DbReport = ({ transactions }) => {
           break;
         }
 
-        // Check hardcoded suspicious accounts first
         if (SUSPICIOUS_ACCOUNTS.includes(wallet)) {
           newErrorLogs.push({
             id: txId,

@@ -14,6 +14,22 @@ const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
 const BLOCKCYPHER_API_KEY = process.env.BLOCKCYPHER_API_KEY;
 const CHAINALYSIS_API_KEY = process.env.CHAINALYSIS_API_KEY; // Added Chainalysis API key
 
+app.get("/api/chainalysis/:address", async (req, res) => {
+  const { address } = req.params;
+  try {
+    console.log(`Requesting sanctions check for ${address} with key: ${CHAINALYSIS_API_KEY}...`);
+    const response = await axios.get(`https://public.chainalysis.com/api/v1/address/${address}`, { // Verify endpoint
+      headers: {
+        "X-API-Key":`${CHAINALYSIS_API_KEY}`,
+        "Accept": "application/json",
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error(`Chainalysis request failed for ${address}:`, error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
 // New endpoint to serve API keys
 app.get("/api/keys", (req, res) => {
   console.log("API keys requested");
