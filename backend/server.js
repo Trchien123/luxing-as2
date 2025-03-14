@@ -17,7 +17,6 @@ const CHAINALYSIS_API_KEY = process.env.CHAINALYSIS_API_KEY; // Added Chainalysi
 app.get("/api/chainalysis/:address", async (req, res) => {
   const { address } = req.params;
   try {
-    console.log(`Requesting sanctions check for ${address} with key: ${CHAINALYSIS_API_KEY}...`);
     const response = await axios.get(`https://public.chainalysis.com/api/v1/address/${address}`, { // Verify endpoint
       headers: {
         "X-API-Key":`${CHAINALYSIS_API_KEY}`,
