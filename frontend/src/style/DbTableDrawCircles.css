@@ -1,428 +1,438 @@
 .DB-table {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-  
+
 .Dbtable-component {
-    width: 100%;
-    height: auto;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    padding: 50px;
-    border: 1px solid gray; /* Optional: helps visualize the component */
+  width: 100%;
+  height: auto;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 50px;
+  border: 1px solid gray; /* Optional: helps visualize the component */
 }
 
 .transaction-visualization {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    transition: all 2s ease;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  transition: all 2s ease;
 }
 
 .transaction-visualization.selected {
-    justify-content: flex-start; 
+  justify-content: flex-start;
 }
 
 #visualization {
-    min-width: 500px; /* Ensure it doesn’t shrink too much */
-    min-height: 500px; /* Maintain a minimum height */
+  min-width: 500px; /* Ensure it doesn’t shrink too much */
+  min-height: 500px; /* Maintain a minimum height */
 }
 
 /* Pop-up Modal Styles */
 .transaction-details-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Center the popup */
-    
-    background-color: rgba(0, 0, 0, 1); /* Dark semi-transparent background */
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    
-    width: 90%; /* Better scaling on smaller screens */
-    max-width: 600px; /* Ensure the popup doesn't stretch too wide */
-    height: auto;
-    max-height: 50vh; /* Limit height to avoid overflow */
-    overflow-y: auto; /* Allow vertical scrolling if content overflows */
-    
-    opacity: 0; /* Initially hidden */
-    visibility: hidden; /* Hide it from screen readers until it's shown */
-    display: none; /* Ensure it's removed from layout when hidden */
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-    
-    z-index: 1000; /* Make sure it appears above everything */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the popup */
+
+  background-color: rgba(0, 0, 0, 1); /* Dark semi-transparent background */
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+
+  width: 90%; /* Better scaling on smaller screens */
+  max-width: 600px; /* Ensure the popup doesn't stretch too wide */
+  height: auto;
+  max-height: 50vh; /* Limit height to avoid overflow */
+  overflow-y: auto; /* Allow vertical scrolling if content overflows */
+
+  opacity: 0; /* Initially hidden */
+  visibility: hidden; /* Hide it from screen readers until it's shown */
+  display: none; /* Ensure it's removed from layout when hidden */
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+  z-index: 1000; /* Make sure it appears above everything */
 }
 
 /* Keyframes for the zoom-in effect */
 @keyframes zoomInFromCenter {
-    0% {
-        transform: translate(-50%, -50%) scale(0.7); /* Start small and centered */
-        opacity: 0;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1); /* End at normal size */
-        opacity: 1;
-    }
+  0% {
+    transform: translate(-50%, -50%) scale(0.7); /* Start small and centered */
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1); /* End at normal size */
+    opacity: 1;
+  }
 }
 
 /* Apply the animation when the popup becomes visible */
 .transaction-details-container.visible {
-    animation: zoomInFromCenter 0.4s ease-out; /* Smooth zoom-in effect */
-    opacity: 1;
-    visibility: visible;
-    display: block; /* Ensure it's displayed properly when visible */
+  animation: zoomInFromCenter 0.4s ease-out; /* Smooth zoom-in effect */
+  opacity: 1;
+  visibility: visible;
+  display: block; /* Ensure it's displayed properly when visible */
 }
 
 /* Keyframes for the zoom-out effect when closing */
 @keyframes zoomOutToCenter {
-    0% {
-        transform: translate(-50%, -50%) scale(1); /* Start at normal size */
-        opacity: 1;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(0.7); /* Shrink and stay centered */
-        opacity: 0;
-    }
+  0% {
+    transform: translate(-50%, -50%) scale(1); /* Start at normal size */
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.7); /* Shrink and stay centered */
+    opacity: 0;
+  }
 }
 
 /* Apply the animation when the popup is being closed */
 .transaction-details-container.hidden {
-    animation: zoomOutToCenter 0.3s ease-in; /* Smooth zoom-out effect */
-    opacity: 0;
-    visibility: hidden;
-    display: none; /* Ensure it's removed from layout */
+  animation: zoomOutToCenter 0.3s ease-in; /* Smooth zoom-out effect */
+  opacity: 0;
+  visibility: hidden;
+  display: none; /* Ensure it's removed from layout */
 }
 
 /* Add a backdrop effect */
 .transaction-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Dark background effect */
-    
-    opacity: 0;
-    visibility: hidden; /* Hide it by default */
-    display: none; /* Ensure it's removed from layout */
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    
-    z-index: 999; /* Just below the modal */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Dark background effect */
+
+  opacity: 0;
+  visibility: hidden; /* Hide it by default */
+  display: none; /* Ensure it's removed from layout */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  z-index: 999; /* Just below the modal */
 }
 
 .transaction-backdrop.visible {
-    opacity: 1;
-    visibility: visible;
-    display: block; /* Ensure the backdrop is displayed when visible */
+  opacity: 1;
+  visibility: visible;
+  display: block; /* Ensure the backdrop is displayed when visible */
 }
 
 /* Close Button Improvements */
 .transaction-details-container .close-button {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    color: white;
-    border: none;
-    font-size: 1.5rem; /* Adjusted for responsiveness */
-    cursor: pointer;
-    transition: color 0.3s ease;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  color: white;
+  border: none;
+  font-size: 1.5rem; /* Adjusted for responsiveness */
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .transaction-details-container .close-button:hover {
-    color: red;
+  color: red;
 }
 
 #main-circle:hover {
-    fill: #669900;
+  fill: #669900;
 }
 
 .child-nodes:hover circle,
 .child-nodes:hover line {
-    stroke: #669900;
-    stroke-width: 5;
+  stroke: #669900;
+  stroke-width: 5;
 }
 
 .child-nodes:hover text {
-    fill: #669900;
-    font-weight: bold;
+  fill: #669900;
+  font-weight: bold;
 }
 
 #sender:hover {
-    fill: #669900;
+  fill: #669900;
 }
 
 .child-nodes circle,
 .child-nodes line,
 .child-nodes text {
-    transition: all 0.3s ease; /* Apply transition to all properties */
+  transition: all 0.3s ease; /* Apply transition to all properties */
 }
 
 #chien-name,
 #main-circle {
-    transition: fill 0.3s ease; /* Smooth transition */
+  transition: fill 0.3s ease; /* Smooth transition */
 }
 
 #chien-name:hover {
-    fill: #669900; /* Change the color to green */
+  fill: #669900; /* Change the color to green */
 }
 
 .transaction-details-content {
-    width: 100%;
-    text-align: left;
-    padding: 15px;
-    overflow-wrap: break-word;
+  width: 100%;
+  text-align: left;
+  padding: 15px;
+  overflow-wrap: break-word;
 }
 
 .transaction-details-content h3 {
-    font-style: italic;
-    font-weight: bold;
-    margin-bottom: 15px;
-    padding-bottom: 5px;
+  font-style: italic;
+  font-weight: bold;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
 }
 
 .transaction-details-content h4 {
-    font-style: italic;
-    border-top: 2px solid #669900;
-    padding-bottom: 5px;
-    text-align: center;
-    padding-top: 20px;
+  font-style: italic;
+  border-top: 2px solid #669900;
+  padding-bottom: 5px;
+  text-align: center;
+  padding-top: 20px;
 }
 
 .transaction-details-content p {
-    padding-left: 10px;
-    margin-bottom: 10px;
+  padding-left: 10px;
+  margin-bottom: 10px;
 }
 
-
 .loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(255, 255, 255, 0.2);
-    border-top: 5px solid #ffffff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-top: 5px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 .transaction-visualization-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 .transaction-visualization {
-    flex: 1;
-    display: flex;
-    justify-content: center;
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .legend {
-    max-width: 400px;
-    background-color: black;
-    border-radius: 5px;
-    padding: 10px;
-    opacity: 0.7;
+  max-width: 400px;
+  background-color: black;
+  border-radius: 5px;
+  padding: 10px;
+  opacity: 0.7;
 }
 
 .sub-legend {
-    display: flex;
-    flex-direction: column;
-    color: white;
+  display: flex;
+  flex-direction: column;
+  color: white;
 }
 
 .legend-item {
-    margin-left: 10px;
-    font-size: 14px;
+  margin-left: 10px;
+  font-size: 14px;
 }
 
 .legend-circle {
-    width: 12px; /* Adjust size */
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
+  width: 12px; /* Adjust size */
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 .inbound-tx {
-    background-color: green; /* Adjust color */
+  background-color: green; /* Adjust color */
 }
 
 .outbound-tx {
-    background-color: red;
+  background-color: red;
 }
 
 .inbound-contract {
-    background-color: blue;
+  background-color: blue;
 }
 
 .outbound-contract {
-    background-color: orange;
+  background-color: orange;
 }
 
 .go-back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .go-back-button svg {
-    color: white; /* Set arrow color */
-    width: 30px;
-    height: 30px;
+  color: white; /* Set arrow color */
+  width: 30px;
+  height: 30px;
 }
 
 .go-back-button:hover {
-    opacity: 0.8;
+  opacity: 0.8;
 }
 
 .copy-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: white;
-    margin-left: 8px;
-    padding: 2px;
-    transition: color 0.3s ease;
-    position: relative;  /* Ensure button is clickable */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+  margin-left: 8px;
+  padding: 2px;
+  transition: color 0.3s ease;
+  position: relative; /* Ensure button is clickable */
 }
 
 /* Hover effect */
 .copy-button:hover {
-    color:rgb(85, 85, 145);
+  color: rgb(85, 85, 145);
 }
 
 /* Keyframe animation for bounce effect */
 @keyframes bounce {
-    0% { transform: scale(1); }
-    30% { transform: scale(1.2); }
-    50% { transform: scale(0.9); }
-    70% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Apply bounce effect when clicked */
 .copy-button.clicked {
-    animation: bounce 0.5s;
+  animation: bounce 0.5s;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-
 
 /* Mobile Responsiveness */
 @media (max-width: 800px) {
-    .transaction-visualization {
-        flex-direction: column;
-    }
-    
-    .legend {
-        max-width: 350px;
-        margin-bottom: 20px;
-    }
+  .transaction-visualization {
+    flex-direction: column;
+  }
 
-    .sub-legend {
-        flex-direction: row;
-    }
+  .legend {
+    max-width: 350px;
+    margin-bottom: 20px;
+  }
 
-    .legend-item {
-        font-size: 14px;
-    }
+  .sub-legend {
+    flex-direction: row;
+  }
 
-    /* Transaction content */
-    .transaction-details-content h3 {
-        font-size: 4vw; /* Larger font size for mobile */
-        text-align: center;
-    }
+  .legend-item {
+    font-size: 14px;
+  }
 
-    .transaction-details-content h4 {
-        font-size: 3vw;
-        text-align: center;
-    }
+  /* Transaction content */
+  .transaction-details-content h3 {
+    font-size: 4vw; /* Larger font size for mobile */
+    text-align: center;
+  }
 
-    .transaction-details-content p {
-        font-size: 2.5vw; /* Ensure readability on small screens */
-    }
+  .transaction-details-content h4 {
+    font-size: 3vw;
+    text-align: center;
+  }
 
-    .Dbtable-component {
-        padding: 0px;
-    }
+  .transaction-details-content p {
+    font-size: 2.5vw; /* Ensure readability on small screens */
+  }
+
+  .Dbtable-component {
+    padding: 0px;
+  }
 }
 
 /* Larger Screen Enhancements */
 @media (min-width: 1100px) {
-    #visualization {
-        min-width: 700px;
-        min-height: 700px;
-    }
+  #visualization {
+    min-width: 700px;
+    min-height: 700px;
+  }
 
-    .transaction-details-container {
-        width: 60%; /* Adjust width for larger screens */
-        padding: 30px;
-    }
+  .transaction-details-container {
+    width: 60%; /* Adjust width for larger screens */
+    padding: 30px;
+  }
 
-    /* Transaction content */
-    .transaction-details-content h3 {
-        font-size: 1.75vw; /* Slightly smaller font size */
-        text-align: left;
-    }
+  /* Transaction content */
+  .transaction-details-content h3 {
+    font-size: 1.75vw; /* Slightly smaller font size */
+    text-align: left;
+  }
 
-    .transaction-details-content h4 {
-        font-size: 1.5vw;
-        text-align: left;
-    }
+  .transaction-details-content h4 {
+    font-size: 1.5vw;
+    text-align: left;
+  }
 
-    .transaction-details-content p {
-        font-size: 1.25vw; /* Ensure readability for larger screens */
-    }
+  .transaction-details-content p {
+    font-size: 1.25vw; /* Ensure readability for larger screens */
+  }
 }
 
-
 @media (max-width: 350px) {
-    #visualization {
-        min-width: 300px;
-        min-height: 300px;
-    }
+  #visualization {
+    min-width: 300px;
+    min-height: 300px;
+  }
 }
 
 @media (max-width: 450px) {
-    
-    .legend {
-        max-width: 250px;
-    }
+  .legend {
+    max-width: 250px;
+  }
 
-    .legend-item {
-        font-size: 10px;
-    }
+  .legend-item {
+    font-size: 10px;
+  }
 
-    #visualization {
-        min-width: 400px;
-        min-height: 400px;
-    }
+  #visualization {
+    min-width: 400px;
+    min-height: 400px;
+  }
 }
