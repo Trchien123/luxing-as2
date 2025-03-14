@@ -12,6 +12,7 @@ app.use(express.json());
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY;
 const BLOCKCYPHER_API_KEY = process.env.BLOCKCYPHER_API_KEY;
+const CHAINALYSIS_API_KEY = process.env.CHAINALYSIS_API_KEY; // Added Chainalysis API key
 
 // New endpoint to serve API keys
 app.get("/api/keys", (req, res) => {
@@ -20,6 +21,7 @@ app.get("/api/keys", (req, res) => {
     ETHERSCAN_API_KEY: ETHERSCAN_API_KEY,
     BITQUERY_API_KEY: BITQUERY_API_KEY,
     BLOCKCYPHER_API_KEY: BLOCKCYPHER_API_KEY,
+    CHAINALYSIS_API_KEY: CHAINALYSIS_API_KEY, // Added Chainalysis API key
   });
 });
 

@@ -8,7 +8,16 @@ const DbReport = ({ transactions }) => {
   const [apiKeys, setApiKeys] = useState({
     ETHERSCAN_API_KEY: "",
     BITQUERY_API_KEY: "",
+    CHAINALYSIS_API_KEY: "",
   });
+
+  const MAX_TRANSACTIONS = 10;
+
+  // Hardcoded suspicious accounts
+  const SUSPICIOUS_ACCOUNTS = [
+    "0x7db57c738b27c5f9b898248385306d30053f54fd", // Lowercase for consistency
+    "0x6598a3f7c9583f4aa830e26589d41c05f7008b28",
+  ];
 
   const isBitcoinAddress = (address) => {
     return /^(1|3|bc1)[A-Za-z0-9]{25,34}$/.test(address) || /^bc1[A-Za-z0-9]{39,59}$/.test(address);
@@ -16,29 +25,29 @@ const DbReport = ({ transactions }) => {
 
   const fetchEtherScamDB = () => {
     return fetch("/scams.json")
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         if (!Array.isArray(data)) {
           throw new Error("scams.json does not contain a valid array");
         }
         return data
-          .filter(scam => Array.isArray(scam.addresses))
-          .map(scam => scam.addresses.map(addr => addr.toLowerCase()))
+          .filter((scam) => Array.isArray(scam.addresses))
+          .map((scam) => scam.addresses.map((addr) => addr.toLowerCase()))
           .flat();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Failed to load local EtherScamDB:", error.message);
         return [
           "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
           "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
           "0x4e6fec28f5316c2829d41bc2187202c70ec75bc7",
           "0xd90e2f925da726b50c4ed8d0fb90ad053324f31b",
-        ].map(addr => addr.toLowerCase());
+        ].map((addr) => addr.toLowerCase());
       });
   };
 
@@ -52,78 +61,81 @@ const DbReport = ({ transactions }) => {
     }
   }, []);
 
-  const checkEtherscanSuspicious = useCallback(async (wallet) => {
-    const knownSafeContracts = [
-      "0x253553366da8546fc250f225fe3d25d0c782303b",
-      "0x0000000000000000000000000000000000000000",
-    ];
-    if (knownSafeContracts.includes(wallet.toLowerCase())) {
-      return false;
-    }
-
+  const checkChainalysis = useCallback(async (wallet) => {
     try {
-      const response = await fetch(
-        `https://api.etherscan.io/api?module=account&action=txlist&address=${wallet}&startblock=0&endblock=99999999&sort=desc&apikey=${apiKeys.ETHERSCAN_API_KEY}`
-      );
-      const data = await response.json();
-      if (data.status === "1" && data.result.length > 0) {
-        const recentTxs = data.result.slice(0, 10);
-        const smallTxCount = recentTxs.filter((tx) => parseFloat(tx.value) / 1e18 < 0.01).length;
-        const zeroValueTxCount = recentTxs.filter((tx) => parseFloat(tx.value) === 0).length;
-        const timestamps = recentTxs.map((tx) => parseInt(tx.timeStamp) * 1000);
-        const timeSpan = (timestamps[0] - timestamps[timestamps.length - 1]) / (1000 * 60);
-        const highFrequency = timestamps.length >= 10 && timeSpan < 30;
-        return (smallTxCount > 7 && highFrequency) || zeroValueTxCount > 5;
+      console.log(`Fetching Chainalysis for ${wallet} with key: ${apiKeys.CHAINALYSIS_API_KEY.slice(0, 4)}...`);
+      const response = await fetch(`https://api.chainalysis.com/api/kyt/v1/addresses/${wallet}`, {
+        method: "GET",
+        headers: {
+          "Token": apiKeys.CHAINALYSIS_API_KEY,
+          "Accept": "application/json",
+        },
+        params:{
+          address: wallet
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`Chainalysis API error! status: ${response.status}, statusText: ${response.statusText}`);
       }
-      return false;
+      const data = await response.json();
+      console.log(`Chainalysis response for ${wallet}:`, data);
+      const isSuspicious = data?.riskScore > 50 || data?.isFlagged || false;
+      console.log(`Chainalysis result for ${wallet}: riskScore=${data?.riskScore}, isFlagged=${data?.isFlagged}, suspicious=${isSuspicious}`);
+      return isSuspicious;
     } catch (error) {
-      console.error(`Etherscan check failed for ${wallet}:`, error);
+      console.error(`Chainalysis check failed for ${wallet}:`, error.message);
       return false;
     }
-  }, [apiKeys.ETHERSCAN_API_KEY]);
+  }, [apiKeys.CHAINALYSIS_API_KEY]);
 
-  const checkSuspiciousBtc = useCallback(async (wallet) => {
-    const query = {
-      query: `
+  const checkSuspiciousBtc = useCallback(
+    async (wallet) => {
+      const query = {
+        query: `
         {
           bitcoin(network: bitcoin) {
-            outputs(
-              where: { address: { is: "${wallet}" } }
+            outbound: coinpath(
+              initialAddress: { is: "${wallet}" }
+              depth: { lteq: 1 }
+              options: { direction: outbound }
               limit: { count: 50 }
             ) {
-              value
-              transaction { hash time }
+              amount
+              block { timestamp { time } }
             }
           }
         }
       `,
-    };
-    try {
-      const response = await fetch("https://graphql.bitquery.io/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-KEY": apiKeys.BITQUERY_API_KEY,
-        },
-        body: JSON.stringify(query),
-      });
-      const { data } = await response.json();
-      const outputs = data?.bitcoin?.outputs || [];
-      const recentOutputs = outputs.filter((o) => {
-        const txTime = new Date(o.transaction.time);
-        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-        return txTime > thirtyDaysAgo && parseFloat(o.value) > 1;
-      });
-      return recentOutputs.length > 5;
-    } catch (error) {
-      console.error(`BitQuery BTC check failed for ${wallet}:`, error);
-      return false;
-    }
-  }, [apiKeys.BITQUERY_API_KEY]);
+      };
+      try {
+        const response = await fetch("https://graphql.bitquery.io/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": apiKeys.BITQUERY_API_KEY,
+          },
+          body: JSON.stringify(query),
+        });
+        const { data } = await response.json();
+        const transfers = data?.bitcoin?.outbound || [];
+        const recentTransfers = transfers.filter((t) => {
+          const txTime = new Date(t.block.timestamp.time);
+          const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+          return txTime > thirtyDaysAgo && parseFloat(t.amount) > 1;
+        });
+        return recentTransfers.length > 5;
+      } catch (error) {
+        console.error(`BitQuery BTC check failed for ${wallet}:`, error);
+        return false;
+      }
+    },
+    [apiKeys.BITQUERY_API_KEY]
+  );
 
-  const checkSuspiciousEth = useCallback(async (wallet) => {
-    const query = {
-      query: `
+  const checkSuspiciousEth = useCallback(
+    async (wallet) => {
+      const query = {
+        query: `
         {
           ethereum(network: eth) {
             transfers(
@@ -136,29 +148,64 @@ const DbReport = ({ transactions }) => {
           }
         }
       `,
-    };
-    try {
-      const response = await fetch("https://graphql.bitquery.io/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-KEY": apiKeys.BITQUERY_API_KEY,
-        },
-        body: JSON.stringify(query),
-      });
-      const { data } = await response.json();
-      const transfers = data?.ethereum?.transfers || [];
-      const recentTransfers = transfers.filter((t) => {
-        const txTime = new Date(t.block.time);
-        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-        return txTime > thirtyDaysAgo && parseFloat(t.amount) > 10;
-      });
-      return recentTransfers.length > 10;
-    } catch (error) {
-      console.error(`BitQuery ETH check failed for ${wallet}:`, error);
-      return false;
-    }
-  }, [apiKeys.BITQUERY_API_KEY]);
+      };
+      try {
+        const response = await fetch("https://graphql.bitquery.io/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": apiKeys.BITQUERY_API_KEY,
+          },
+          body: JSON.stringify(query),
+        });
+        const { data } = await response.json();
+        const transfers = data?.ethereum?.transfers || [];
+        const recentTransfers = transfers.filter((t) => {
+          const txTime = new Date(t.block.time);
+          const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+          return txTime > thirtyDaysAgo && parseFloat(t.amount) > 10;
+        });
+        return recentTransfers.length > 10;
+      } catch (error) {
+        console.error(`BitQuery ETH check failed for ${wallet}:`, error);
+        return false;
+      }
+    },
+    [apiKeys.BITQUERY_API_KEY]
+  );
+
+  const checkEtherscanSuspicious = useCallback(
+    async (wallet) => {
+      const knownSafeContracts = [
+        "0x253553366da8546fc250f225fe3d25d0c782303b",
+        "0x0000000000000000000000000000000000000000",
+      ];
+      if (knownSafeContracts.includes(wallet.toLowerCase())) {
+        return false;
+      }
+
+      try {
+        const response = await fetch(
+          `https://api.etherscan.io/api?module=account&action=txlist&address=${wallet}&startblock=0&endblock=99999999&sort=desc&apikey=${apiKeys.ETHERSCAN_API_KEY}`
+        );
+        const data = await response.json();
+        if (data.status === "1" && data.result.length > 0) {
+          const recentTxs = data.result.slice(0, 10);
+          const smallTxCount = recentTxs.filter((tx) => parseFloat(tx.value) / 1e18 < 0.01).length;
+          const zeroValueTxCount = recentTxs.filter((tx) => parseFloat(tx.value) === 0).length;
+          const timestamps = recentTxs.map((tx) => parseInt(tx.timeStamp) * 1000);
+          const timeSpan = (timestamps[0] - timestamps[timestamps.length - 1]) / (1000 * 60);
+          const highFrequency = timestamps.length >= 10 && timeSpan < 30;
+          return (smallTxCount > 7 && highFrequency) || zeroValueTxCount > 5;
+        }
+        return false;
+      } catch (error) {
+        console.error(`Etherscan check failed for ${wallet}:`, error);
+        return false;
+      }
+    },
+    [apiKeys.ETHERSCAN_API_KEY]
+  );
 
   useEffect(() => {
     const fetchApiKeys = async () => {
@@ -167,6 +214,7 @@ const DbReport = ({ transactions }) => {
         const response = await fetch("http://localhost:5000/api/keys");
         if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
         const keys = await response.json();
+        console.log("API keys fetched:", keys);
         setApiKeys(keys);
       } catch (error) {
         console.error("Failed to fetch API keys:", error);
@@ -178,15 +226,15 @@ const DbReport = ({ transactions }) => {
   }, []);
 
   useEffect(() => {
-    if (!apiKeys.ETHERSCAN_API_KEY || !apiKeys.BITQUERY_API_KEY) return;
+    if (!apiKeys.ETHERSCAN_API_KEY || !apiKeys.BITQUERY_API_KEY || !apiKeys.CHAINALYSIS_API_KEY) {
+      console.log("Waiting for all API keys...");
+      return;
+    }
 
     const checkSuspiciousActivity = async () => {
       console.time("checkSuspiciousActivity");
       const newErrorLogs = [];
       let errorFound = false;
-
-      const walletErrors = new Map();
-      console.log("Transactions received:", transactions);
 
       const scamAddresses = await fetchEtherScamDB();
 
@@ -196,207 +244,131 @@ const DbReport = ({ transactions }) => {
           message: "No transactions provided",
           details: "The transactions prop is empty or invalid.",
         });
-        errorFound = true;
-      } else {
-        const checkPromises = transactions.map(async (tx, index) => {
-          const wallet = tx.from_address?.toLowerCase();
+        setErrorLogs(newErrorLogs);
+        setCheckState("error");
+        return;
+      }
 
-          if (!wallet || typeof wallet !== "string") {
-            return {
-              id: tx.id || `unknown-${index}`,
-              message: `Error in Transaction #${tx.id || `unknown-${index}`}: Missing or invalid wallet address`,
-              details: `Transaction lacks a valid from_address. Received: ${JSON.stringify(tx)}`,
-              errorType: "invalid_address",
-            };
-          }
+      console.log("Transactions received:", transactions);
 
-          if (!walletErrors.has(wallet)) {
-            walletErrors.set(wallet, new Set());
-          }
-          const loggedErrors = walletErrors.get(wallet);
+      for (const [index, tx] of transactions.entries()) {
+        if (index >= MAX_TRANSACTIONS) {
+          console.log(`Stopped checking after ${MAX_TRANSACTIONS} transactions`);
+          break;
+        }
 
-          const errorsForTx = [];
+        console.log(`Checking transaction ${index + 1} of ${Math.min(transactions.length, MAX_TRANSACTIONS)}:`, tx);
+        const wallet = tx.from_address?.toLowerCase();
+        const txId = tx.id || `unknown-${index}`;
 
-          const usdValue = tx.usd;
-          if (usdValue && usdValue > 50000) {
-            const errorType = "high_usd_value";
-            if (!loggedErrors.has(errorType)) {
-              errorsForTx.push({
-                id: tx.id || `unknown-${index}`,
-                message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: High USD value detected ($${usdValue})`,
-                details: `Transaction from ${wallet} has an unusually high value of $${usdValue}.`,
-                errorType,
-              });
-              loggedErrors.add(errorType);
-            }
-          }
-
-          if (scamAddresses.includes(wallet)) {
-            const errorType = "etherscamdb";
-            if (!loggedErrors.has(errorType)) {
-              errorsForTx.push({
-                id: tx.id || `unknown-${index}`,
-                message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Known scam Ethereum address`,
-                details: `The wallet ${wallet} is listed in EtherScamDB as a known scam or phishing address.`,
-                errorType,
-              });
-              loggedErrors.add(errorType);
-            }
-          }
-
-          if (await checkCryptoScamDB(wallet)) {
-            const errorType = "cryptoscamdb";
-            if (!loggedErrors.has(errorType)) {
-              errorsForTx.push({
-                id: tx.id || `unknown-${index}`,
-                message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Community-reported scam`,
-                details: `The wallet ${wallet} is flagged as suspicious by CryptoScamDB community reports.`,
-                errorType,
-              });
-              loggedErrors.add(errorType);
-            }
-          }
-
-          if (await checkEtherscanSuspicious(wallet)) {
-            const errorType = "etherscan_suspicious";
-            if (!loggedErrors.has(errorType)) {
-              errorsForTx.push({
-                id: tx.id || `unknown-${index}`,
-                message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Flagged by Etherscan`,
-                details: `The wallet ${wallet} shows suspicious activity patterns on Etherscan.`,
-                errorType,
-              });
-              loggedErrors.add(errorType);
-            }
-          }
-
-          if (tx.tokenAmount?.includes("BTC")) {
-            if (!isBitcoinAddress(wallet)) {
-              const errorType = "invalid_btc_address";
-              if (!loggedErrors.has(errorType)) {
-                errorsForTx.push({
-                  id: tx.id || `unknown-${index}`,
-                  message: `Error in Transaction #${tx.id || `unknown-${index}`}: Invalid Bitcoin address format`,
-                  details: `The wallet address ${wallet} does not match the expected Bitcoin address format.`,
-                  errorType,
-                });
-                loggedErrors.add(errorType);
-              }
-            } else {
-              try {
-                const response = await fetch(`https://blockchain.info/rawaddr/${wallet}`, { mode: "cors" });
-                if (!response.ok) {
-                  const errorType = "invalid_btc_api";
-                  if (!loggedErrors.has(errorType)) {
-                    errorsForTx.push({
-                      id: tx.id || `unknown-${index}`,
-                      message: `Error in Transaction #${tx.id || `unknown-${index}`}: Invalid Bitcoin address`,
-                      details: `The wallet address ${wallet} returned an error: ${response.status} - ${response.statusText}`,
-                      errorType,
-                    });
-                    loggedErrors.add(errorType);
-                  }
-                } else {
-                  const data = await response.json();
-                  if (data.total_received === 0 && data.total_sent === 0) {
-                    const errorType = "inactive_btc_address";
-                    if (!loggedErrors.has(errorType)) {
-                      errorsForTx.push({
-                        id: tx.id || `unknown-${index}`,
-                        message: `Warning in Transaction #${tx.id || `unknown-${index}`}: Inactive Bitcoin address`,
-                        details: `The Bitcoin address ${wallet} has no recorded transactions.`,
-                        errorType,
-                      });
-                      loggedErrors.add(errorType);
-                    }
-                  }
-                  if (await checkSuspiciousBtc(wallet)) {
-                    const errorType = "suspicious_btc_activity";
-                    if (!loggedErrors.has(errorType)) {
-                      errorsForTx.push({
-                        id: tx.id || `unknown-${index}`,
-                        message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Unusual Bitcoin activity`,
-                        details: `The wallet ${wallet} shows high Bitcoin transfer volume in the last 30 days.`,
-                        errorType,
-                      });
-                      loggedErrors.add(errorType);
-                    }
-                  }
-                }
-              } catch (error) {
-                const errorType = "btc_api_failure";
-                if (!loggedErrors.has(errorType)) {
-                  errorsForTx.push({
-                    id: tx.id || `unknown-${index}`,
-                    message: `Error in Transaction #${tx.id || `unknown-${index}`}: Bitcoin API failure`,
-                    details: `Failed to verify Bitcoin address ${wallet}: ${error.message}`,
-                    errorType,
-                  });
-                  loggedErrors.add(errorType);
-                }
-              }
-            }
-          }
-
-          if (tx.amount?.includes("ETH") && !tx.tokenAmount?.includes("BTC")) {
-            try {
-              const response = await fetch(
-                `https://api.etherscan.io/api?module=account&action=balance&address=${wallet}&tag=latest&apikey=${apiKeys.ETHERSCAN_API_KEY}`
-              );
-              const data = await response.json();
-              if (data.status !== "1") {
-                const errorType = "invalid_eth_address";
-                if (!loggedErrors.has(errorType)) {
-                  errorsForTx.push({
-                    id: tx.id || `unknown-${index}`,
-                    message: `Error in Transaction #${tx.id || `unknown-${index}`}: Invalid Ethereum address`,
-                    details: `The wallet address ${wallet} is not valid: ${data.message}`,
-                    errorType,
-                  });
-                  loggedErrors.add(errorType);
-                }
-              } else if (await checkSuspiciousEth(wallet)) {
-                const errorType = "suspicious_eth_activity";
-                if (!loggedErrors.has(errorType)) {
-                  errorsForTx.push({
-                    id: tx.id || `unknown-${index}`,
-                    message: `Suspicious Transaction #${tx.id || `unknown-${index}`}: Unusual Ethereum activity`,
-                    details: `The wallet ${wallet} shows high Ethereum transfer volume in the last 30 days.`,
-                    errorType,
-                  });
-                  loggedErrors.add(errorType);
-                }
-              }
-            } catch (error) {
-              const errorType = "eth_api_failure";
-              if (!loggedErrors.has(errorType)) {
-                errorsForTx.push({
-                  id: tx.id || `unknown-${index}`,
-                  message: `Error in Transaction #${tx.id || `unknown-${index}`}: Ethereum API failure`,
-                  details: `Failed to verify Ethereum address ${wallet}: ${error.message}`,
-                  errorType,
-                });
-                loggedErrors.add(errorType);
-              }
-            }
-          }
-
-          return { txId: tx.id || `unknown-${index}`, errors: errorsForTx };
-        });
-
-        const results = await Promise.all(checkPromises);
-
-        results.forEach(({ txId, errors }) => {
-          errors.forEach((error) => {
-            if (!newErrorLogs.some((log) => log.id === error.id && log.message === error.message)) {
-              newErrorLogs.push(error);
-              errorFound = true;
-            }
+        if (!wallet || typeof wallet !== "string") {
+          newErrorLogs.push({
+            id: txId,
+            message: `Error in Transaction #${txId}: Missing or invalid sender address`,
+            details: `Transaction lacks a valid from_address. Received: ${JSON.stringify(tx)}`,
+            errorType: "invalid_address",
           });
-        });
+          errorFound = true;
+          break;
+        }
+
+        // Check hardcoded suspicious accounts first
+        if (SUSPICIOUS_ACCOUNTS.includes(wallet)) {
+          newErrorLogs.push({
+            id: txId,
+            message: `Suspicious Transaction #${txId}: Known suspicious sender address`,
+            details: `The sender ${wallet} is hardcoded as a known suspicious account.`,
+            errorType: "hardcoded_suspicious",
+          });
+          errorFound = true;
+          break;
+        }
+
+        if (scamAddresses.includes(wallet)) {
+          newErrorLogs.push({
+            id: txId,
+            message: `Suspicious Transaction #${txId}: Known scam sender address`,
+            details: `The sender ${wallet} is listed in EtherScamDB as a known scam or phishing address.`,
+            errorType: "etherscamdb",
+          });
+          errorFound = true;
+          break;
+        }
+
+        if (await checkChainalysis(wallet)) {
+          newErrorLogs.push({
+            id: txId,
+            message: `Suspicious Transaction #${txId}: Sender flagged by Chainalysis`,
+            details: `The sender ${wallet} has been identified as suspicious by Chainalysis.`,
+            errorType: "chainalysis_suspicious",
+          });
+          errorFound = true;
+          break;
+        }
+
+        if (tx.tokenAmount?.includes("BTC") && isBitcoinAddress(wallet)) {
+          if (await checkSuspiciousBtc(wallet)) {
+            newErrorLogs.push({
+              id: txId,
+              message: `Suspicious Transaction #${txId}: Unusual Bitcoin sender activity`,
+              details: `The sender ${wallet} shows high Bitcoin transfer volume in the last 30 days.`,
+              errorType: "suspicious_btc_activity",
+            });
+            errorFound = true;
+            break;
+          }
+        } else if (tx.amount?.includes("ETH") && !tx.tokenAmount?.includes("BTC")) {
+          if (await checkSuspiciousEth(wallet)) {
+            newErrorLogs.push({
+              id: txId,
+              message: `Suspicious Transaction #${txId}: Unusual Ethereum sender activity`,
+              details: `The sender ${wallet} shows high Ethereum transfer volume in the last 30 days.`,
+              errorType: "suspicious_eth_activity",
+            });
+            errorFound = true;
+            break;
+          }
+        }
+
+        if (tx.amount?.includes("ETH") && !tx.tokenAmount?.includes("BTC")) {
+          if (await checkEtherscanSuspicious(wallet)) {
+            newErrorLogs.push({
+              id: txId,
+              message: `Suspicious Transaction #${txId}: Sender flagged by Etherscan`,
+              details: `The sender ${wallet} shows suspicious activity patterns on Etherscan.`,
+              errorType: "etherscan_suspicious",
+            });
+            errorFound = true;
+            break;
+          }
+        }
+
+        const usdValue = tx.usd;
+        if (usdValue && usdValue > 50000) {
+          newErrorLogs.push({
+            id: txId,
+            message: `Suspicious Transaction #${txId}: High USD value sent ($${usdValue})`,
+            details: `Sender ${wallet} initiated a transaction with an unusually high value of $${usdValue}.`,
+            errorType: "high_usd_value",
+          });
+          errorFound = true;
+          break;
+        }
+
+        if (tx.tokenAmount?.includes("BTC") && !isBitcoinAddress(wallet)) {
+          newErrorLogs.push({
+            id: txId,
+            message: `Error in Transaction #${txId}: Invalid Bitcoin sender address format`,
+            details: `The sender address ${wallet} does not match the expected Bitcoin address format.`,
+            errorType: "invalid_btc_address",
+          });
+          errorFound = true;
+          break;
+        }
       }
 
       console.timeEnd("checkSuspiciousActivity");
+      console.log(`Total transactions checked: ${Math.min(transactions.length, MAX_TRANSACTIONS)}`);
       setErrorLogs(newErrorLogs);
       setCheckState(errorFound ? "error" : "verified");
     };
@@ -408,6 +380,7 @@ const DbReport = ({ transactions }) => {
     checkEtherscanSuspicious,
     checkSuspiciousBtc,
     checkSuspiciousEth,
+    checkChainalysis,
     checkCryptoScamDB,
   ]);
 
@@ -419,8 +392,8 @@ const DbReport = ({ transactions }) => {
     <div className="report-table-container">
       <div className="lower-box">
         {checkState === "checking" && "Checking transactions..."}
-        {checkState === "error" && "Verification failed, errors found."}
-        {checkState === "verified" && "Verification complete, no error found."}
+        {checkState === "error" && "Verification failed, suspicious sender detected."}
+        {checkState === "verified" && "Verification complete, no suspicious senders found."}
       </div>
 
       {checkState === "verified" && (
