@@ -64,6 +64,7 @@ const DbHome = () => {
       <section className="DB-main-container-2">
         <div className="Db-main-2-items Db-main-2-items-6 ">
           <SendReceiveTable
+            title={"Top Interactive"}
             crypto={crypto}
             transactions={transactions}
             address={crypto.address}

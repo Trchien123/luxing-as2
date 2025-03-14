@@ -1,78 +1,69 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "../../style/sendReceiveTable.css";
 import { Link } from "react-router-dom";
 
-const SendReceiveTable = ({ crypto, transactions }) => {
+const SendReceiveTable = ({
+  title,
+  crypto,
+  transactions,
+  address: currentUser,
+}) => {
   const [senderData, setSenderData] = useState([]);
   const [receiverData, setReceiverData] = useState([]);
+
   const shortenAddress = (addr) => {
+    if (!addr || addr.length < 10) return addr || "N/A";
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
-  const DataProcessing = (transactions) => {
-    // Create a list of sending and receiving
-    const senderMap = new Map();
-    const receiverMap = new Map();
 
-    transactions.forEach((tx) => {
-      if (tx.direction === "outbound") {
-        senderMap.set(
+  const DataProcessing = useCallback(
+    (transactions) => {
+      const senderValueMap = new Map();
+      const receiverValueMap = new Map();
+
+      transactions.forEach((tx) => {
+        senderValueMap.set(
           tx.from_address,
-          (senderMap.get(tx.from_address) || 0) + 1
+          (senderValueMap.get(tx.from_address) || 0) + tx.value
         );
-        receiverMap.set(
+        receiverValueMap.set(
           tx.to_address,
-          (receiverMap.get(tx.to_address) || 0) + 1
+          (receiverValueMap.get(tx.to_address) || 0) + tx.value
         );
-      } else {
-        senderMap.set(
-          tx.from_address,
-          (senderMap.get(tx.from_address) || 0) + 1
-        );
-        receiverMap.set(
-          tx.to_address,
-          (receiverMap.get(tx.to_address) || 0) + 1
-        );
-      }
-    });
+      });
 
-    // Convert data into array and calculate percentage
-    const totalSent = [...senderMap.values()].reduce(
-      (currentTotal, currentValue) => currentTotal + currentValue,
-      0
-    ); // array.reduce((accumulator, currentValue) => a+b, 0), 0 is the first value of accumlator
-    const totalReceived = [...receiverMap.values()].reduce(
-      (currentTotal, currentValue) => currentTotal + currentValue,
-      0
-    );
+      setSenderData(
+        [...senderValueMap.entries()]
+          .map(([address, totalValue]) => ({
+            address,
+            totalValue,
+          }))
+          .filter((entry) => entry.address !== currentUser)
+          .sort((a, b) => b.totalValue - a.totalValue)
+          .slice(0, 5)
+      );
 
-    setSenderData(
-      [...senderMap.entries()]
-        .map(([address, count]) => ({
-          address,
-          transaction: count,
-          percentage: ((count / totalSent) * 100).toFixed(2),
-        }))
-        .sort((a, b) => b.transaction - a.transaction) //  descending transaction
-        .slice(0, 5)
-    );
+      setReceiverData(
+        [...receiverValueMap.entries()]
+          .map(([address, totalValue]) => ({
+            address,
+            totalValue,
+          }))
+          .filter((entry) => entry.address !== currentUser)
+          .sort((a, b) => b.totalValue - a.totalValue)
+          .slice(0, 5)
+      );
+    },
+    [currentUser]
+  );
 
-    setReceiverData(
-      [...receiverMap.entries()]
-        .map(([address, count]) => ({
-          address,
-          transaction: count,
-          percentage: ((count / totalReceived) * 100).toFixed(2),
-        }))
-        .sort((a, b) => b.transaction - a.transaction)
-        .slice(0, 5)
-    );
-  };
   useEffect(() => {
     DataProcessing(transactions);
-  }, [transactions]);
+  }, [transactions, DataProcessing]);
 
   return (
     <section>
+      <h1 className="Bo--title">{title}</h1>
       <div id="table-container">
         <div className="table-wrapper">
           <div className="tbl-header-sender">
@@ -80,8 +71,7 @@ const SendReceiveTable = ({ crypto, transactions }) => {
               <thead>
                 <tr>
                   <th>Sender</th>
-                  <th>Transaction</th>
-                  <th>Percentage</th>
+                  <th>Total Value</th>
                 </tr>
               </thead>
             </table>
@@ -92,8 +82,7 @@ const SendReceiveTable = ({ crypto, transactions }) => {
                 {senderData.map((row, index) => (
                   <tr key={index}>
                     <td>{shortenAddress(row.address)}</td>
-                    <td>{row.transaction}</td>
-                    <td>{row.percentage}%</td>
+                    <td>{row.totalValue.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -107,8 +96,7 @@ const SendReceiveTable = ({ crypto, transactions }) => {
               <thead>
                 <tr>
                   <th>Receiver</th>
-                  <th>Transaction</th>
-                  <th>Percentage</th>
+                  <th>Total Value</th>
                 </tr>
               </thead>
             </table>
@@ -119,8 +107,7 @@ const SendReceiveTable = ({ crypto, transactions }) => {
                 {receiverData.map((row, index) => (
                   <tr key={index}>
                     <td>{shortenAddress(row.address)}</td>
-                    <td>{row.transaction}</td>
-                    <td>{row.percentage}%</td>
+                    <td>{row.totalValue.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
