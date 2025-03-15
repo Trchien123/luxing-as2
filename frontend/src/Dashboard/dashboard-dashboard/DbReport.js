@@ -2,14 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../../style/ReportTable.css";
 import approveIcon from "../../asset/approve.png";
-import errorIcon from "../../asset/error.png";
-
-const SUSPICIOUS_ACCOUNTS = [
-  "0x7db57c738b27c5f9b898248385306d30053f54fd",
-  "0x6598a3f7c9583f4aa830e26589d41c05f7008b28",
-  "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
-  "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
-];
+import errorIcon from "../../asset/error.png";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 
 const DbReport = ({ address }) => {
   const [checkState, setCheckState] = useState("idle");
@@ -69,7 +62,7 @@ const DbReport = ({ address }) => {
 
         // ✅ Checking with backend API
         const response = await axios.get(
-          `http://localhost:5000/api/chainalysis/${address}`
+          `https://luxing-backend.vercel.app/api/chainalysis/${address}`
         );
         const data = response.data;
         console.log("Chainalysis response:", data);
@@ -149,5 +142,14 @@ const DbReport = ({ address }) => {
     </div>
   );
 };
+
+const SUSPICIOUS_ACCOUNTS = [
+  "0x7db57c738b27c5f9b898248385306d30053f54fd",
+  "0x6598a3f7c9583f4aa830e26589d41c05f7008b28",
+  "0x8d08aad4b2bac2bb761ac4781cf62468c9ec47b4",
+  "0xb0606f433496bf66338b8ad6b6d51fc4d84a44cd",
+  "bc1q2dequzmk5vk8nmmrata8nq4y0zgqn4vc0n2h8y",
+  "bc1qw5g8lw4kzltpdcraehy2dt6dqda8080xd6vhl4kg4wwsypwerg9s3x6pvk"
+];
 
 export default DbReport;
