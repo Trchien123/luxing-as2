@@ -16,7 +16,7 @@ const FetchTransactions = (address, coin) => {
 
         const fetchTransactions = async () => {
             try {
-                const response = await axios.get(`https://luxing-backend-ihhcjrwmr-huynh-trung-chiens-projects.vercel.app/api/transactions/${address}?coin=${coin}`);
+                const response = await axios.get(`https://luxing-backend.vercel.app//api/transactions/${address}?coin=${coin}`);
                 if (isMounted && coin === "bitcoin") {
                     const transactionsData = response.data.transactions || []; // Get only transactions
                     setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
