@@ -7,15 +7,17 @@ const { runNeo4jQuery, runNeo4jQuery2 } = require("./neo4j");
 const app = express();
 app.use(express.json());
 
-app.get('/api/hello', (req, res) => {
-    res.json({ message: "Hello from Vercel backend!" });
-});
-
 app.use(cors({
   origin: "https://luxing-frontend.vercel.app", // Allow only your frontend
   methods: "GET,POST",
   allowedHeaders: "Content-Type"
 }));
+
+app.options("*", cors());
+
+app.get('/api/hello', (req, res) => {
+    res.json({ message: "Hello from Vercel backend!" });
+});
 
 module.exports = app;
 
