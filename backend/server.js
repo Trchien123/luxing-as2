@@ -5,8 +5,13 @@ const cors = require("cors");
 const { runNeo4jQuery, runNeo4jQuery2 } = require("./neo4j");
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+
+app.get('/api/hello', (req, res) => {
+    res.json({ message: "Hello from Vercel backend!" });
+});
+
+module.exports = app;
 
 // Fetching API Keys from environment variables
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
