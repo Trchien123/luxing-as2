@@ -17,8 +17,6 @@ const Dashboard = () => {
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef(null);
     const [showBar, setShowBar] = useState(true)
-    const [showNoti, setShowNoti] = useState(false)
-
     useEffect(() => {
         const handleScroll = () => {
             const container = containerRef.current;

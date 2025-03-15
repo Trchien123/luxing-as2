@@ -11,6 +11,12 @@ app.get('/api/hello', (req, res) => {
     res.json({ message: "Hello from Vercel backend!" });
 });
 
+app.use(cors({
+  origin: "https://luxing-frontend.vercel.app", // Allow only your frontend
+  methods: "GET,POST",
+  allowedHeaders: "Content-Type"
+}));
+
 module.exports = app;
 
 // Fetching API Keys from environment variables
