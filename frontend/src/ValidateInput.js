@@ -24,7 +24,7 @@ export const isValidSeeleAddress = (address) =>
   seeleAddressList.includes(address.toLowerCase());
 
 export const isValidBitcoinAddress = (address) =>
-  /^(1|3|bc1)[a-zA-HJ-NP-Z0-9]{25,39}$/.test(address);
+  /^(1|3|bc1)[a-zA-HJ-NP-Z0-9]{25,62}$/.test(address);
 
 // Main validation function
 export const validateInput = (input, id) => {
