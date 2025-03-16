@@ -411,10 +411,22 @@ function DrawCircle({ currentPage, transactions }) {
                     <h4>Sender & Receiver</h4>
                     <p>
                       📤 <strong>Sender Address:</strong> {selectedNode.sender}
+                      <button
+                        className="copy-button"
+                        onClick={(e) =>
+                          handleCopy(selectedNode.sender, e.target)
+                        }
+                      ></button>
                     </p>
                     <p>
                       📥 <strong>Receiver Address:</strong>{" "}
                       {selectedNode.receiver}
+                      <button
+                        className="copy-button"
+                        onClick={(e) =>
+                          handleCopy(selectedNode.receiver, e.target)
+                        }
+                      ></button>
                     </p>
 
                     <h4>Amount & Fees</h4>
