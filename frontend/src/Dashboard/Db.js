@@ -13,7 +13,7 @@ const Dashboard = () => {
 
     const crypto = location.state
     console.log(crypto)
-    const response = FetchTransactions(crypto.address, crypto.name.toLowerCase());
+    const response = FetchTransactions(crypto.address.toLowerCase(), crypto.name.toLowerCase());
     const [scrolled, setScrolled] = useState(false);
     const containerRef = useRef(null);
     const [showBar, setShowBar] = useState(true)
