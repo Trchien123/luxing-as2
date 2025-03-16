@@ -36,7 +36,7 @@ const UserOverview = ({ transactions, address, coinName, coinId }) => {
       if (
         (coinName.toLowerCase() === "ethereum" && tx.input === "0x") ||
         coinName.toLowerCase() === "seelecoin" ||
-        coinName.toLowerCase() === "bitcoin" // Bitcoin không có input như Ethereum
+        coinName.toLowerCase() === "bitcoin"
       ) {
         if (tx.direction === "inbound") {
           receivedTotal += parseFloat(tx.value);
